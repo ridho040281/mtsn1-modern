@@ -306,6 +306,7 @@ require_once get_template_directory() . '/inc/admin-editorial-headline.php';
 require_once get_template_directory() . '/inc/admin-medsos.php';
 require_once get_template_directory() . '/inc/admin-instagram-sync.php';
 require_once get_template_directory() . '/inc/admin-prestasi-meta.php';
+require_once get_template_directory() . '/inc/auto-sync-content.php';
 
 /**
  * Helper Ekstraksi YouTube Video ID dari URL / Embed string
