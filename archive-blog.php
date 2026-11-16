@@ -119,19 +119,22 @@ $categories = get_terms( array(
             ?>
             <article class="blog-card bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>" data-author="<?php echo esc_attr( strtolower( $author_name ) ); ?>">
               
-              <!-- Gambar Banner Artikel (Sama seperti di dalam artikel) -->
-              <div class="relative overflow-hidden aspect-[16/10] bg-slate-900">
-                <a href="<?php the_permalink(); ?>" class="block w-full h-full">
-                  <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <!-- Gambar Banner Artikel (Skala Pas Tanpa Terpotong) -->
+              <div class="relative overflow-hidden aspect-[21/9] bg-slate-950 flex items-center justify-center">
+                <a href="<?php the_permalink(); ?>" class="relative z-10 block w-full h-full">
+                  <!-- Ambient blurred backdrop -->
+                  <img src="<?php echo esc_url( $post_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-md opacity-40 scale-105 pointer-events-none" aria-hidden="true">
+                  <!-- Gambar Utama: 100% Utuh Tanpa Terpotong -->
+                  <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="relative z-10 w-full h-full object-contain group-hover:scale-102 transition-transform duration-500">
                 </a>
                 
-                <div class="absolute top-3 left-3">
-                  <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow flex items-center gap-1">
+                <div class="absolute top-2.5 left-2.5 z-20 pointer-events-none">
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow flex items-center gap-1">
                     <i class="fa-solid fa-feather-pointed text-gold-400"></i> <?php echo esc_html( $cat_name ); ?>
                   </span>
                 </div>
 
-                <div class="absolute bottom-3 left-3 text-white text-[10px] font-bold bg-slate-950/75 backdrop-blur-sm px-2.5 py-1 rounded-lg">
+                <div class="absolute bottom-2.5 left-2.5 z-20 text-white text-[10px] font-bold bg-slate-950/75 backdrop-blur-sm px-2 py-0.5 rounded-lg pointer-events-none">
                   <i class="fa-regular fa-clock mr-1 text-gold-400"></i> <?php echo esc_html( $reading_time ); ?> mnt baca
                 </div>
               </div>

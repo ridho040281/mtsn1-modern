@@ -135,9 +135,9 @@ get_header();
                   ?>
                   <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between">
                     <div>
-                      <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100 mb-3">
+                      <div class="overflow-hidden rounded-2xl <?php echo get_post_type() === 'blog' ? 'aspect-[21/9] bg-slate-950' : 'aspect-[16/10] bg-slate-100'; ?> mb-3 flex items-center justify-center">
                         <?php if ( has_post_thumbnail() ) : ?>
-                          <?php the_post_thumbnail( 'mtsn1-card', array( 'class' => 'w-full h-full object-cover group-hover:scale-105 transition duration-300' ) ); ?>
+                          <?php the_post_thumbnail( 'mtsn1-card', array( 'class' => 'w-full h-full ' . ( get_post_type() === 'blog' ? 'object-contain' : 'object-cover' ) . ' group-hover:scale-105 transition duration-300' ) ); ?>
                         <?php else : ?>
                           <img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/santri.jpg' ) ); ?>" class="w-full h-full object-cover">
                         <?php endif; ?>
