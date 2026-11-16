@@ -134,28 +134,32 @@ $categories = get_terms( array(
                     <i class="fa-solid fa-feather-pointed text-gold-400"></i> <?php echo esc_html( $cat_name ); ?>
                   </span>
                 </div>
-
-                <!-- Waktu Baca (Pojok Kanan Bawah) -->
-                <div class="absolute bottom-2.5 right-2.5 z-20 text-white text-[10px] font-bold bg-slate-950/80 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-md pointer-events-none">
-                  <i class="fa-regular fa-clock mr-1 text-gold-400"></i> <?php echo esc_html( $reading_time ); ?> mnt baca
-                </div>
               </div>
 
               <!-- Isi Konten Card -->
               <div class="p-6 flex-1 flex flex-col justify-between">
                 <div>
-                  <div class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 mb-2">
-                    <i class="fa-regular fa-calendar-days text-emerald-600"></i>
-                    <?php
-                    $months_id = array(
-                        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-                        5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-                        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
-                    );
-                    $post_time = get_the_time( 'U' );
-                    $formatted_date = gmdate( 'd', $post_time ) . ' ' . ( $months_id[ intval( gmdate( 'n', $post_time ) ) ] ?? '' ) . ' ' . gmdate( 'Y', $post_time );
-                    ?>
-                    <span><?php echo esc_html( $formatted_date ); ?></span>
+                  <!-- Meta Info: Tanggal & Waktu Baca (Sejajar Kiri-Kanan) -->
+                  <div class="flex items-center justify-between text-[11px] font-semibold text-slate-400 mb-2.5">
+                    <div class="flex items-center gap-1.5">
+                      <i class="fa-regular fa-calendar-days text-emerald-600"></i>
+                      <?php
+                      $months_id = array(
+                          1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                          5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                          9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                      );
+                      $post_time = get_the_time( 'U' );
+                      $formatted_date = gmdate( 'd', $post_time ) . ' ' . ( $months_id[ intval( gmdate( 'n', $post_time ) ) ] ?? '' ) . ' ' . gmdate( 'Y', $post_time );
+                      ?>
+                      <span><?php echo esc_html( $formatted_date ); ?></span>
+                    </div>
+
+                    <!-- Waktu Baca (Dipindahkan ke Sebelah Kanan Tanggal) -->
+                    <div class="flex items-center gap-1 text-slate-500 bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded-md font-bold text-[10px] transition">
+                      <i class="fa-regular fa-clock text-emerald-600"></i>
+                      <span><?php echo esc_html( $reading_time ); ?> mnt baca</span>
+                    </div>
                   </div>
 
                   <h3 class="text-base sm:text-lg font-black text-slate-900 group-hover:text-emerald-700 transition leading-snug line-clamp-2">
