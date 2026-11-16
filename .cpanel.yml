@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/mtsr8395/public_html/wp-content/themes/mtsn1-modern/
+    - export DEPLOYPATH=/home/mtsr8395/public_html/web/wp-content/themes/mtsn1-modern/
     - /bin/cp -R * $DEPLOYPATH
