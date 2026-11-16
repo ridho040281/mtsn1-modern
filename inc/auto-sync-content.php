@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'init', 'mtsn1_sync_all_alqalam_articles' );
 function mtsn1_sync_all_alqalam_articles() {
     // Flag versi sinkronisasi
-    $current_version = 'v2_alqalam_series';
+    $current_version = 'v3_clean_series';
     if ( get_option( 'mtsn1_alqalam_sync_version' ) === $current_version ) {
         return;
     }
@@ -351,6 +351,9 @@ function mtsn1_sync_all_alqalam_articles() {
             }
         }
     }
+
+    // Nonaktifkan postingan dummy Dra. Hj. Rofi'ah dari archive Al-Qalam agar murni serial edisi resmi
+    $wpdb->query( "UPDATE {$wpdb->posts} SET post_status = 'draft' WHERE post_title LIKE '%Menanamkan Adab dan Karakter Qurani%' AND post_type = 'blog'" );
 
     update_option( 'mtsn1_alqalam_sync_version', $current_version );
 }

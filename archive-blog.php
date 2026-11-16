@@ -146,7 +146,16 @@ $categories = get_terms( array(
                 <div>
                   <div class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 mb-2">
                     <i class="fa-regular fa-calendar-days text-emerald-600"></i>
-                    <span><?php echo get_the_date( 'd F Y' ); ?></span>
+                    <?php
+                    $months_id = array(
+                        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                        5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                    );
+                    $post_time = get_the_time( 'U' );
+                    $formatted_date = gmdate( 'd', $post_time ) . ' ' . ( $months_id[ intval( gmdate( 'n', $post_time ) ) ] ?? '' ) . ' ' . gmdate( 'Y', $post_time );
+                    ?>
+                    <span><?php echo esc_html( $formatted_date ); ?></span>
                   </div>
 
                   <h3 class="text-base sm:text-lg font-black text-slate-900 group-hover:text-emerald-700 transition leading-snug line-clamp-2">
