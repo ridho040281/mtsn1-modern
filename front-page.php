@@ -174,8 +174,13 @@ get_header();
       if ( get_theme_mod( 'foto_kepala' ) ) {
           $editorial_img = get_theme_mod( 'foto_kepala' );
       } else {
-          $editorial_img = home_url( '/wp-content/uploads/2024/01/sihab-web-copy.png' );
+          $editorial_img = get_template_directory_uri() . '/assets/img/kepala-madrasah.webp';
       }
+  }
+
+  // Auto-optimize: Ganti gambar PNG mentah (8.7MB) dengan WebP terkompresi tema (31KB)
+  if ( strpos( $editorial_img, 'DSC05956' ) !== false || strpos( $editorial_img, 'sihab-web-copy' ) !== false ) {
+      $editorial_img = get_template_directory_uri() . '/assets/img/kepala-madrasah.webp';
   }
   ?>
   <section class="py-16 sm:py-20 bg-white relative overflow-hidden border-b border-slate-200">
@@ -194,7 +199,11 @@ get_header();
             <img src="<?php echo esc_url( $editorial_img ); ?>" 
                  alt="<?php echo esc_attr( $kepala_nama . ' - Kepala MTsN 1 Blitar' ); ?>" 
                  class="w-auto max-h-[420px] sm:max-h-[480px] lg:max-h-[520px] object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] hover:scale-105 transition-transform duration-500" 
-                 onerror="this.onerror=null; this.src='<?php echo esc_url( home_url( '/wp-content/uploads/2024/01/sihab-web-copy.png' ) ); ?>';">
+                 width="400"
+                 height="520"
+                 loading="eager"
+                 fetchpriority="high"
+                 onerror="this.onerror=null; this.src='<?php echo esc_url( get_template_directory_uri() . '/assets/img/kepala-madrasah.webp' ); ?>';">
           </div>
         </div>
 
