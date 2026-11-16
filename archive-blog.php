@@ -128,13 +128,15 @@ $categories = get_terms( array(
                   <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="relative z-10 w-full h-full object-contain group-hover:scale-102 transition-transform duration-500">
                 </a>
                 
-                <div class="absolute top-2.5 left-2.5 z-20 pointer-events-none">
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow flex items-center gap-1">
+                <!-- Kategori / Rubrik (Pojok Kanan Atas) -->
+                <div class="absolute top-2.5 right-2.5 z-20 pointer-events-none">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600/95 text-white shadow-md flex items-center gap-1 backdrop-blur-xs">
                     <i class="fa-solid fa-feather-pointed text-gold-400"></i> <?php echo esc_html( $cat_name ); ?>
                   </span>
                 </div>
 
-                <div class="absolute bottom-2.5 left-2.5 z-20 text-white text-[10px] font-bold bg-slate-950/75 backdrop-blur-sm px-2 py-0.5 rounded-lg pointer-events-none">
+                <!-- Waktu Baca (Pojok Kanan Bawah) -->
+                <div class="absolute bottom-2.5 right-2.5 z-20 text-white text-[10px] font-bold bg-slate-950/80 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-md pointer-events-none">
                   <i class="fa-regular fa-clock mr-1 text-gold-400"></i> <?php echo esc_html( $reading_time ); ?> mnt baca
                 </div>
               </div>
