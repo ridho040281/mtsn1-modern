@@ -128,7 +128,6 @@
         <div class="leading-tight min-w-0">
           <span class="text-base sm:text-2xl font-black text-madrasah-900 tracking-tight block truncate">MTsN 1 BLITAR</span>
           <p class="text-[9px] sm:text-xs font-bold text-emerald-700 tracking-wide mt-0.5 truncate">MADRASAH TSANAWIYAH NEGERI 1 BLITAR</p>
-          <p class="text-[10px] text-slate-500 italic mt-0.5 hidden md:block">Mandiri Berprestasi • Berakhlak Mulia & Digital</p>
         </div>
       </a>
 
