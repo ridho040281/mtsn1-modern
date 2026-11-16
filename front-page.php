@@ -99,33 +99,33 @@ get_header();
           </div>
 
           <!-- Quick Stat Counters Bar -->
-          <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-3.5 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg"><i class="fa-solid fa-award"></i></div>
-              <div>
-                <p class="text-lg font-black text-white leading-none">Akreditasi A</p>
-                <p class="text-[11px] text-slate-400 mt-1">Predikat Unggul</p>
+          <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-2.5 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base sm:text-lg shrink-0"><i class="fa-solid fa-award"></i></div>
+              <div class="min-w-0">
+                <p class="text-sm sm:text-lg font-black text-white leading-tight">Akreditasi A</p>
+                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">Predikat Unggul</p>
               </div>
             </div>
-            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-3.5 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gold-500/20 text-gold-400 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
-              <div>
-                <p class="text-lg font-black text-white leading-none">1.250+</p>
-                <p class="text-[11px] text-slate-400 mt-1">Siswa Aktif</p>
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-2.5 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gold-500/20 text-gold-400 flex items-center justify-center text-base sm:text-lg shrink-0"><i class="fa-solid fa-users"></i></div>
+              <div class="min-w-0">
+                <p class="text-sm sm:text-lg font-black text-white leading-tight">1.250+</p>
+                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">Siswa Aktif</p>
               </div>
             </div>
-            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-3.5 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg"><i class="fa-solid fa-chalkboard-user"></i></div>
-              <div>
-                <p class="text-lg font-black text-white leading-none">77 GTK</p>
-                <p class="text-[11px] text-slate-400 mt-1">Guru & Tendik</p>
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-2.5 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base sm:text-lg shrink-0"><i class="fa-solid fa-chalkboard-user"></i></div>
+              <div class="min-w-0">
+                <p class="text-sm sm:text-lg font-black text-white leading-tight">77 GTK</p>
+                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">Guru & Tendik</p>
               </div>
             </div>
-            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-3.5 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg"><i class="fa-solid fa-trophy"></i></div>
-              <div>
-                <p class="text-lg font-black text-white leading-none">180+</p>
-                <p class="text-[11px] text-slate-400 mt-1">Piala Prestasi</p>
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-2.5 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-base sm:text-lg shrink-0"><i class="fa-solid fa-trophy"></i></div>
+              <div class="min-w-0">
+                <p class="text-sm sm:text-lg font-black text-white leading-tight">180+</p>
+                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">Piala Prestasi</p>
               </div>
             </div>
           </div>

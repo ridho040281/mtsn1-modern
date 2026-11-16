@@ -100,3 +100,29 @@ header img, .custom-logo {
   color: #475569;
   margin: 1.5rem 0;
 }
+
+/* ==========================================================================
+   Mobile Responsiveness & Anti-Horizontal Overflow Fixes
+   ========================================================================== */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  position: relative;
+  -webkit-text-size-adjust: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Ensure media never forces horizontal scroll on phones */
+img, video, iframe, embed, object {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Fix marquee container on mobile */
+marquee {
+  max-width: 100%;
+}

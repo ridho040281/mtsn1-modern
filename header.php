@@ -46,25 +46,25 @@
 
   <!-- TOPBAR DENGAN TANGGAL MASEHI & HIJRIAH & MEDSOS RESMI -->
   <?php $top_medsos = function_exists( 'mtsn1_get_medsos' ) ? mtsn1_get_medsos() : []; ?>
-  <div class="bg-madrasah-950 text-slate-200 text-xs py-2 px-4 border-b border-madrasah-800">
+  <div class="bg-madrasah-950 text-slate-200 text-xs py-2 px-3 sm:px-4 border-b border-madrasah-800 overflow-hidden w-full">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
-      <div class="flex flex-wrap items-center gap-3 text-xs">
-        <span class="flex items-center gap-1.5 font-medium"><i class="fa-solid fa-moon text-gold-400"></i> <?php echo esc_html( mtsn1_hijri_date() ); ?></span>
+      <div class="flex flex-wrap justify-center sm:justify-start items-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-center">
+        <span class="flex items-center gap-1 font-medium"><i class="fa-solid fa-moon text-gold-400"></i> <?php echo esc_html( mtsn1_hijri_date() ); ?></span>
         <span class="text-slate-600">|</span>
-        <span class="flex items-center gap-1.5 font-medium"><i class="fa-regular fa-calendar text-emerald-400"></i> <?php echo esc_html( mtsn1_indonesian_date() ); ?></span>
+        <span class="flex items-center gap-1 font-medium"><i class="fa-regular fa-calendar text-emerald-400"></i> <?php echo esc_html( mtsn1_indonesian_date() ); ?></span>
         <?php if ( ! empty( $top_medsos['npsn'] ) ) : ?>
           <span class="hidden lg:inline text-slate-600">|</span>
           <span class="hidden lg:inline text-gold-300 font-semibold"><i class="fa-solid fa-shield-halved mr-1"></i> <?php echo esc_html( $top_medsos['npsn'] ); ?></span>
         <?php endif; ?>
       </div>
-      <div class="flex items-center gap-5 text-xs">
+      <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-5 text-[11px] sm:text-xs">
         <?php if ( ! empty( $top_medsos['telepon'] ) ) : ?>
           <a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $top_medsos['telepon'] ) ); ?>" class="hover:text-gold-400 transition flex items-center gap-1"><i class="fa-solid fa-phone text-emerald-400"></i> <?php echo esc_html( $top_medsos['telepon'] ); ?></a>
         <?php endif; ?>
         <?php if ( ! empty( $top_medsos['email'] ) ) : ?>
           <a href="mailto:<?php echo esc_attr( $top_medsos['email'] ); ?>" class="hover:text-gold-400 transition flex items-center gap-1"><i class="fa-solid fa-envelope text-emerald-400"></i> <?php echo esc_html( $top_medsos['email'] ); ?></a>
         <?php endif; ?>
-        <div class="flex items-center gap-2.5 text-sm border-l border-slate-700 pl-4">
+        <div class="flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm border-l border-slate-700 pl-3 sm:pl-4">
           <?php if ( ! empty( $top_medsos['youtube'] ) ) : ?>
             <a href="<?php echo esc_url( $top_medsos['youtube'] ); ?>" target="_blank" rel="noopener noreferrer" class="hover:text-gold-400 transition" title="YouTube MTsN 1 Blitar"><i class="fa-brands fa-youtube"></i></a>
           <?php endif; ?>
@@ -83,8 +83,8 @@
   </div>
 
   <!-- BREAKING NEWS / RUNNING TEXT TICKER (1 BARIS BERJALAN) -->
-  <div class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-madrasah-900 border-b border-emerald-700/50 text-white text-xs py-2 shadow-inner">
-    <div class="max-w-7xl mx-auto px-4 flex items-center gap-3 overflow-hidden">
+  <div class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-madrasah-900 border-b border-emerald-700/50 text-white text-xs py-2 shadow-inner overflow-hidden w-full">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 flex items-center gap-2 sm:gap-3 overflow-hidden min-w-0">
       <span class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-600 text-white font-extrabold tracking-wide uppercase text-[10px] shadow-sm shrink-0 animate-pulse">
         <i class="fa-solid fa-bullhorn text-xs"></i> PENGUMUMAN
       </span>
@@ -119,15 +119,15 @@
   </div>
 
   <!-- MAIN HEADER & NAVIGATION -->
-  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm w-full overflow-hidden">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
       
       <!-- Logo MTsN 1 Blitar & Identitas Kemenag -->
-      <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-3 shrink-0 group">
-        <img src="<?php echo esc_url( home_url( '/wp-content/uploads/2024/01/ikon_mtsn1blitar.png' ) ); ?>" alt="Logo MTsN 1 Blitar" class="h-12 w-12 sm:h-14 sm:w-14 object-contain shrink-0 group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='<?php echo esc_url( get_template_directory_uri() . '/screenshot.png' ); ?>';">
-        <div class="leading-tight">
-          <span class="text-xl sm:text-2xl font-black text-madrasah-900 tracking-tight block">MTsN 1 BLITAR</span>
-          <p class="text-[11px] sm:text-xs font-bold text-emerald-700 tracking-wide mt-0.5">MADRASAH TSANAWIYAH NEGERI 1 BLITAR</p>
+      <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 sm:flex-initial group">
+        <img src="<?php echo esc_url( home_url( '/wp-content/uploads/2024/01/ikon_mtsn1blitar.png' ) ); ?>" alt="Logo MTsN 1 Blitar" class="h-10 w-10 sm:h-14 sm:w-14 object-contain shrink-0 group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='<?php echo esc_url( get_template_directory_uri() . '/screenshot.png' ); ?>';">
+        <div class="leading-tight min-w-0">
+          <span class="text-base sm:text-2xl font-black text-madrasah-900 tracking-tight block truncate">MTsN 1 BLITAR</span>
+          <p class="text-[9px] sm:text-xs font-bold text-emerald-700 tracking-wide mt-0.5 truncate">MADRASAH TSANAWIYAH NEGERI 1 BLITAR</p>
           <p class="text-[10px] text-slate-500 italic mt-0.5 hidden md:block">Mandiri Berprestasi • Berakhlak Mulia & Digital</p>
         </div>
       </a>
