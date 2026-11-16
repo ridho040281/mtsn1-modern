@@ -113,12 +113,17 @@ $categories = get_terms( array(
             $author_photo = ! empty( $author_data['photo'] ) ? $author_data['photo'] : home_url( '/wp-content/uploads/2025/08/WhatsApp-Image-2023-07-20-at-07.43.09-copy-768x1024.png' );
             $author_name  = $author_data['name'];
             $author_role  = $author_data['role'];
+
+            // Gambar Banner Artikel (Sama seperti gambar di dalam artikel / Featured Image)
+            $post_thumb = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : $author_photo;
             ?>
             <article class="blog-card bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>" data-author="<?php echo esc_attr( strtolower( $author_name ) ); ?>">
               
-              <!-- Foto Penulis Card -->
+              <!-- Gambar Banner Artikel (Sama seperti di dalam artikel) -->
               <div class="relative overflow-hidden aspect-[16/10] bg-slate-900">
-                <img src="<?php echo esc_url( $author_photo ); ?>" alt="<?php echo esc_attr( $author_name ); ?>" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                <a href="<?php the_permalink(); ?>" class="block w-full h-full">
+                  <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </a>
                 
                 <div class="absolute top-3 left-3">
                   <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow flex items-center gap-1">
@@ -150,8 +155,8 @@ $categories = get_terms( array(
 
                 <div class="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between">
                   <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">
-                      <i class="fa-solid fa-pen-nib text-xs"></i>
+                    <div class="w-8 h-8 rounded-full overflow-hidden bg-emerald-100 border border-emerald-300 shadow-sm shrink-0">
+                      <img src="<?php echo esc_url( $author_photo ); ?>" alt="<?php echo esc_attr( $author_name ); ?>" class="w-full h-full object-cover object-top">
                     </div>
                     <div class="leading-tight truncate">
                       <span class="text-xs font-bold text-slate-900 block truncate"><?php echo esc_html( $author_name ); ?></span>
