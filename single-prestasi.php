@@ -16,17 +16,17 @@ get_header();
     ?>
 
       <!-- Breadcrumb -->
-      <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6">
-        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="hover:text-emerald-700">Beranda</a>
-        <span>/</span>
-        <a href="<?php echo esc_url( get_post_type_archive_link( 'prestasi' ) ? get_post_type_archive_link( 'prestasi' ) : home_url( '/prestasi' ) ); ?>" class="text-amber-700 font-semibold hover:underline">Prestasi & Kejuaraan</a>
-        <span>/</span>
-        <span class="line-clamp-1 max-w-xs text-slate-400"><?php the_title(); ?></span>
+      <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs text-slate-500 mb-4 sm:mb-6">
+        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="hover:text-emerald-700 whitespace-nowrap">Beranda</a>
+        <span class="text-slate-400">/</span>
+        <a href="<?php echo esc_url( get_post_type_archive_link( 'prestasi' ) ? get_post_type_archive_link( 'prestasi' ) : home_url( '/prestasi' ) ); ?>" class="text-amber-700 font-semibold hover:underline whitespace-nowrap">Prestasi & Kejuaraan</a>
+        <span class="text-slate-400">/</span>
+        <span class="truncate max-w-[180px] sm:max-w-xs text-slate-400" title="<?php echo esc_attr( get_the_title() ); ?>"><?php the_title(); ?></span>
       </nav>
 
       <!-- Main Prestasi Showcase Card -->
-      <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-200">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      <div class="bg-white rounded-3xl p-4 sm:p-8 lg:p-10 shadow-sm border border-slate-200">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
 
           <!-- Left Column: Instagram Flyer Display (Full Uncut Flyer) -->
           <div class="lg:col-span-6 flex flex-col items-center">
@@ -45,34 +45,36 @@ get_header();
                 </div>
               <?php endif; ?>
 
-              <!-- Badge Overlay -->
-              <div class="absolute top-4 left-4 z-20">
-                <span class="px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-400/50 shadow-lg flex items-center gap-2">
-                  <i class="fa-solid fa-trophy text-amber-400"></i>
-                  <span>Prestasi Juara</span>
+              <!-- Badge Header Bar (Flex Responsive, Zero Overlap on Mobile) -->
+              <div class="absolute top-2.5 sm:top-3.5 inset-x-2.5 sm:inset-x-3.5 z-20 flex items-center justify-between gap-2 pointer-events-none">
+                <span class="px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-slate-950/85 backdrop-blur-md text-amber-400 border border-amber-400/50 shadow-lg flex items-center gap-1.5 shrink-0 pointer-events-auto">
+                  <i class="fa-solid fa-trophy text-amber-400 text-[10px] sm:text-xs"></i>
+                  <span class="hidden sm:inline">Prestasi Juara</span>
+                  <span class="sm:hidden">Juara</span>
                 </span>
-              </div>
-
-              <!-- Tingkat Kejuaraan Badge in Top Right -->
-              <div class="absolute top-4 right-4 z-20">
-                <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ), 'text-xs px-3.5 py-1.5' ); ?>
+                <div class="shrink-0 pointer-events-auto">
+                  <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ), 'text-[10px] sm:text-xs px-2.5 py-1 sm:px-3 sm:py-1.5 shadow-lg' ); ?>
+                </div>
               </div>
             </div>
 
             <!-- Download / Open Fullsize / Instagram Buttons -->
-            <div class="mt-4 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
+            <div class="mt-4 flex items-center gap-2 w-full max-w-md">
               <?php if ( $thumb ) : ?>
-                <a href="<?php echo esc_url( $thumb ); ?>" target="_blank" class="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center flex items-center justify-center gap-2 transition">
-                  <i class="fa-solid fa-expand"></i> Buka Flyer
+                <a href="<?php echo esc_url( $thumb ); ?>" target="_blank" class="flex-1 py-2.5 px-2 sm:px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] sm:text-xs font-bold text-center flex items-center justify-center gap-1.5 transition">
+                  <i class="fa-solid fa-expand text-xs"></i>
+                  <span class="hidden sm:inline">Buka</span> Flyer
                 </a>
               <?php endif; ?>
               <?php if ( $ig_url ) : ?>
-                <a href="<?php echo esc_url( $ig_url ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:opacity-90 text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
-                  <i class="fa-brands fa-instagram"></i> Cek di IG
+                <a href="<?php echo esc_url( $ig_url ); ?>" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-2 sm:px-4 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:opacity-90 text-white text-[11px] sm:text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
+                  <i class="fa-brands fa-instagram text-xs"></i>
+                  <span class="hidden sm:inline">Cek di</span> IG
                 </a>
               <?php endif; ?>
-              <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . ' - MTsN 1 Blitar: ' . get_permalink() ); ?>" target="_blank" class="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
-                <i class="fa-brands fa-whatsapp"></i> Bagikan
+              <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . ' - MTsN 1 Blitar: ' . get_permalink() ); ?>" target="_blank" class="flex-1 py-2.5 px-2 sm:px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] sm:text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
+                <i class="fa-brands fa-whatsapp text-xs"></i>
+                <span class="hidden sm:inline">Bagikan</span><span class="sm:hidden">Share</span>
               </a>
             </div>
           </div>

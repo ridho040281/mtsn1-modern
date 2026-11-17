@@ -112,17 +112,15 @@ $total_prestasi = $prestasi_query->found_posts;
                   </div>
                 <?php endif; ?>
 
-                <!-- Trophy Overlay Badge (Top Left) -->
-                <div class="absolute top-3 left-3 z-20">
-                  <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-400/40 shadow-md flex items-center gap-1.5">
-                    <i class="fa-solid fa-trophy text-amber-400 text-xs"></i>
-                    <span>Juara</span>
+                <!-- Badges Overlay Bar (Flex Responsive, Zero Overlap) -->
+                <div class="absolute top-2 sm:top-2.5 inset-x-2 sm:inset-x-2.5 z-20 flex items-center justify-between gap-1 pointer-events-none">
+                  <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-400/40 shadow-sm flex items-center gap-1 shrink-0">
+                    <i class="fa-solid fa-trophy text-amber-400 text-[9px] sm:text-xs"></i>
+                    <span class="hidden xs:inline sm:inline">Juara</span>
                   </span>
-                </div>
-
-                <!-- Tingkat Kejuaraan Badge in Top Right -->
-                <div class="absolute top-3 right-3 z-20">
-                  <?php echo mtsn1_render_tingkat_badge( $tingkat ); ?>
+                  <div class="shrink-0">
+                    <?php echo mtsn1_render_tingkat_badge( $tingkat, 'text-[9px] sm:text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1' ); ?>
+                  </div>
                 </div>
               </a>
 
