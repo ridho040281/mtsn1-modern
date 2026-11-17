@@ -126,3 +126,46 @@ img, video, iframe, embed, object {
 marquee {
   max-width: 100%;
 }
+
+/* Styling Tabel & Format Teks Dokumen dari Word Editor */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.95em;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.prose table td, .prose table th {
+  border: 1px solid #cbd5e1;
+  padding: 10px 14px;
+  vertical-align: top;
+}
+.prose table th {
+  background-color: #f8fafc;
+  font-weight: 700;
+  color: #0f172a;
+}
+.prose .alignleft {
+  float: left;
+  margin: 0.5em 1.5em 1em 0;
+}
+.prose .alignright {
+  float: right;
+  margin: 0.5em 0 1em 1.5em;
+}
+.prose .aligncenter {
+  display: block;
+  margin: 1em auto;
+  text-align: center;
+}
+.prose [style*="text-align: justify"],
+.prose .alignjustify {
+  text-align: justify;
+  text-justify: inter-word;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 2em 0;
+}
