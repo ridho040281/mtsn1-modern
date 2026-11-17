@@ -46,23 +46,29 @@ function mtsn1_word_editor_toggle_editor( $use_block_editor, $post ) {
 }
 
 /**
- * 2. Daftarkan Plugin Eksternal TinyMCE (Table & Search-Replace)
+ * 2. Daftarkan Plugin Eksternal TinyMCE (Table, Search-Replace, Code, dll.)
  */
-add_filter( 'mce_external_plugins', 'mtsn1_word_editor_register_plugins', 99 );
+add_filter( 'mce_external_plugins', 'mtsn1_word_editor_register_plugins', 9999 );
 function mtsn1_word_editor_register_plugins( $plugins ) {
-    $theme_uri = get_template_directory_uri();
+    $theme_dir = get_template_directory() . '/assets/tinymce/';
+    $theme_uri = get_template_directory_uri() . '/assets/tinymce/';
 
-    if ( ! isset( $plugins['table'] ) ) {
-        $table_path = get_template_directory() . '/assets/tinymce/table/plugin.min.js';
-        if ( file_exists( $table_path ) ) {
-            $plugins['table'] = $theme_uri . '/assets/tinymce/table/plugin.min.js';
-        }
-    }
+    $needed = array(
+        'table'          => 'table/plugin.min.js',
+        'searchreplace'  => 'searchreplace/plugin.min.js',
+        'code'           => 'code/plugin.min.js',
+        'insertdatetime' => 'insertdatetime/plugin.min.js',
+        'nonbreaking'    => 'nonbreaking/plugin.min.js',
+        'print'          => 'print/plugin.min.js',
+        'visualblocks'   => 'visualblocks/plugin.min.js',
+        'visualchars'    => 'visualchars/plugin.min.js',
+        'advlist'        => 'advlist/plugin.min.js',
+        'wptadv'         => 'wptadv/plugin.min.js',
+    );
 
-    if ( ! isset( $plugins['searchreplace'] ) ) {
-        $sr_path = get_template_directory() . '/assets/tinymce/searchreplace/plugin.min.js';
-        if ( file_exists( $sr_path ) ) {
-            $plugins['searchreplace'] = $theme_uri . '/assets/tinymce/searchreplace/plugin.min.js';
+    foreach ( $needed as $name => $rel ) {
+        if ( ! isset( $plugins[ $name ] ) && file_exists( $theme_dir . $rel ) ) {
+            $plugins[ $name ] = $theme_uri . $rel;
         }
     }
 
@@ -129,14 +135,17 @@ function mtsn1_word_editor_buttons_row_3( $buttons, $editor_id = 'content' ) {
 }
 
 /**
- * 6. Aktifkan Menu Bar Dokumen, Pilihan Font, Ukuran Font & Styling Kertas Dokumen Word
+ * 6. Aktifkan Menu Bar Dokumen, Pilihan Font, Ukuran Font & Stylesheet Dokumen Word
  */
 add_filter( 'tiny_mce_before_init', 'mtsn1_word_editor_tinymce_init', 9999 );
 function mtsn1_word_editor_tinymce_init( $init ) {
     // 1. Tampilkan Menubar Lengkap ala Microsoft Word
-    $init['menubar'] = 'file edit insert view format table tools';
+    $init['menubar'] = true;
 
-    // 2. Koleksi Font Populer Microsoft Word & Standar Dokumen
+    // 2. Pastikan Semua Toolbar Terbuka (Tidak Tersembunyi)
+    $init['wordpress_adv_hidden'] = false;
+
+    // 3. Koleksi Font Populer Microsoft Word & Standar Dokumen
     $init['font_formats'] = 'Calibri=calibri,candara,segoe,segoe ui,optima,arial,sans-serif;' .
                             'Times New Roman=times new roman,times,serif;' .
                             'Arial=arial,helvetica,sans-serif;' .
@@ -148,80 +157,15 @@ function mtsn1_word_editor_tinymce_init( $init ) {
                             'Courier New=courier new,courier,monospace;' .
                             'Comic Sans MS=comic sans ms,sans-serif;';
 
-    // 3. Pilihan Ukuran Font Lengkap
+    // 4. Pilihan Ukuran Font Lengkap (pt)
     $init['fontsize_formats'] = '8pt 9pt 10pt 11pt 12pt 13pt 14pt 16pt 18pt 20pt 24pt 28pt 32pt 36pt 48pt 72pt';
 
-    // 4. Pengaturan Grid Warna
-    $init['textcolor_rows'] = 6;
-    $init['textcolor_cols'] = 8;
-
-    // 5. Gaya Lembar Kertas Dokumen Word di Dalam Iframe Editor
-    $word_canvas_css = '
-        html {
-            background-color: #f1f5f9 !important;
-            padding: 24px 12px !important;
-            box-sizing: border-box !important;
-        }
-        body#tinymce {
-            font-family: "Calibri", "Segoe UI", Arial, sans-serif !important;
-            font-size: 15px !important;
-            line-height: 1.75 !important;
-            color: #1e293b !important;
-            background-color: #ffffff !important;
-            max-width: 840px !important;
-            margin: 0 auto !important;
-            padding: 45px 55px !important;
-            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.08) !important;
-            border-radius: 4px !important;
-            min-height: 850px !important;
-            box-sizing: border-box !important;
-        }
-        p {
-            margin-top: 0 !important;
-            margin-bottom: 1.3em !important;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            color: #0f172a !important;
-            font-family: "Segoe UI", "Calibri", Arial, sans-serif !important;
-            font-weight: 700 !important;
-            margin-top: 1.5em !important;
-            margin-bottom: 0.6em !important;
-            line-height: 1.3 !important;
-        }
-        table {
-            border-collapse: collapse !important;
-            width: 100% !important;
-            margin: 1.5em 0 !important;
-        }
-        table td, table th {
-            border: 1px solid #94a3b8 !important;
-            padding: 8px 12px !important;
-        }
-        table th {
-            background-color: #f8fafc !important;
-            font-weight: 700 !important;
-            color: #0f172a !important;
-        }
-        blockquote {
-            border-left: 4px solid #10b981 !important;
-            padding: 8px 18px !important;
-            margin: 1.5em 0 !important;
-            background-color: #f8fafc !important;
-            color: #334155 !important;
-            font-style: italic !important;
-            border-radius: 0 8px 8px 0 !important;
-        }
-        img {
-            max-width: 100% !important;
-            height: auto !important;
-            border-radius: 6px !important;
-        }
-    ';
-
-    if ( ! empty( $init['content_style'] ) ) {
-        $init['content_style'] .= ' ' . $word_canvas_css;
+    // 5. Muat Stylesheet Kertas Word ke dalam Editor Iframe (Bebas Error Sintaks JS)
+    $css_url = get_template_directory_uri() . '/assets/css/word-editor-content.css';
+    if ( ! empty( $init['content_css'] ) ) {
+        $init['content_css'] .= ',' . $css_url;
     } else {
-        $init['content_style'] = $word_canvas_css;
+        $init['content_css'] = $css_url;
     }
 
     return $init;
