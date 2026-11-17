@@ -185,7 +185,126 @@ function mtsn1_get_tingkat_prestasi( $post_id ) {
 }
 
 /**
- * Render Badge Tingkat Kejuaraan untuk Flyer (Pojok Kanan Atas)
+ * Deteksi Dinamis Peringkat / Juara Berapa dari Judul Prestasi
+ */
+function mtsn1_get_peringkat_data( $post_id ) {
+    $title = get_the_title( $post_id );
+
+    // 1. Juara Harapan 1 / 2 / 3 / Harapan
+    if ( preg_match( '/Juara\s+Harapan\s+1\b|Harapan\s+1\b|Juara\s+Harapan\s+I\b/i', $title ) ) {
+        return array( 'label' => 'Juara Harapan 1', 'icon' => 'fa-solid fa-award', 'bg' => '#ecfdf5', 'color' => '#064e3b', 'border' => '#34d399', 'icon_color' => '#059669' );
+    }
+    if ( preg_match( '/Juara\s+Harapan\s+2\b|Harapan\s+2\b|Juara\s+Harapan\s+II\b/i', $title ) ) {
+        return array( 'label' => 'Juara Harapan 2', 'icon' => 'fa-solid fa-award', 'bg' => '#f0fdfa', 'color' => '#134e4a', 'border' => '#2dd4bf', 'icon_color' => '#0d9488' );
+    }
+    if ( preg_match( '/Juara\s+Harapan\s+3\b|Harapan\s+3\b|Juara\s+Harapan\s+III\b/i', $title ) ) {
+        return array( 'label' => 'Juara Harapan 3', 'icon' => 'fa-solid fa-award', 'bg' => '#ecfeff', 'color' => '#164e63', 'border' => '#22d3ee', 'icon_color' => '#0891b2' );
+    }
+    if ( preg_match( '/Juara\s+Harapan\b|Harapan\b/i', $title ) ) {
+        return array( 'label' => 'Juara Harapan', 'icon' => 'fa-solid fa-award', 'bg' => '#ecfdf5', 'color' => '#064e3b', 'border' => '#34d399', 'icon_color' => '#059669' );
+    }
+
+    // 2. Juara 1 / Emas / Peringkat 1
+    if ( preg_match( '/Juara\s+1\b|Juara\s+I\b|Juara\s+Pertama\b|Peringkat\s+1\b/i', $title ) ) {
+        return array( 'label' => 'Juara 1', 'icon' => 'fa-solid fa-trophy', 'bg' => '#fef3c7', 'color' => '#78350f', 'border' => '#f59e0b', 'icon_color' => '#d97706' );
+    }
+    if ( preg_match( '/Gold\s+Medal|Medali\s+Emas/i', $title ) ) {
+        return array( 'label' => 'Gold Medal', 'icon' => 'fa-solid fa-trophy', 'bg' => '#fef3c7', 'color' => '#78350f', 'border' => '#f59e0b', 'icon_color' => '#d97706' );
+    }
+
+    // 3. Juara 2 / Perak / Peringkat 2
+    if ( preg_match( '/Juara\s+2\b|Juara\s+II\b|Juara\s+Kedua\b|Peringkat\s+2\b/i', $title ) ) {
+        return array( 'label' => 'Juara 2', 'icon' => 'fa-solid fa-medal', 'bg' => '#f1f5f9', 'color' => '#1e293b', 'border' => '#94a3b8', 'icon_color' => '#64748b' );
+    }
+    if ( preg_match( '/Silver\s+Medal|Medali\s+Perak/i', $title ) ) {
+        return array( 'label' => 'Silver Medal', 'icon' => 'fa-solid fa-medal', 'bg' => '#f1f5f9', 'color' => '#1e293b', 'border' => '#94a3b8', 'icon_color' => '#64748b' );
+    }
+
+    // 4. Juara 3 / Perunggu / Peringkat 3
+    if ( preg_match( '/Juara\s+3\s+Bersama/i', $title ) ) {
+        return array( 'label' => 'Juara 3 Bersama', 'icon' => 'fa-solid fa-medal', 'bg' => '#ffedd5', 'color' => '#7c2d12', 'border' => '#fb923c', 'icon_color' => '#ea580c' );
+    }
+    if ( preg_match( '/Juara\s+3\b|Juara\s+III\b|Juara\s+Ketiga\b|Peringkat\s+3\b/i', $title ) ) {
+        return array( 'label' => 'Juara 3', 'icon' => 'fa-solid fa-medal', 'bg' => '#ffedd5', 'color' => '#7c2d12', 'border' => '#fb923c', 'icon_color' => '#ea580c' );
+    }
+    if ( preg_match( '/Bronze\s+Medal|Medali\s+Perunggu/i', $title ) ) {
+        return array( 'label' => 'Bronze Medal', 'icon' => 'fa-solid fa-medal', 'bg' => '#ffedd5', 'color' => '#7c2d12', 'border' => '#fb923c', 'icon_color' => '#ea580c' );
+    }
+
+    // 5. Juara Umum / Borong Prestasi
+    if ( preg_match( '/Juara\s+Umum|Borong\s+Prestasi|Borong\s+Juara/i', $title ) ) {
+        return array( 'label' => 'Juara Umum', 'icon' => 'fa-solid fa-crown', 'bg' => '#faf5ff', 'color' => '#581c87', 'border' => '#c084fc', 'icon_color' => '#9333ea' );
+    }
+
+    // 6. Juara Favorit
+    if ( preg_match( '/Favorit/i', $title ) ) {
+        return array( 'label' => 'Juara Favorit', 'icon' => 'fa-solid fa-heart', 'bg' => '#fff1f2', 'color' => '#881337', 'border' => '#fb7185', 'icon_color' => '#e11d48' );
+    }
+
+    // 7. Honorable Mention
+    if ( preg_match( '/Honorable\s+Mention/i', $title ) ) {
+        return array( 'label' => 'Honorable Mention', 'icon' => 'fa-solid fa-award', 'bg' => '#f1f5f9', 'color' => '#334155', 'border' => '#94a3b8', 'icon_color' => '#475569' );
+    }
+
+    // 8. Juara Madya
+    if ( preg_match( '/Juara\s+Madya/i', $title ) ) {
+        return array( 'label' => 'Juara Madya', 'icon' => 'fa-solid fa-medal', 'bg' => '#f0fdfa', 'color' => '#134e4a', 'border' => '#2dd4bf', 'icon_color' => '#0d9488' );
+    }
+
+    // 9. Juara Utama
+    if ( preg_match( '/Juara\s+Utama/i', $title ) ) {
+        return array( 'label' => 'Juara Utama', 'icon' => 'fa-solid fa-trophy', 'bg' => '#fef3c7', 'color' => '#78350f', 'border' => '#f59e0b', 'icon_color' => '#d97706' );
+    }
+
+    // 10. Peringkat Terbaik
+    if ( preg_match( '/Peringkat\s+Terbaik/i', $title ) ) {
+        return array( 'label' => 'Peringkat Terbaik', 'icon' => 'fa-solid fa-star', 'bg' => '#fef3c7', 'color' => '#78350f', 'border' => '#f59e0b', 'icon_color' => '#d97706' );
+    }
+
+    // 11. Finalis / Lolos Seleksi / Top N
+    if ( preg_match( '/Finalis|Top\s+\d+|Best|Lolos\s+Seleksi|Lolos\s+\d+\s+Besar/i', $title ) ) {
+        return array( 'label' => 'Finalis', 'icon' => 'fa-solid fa-certificate', 'bg' => '#eff6ff', 'color' => '#1e3a8a', 'border' => '#60a5fa', 'icon_color' => '#2563eb' );
+    }
+
+    // 12. Delegasi / Kontingen / Mewakili
+    if ( preg_match( '/Delegasi|Kontingen|Mewakili/i', $title ) ) {
+        return array( 'label' => 'Delegasi', 'icon' => 'fa-solid fa-flag-checkered', 'bg' => '#e0e7ff', 'color' => '#312e81', 'border' => '#818cf8', 'icon_color' => '#4f46e5' );
+    }
+
+    // 13. Penghargaan / Piagam
+    if ( preg_match( '/Penghargaan|Piagam/i', $title ) ) {
+        return array( 'label' => 'Penghargaan', 'icon' => 'fa-solid fa-certificate', 'bg' => '#f8fafc', 'color' => '#334155', 'border' => '#cbd5e1', 'icon_color' => '#64748b' );
+    }
+
+    // 14. Juara (Umum / Tanpa Angka)
+    if ( preg_match( '/\bJuara\b/i', $title ) ) {
+        return array( 'label' => 'Juara', 'icon' => 'fa-solid fa-trophy', 'bg' => '#fef3c7', 'color' => '#78350f', 'border' => '#f59e0b', 'icon_color' => '#d97706' );
+    }
+
+    // Default Fallback
+    return array( 'label' => 'Prestasi', 'icon' => 'fa-solid fa-award', 'bg' => '#ecfdf5', 'color' => '#064e3b', 'border' => '#34d399', 'icon_color' => '#059669' );
+}
+
+/**
+ * Render Badge Peringkat Juara Dinamis (Juara 1, Juara 2, Juara 3, Juara Harapan, dst.)
+ */
+function mtsn1_render_peringkat_badge( $post_id, $extra_class = '' ) {
+    $data = mtsn1_get_peringkat_data( $post_id );
+
+    return sprintf(
+        '<span class="shrink-0 %s" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2; background-color: %s; color: %s; border: 1px solid %s; box-shadow: 0 1px 2px rgba(0,0,0,0.06);"><i class="%s" style="font-size: 11px; color: %s;"></i> <span>%s</span></span>',
+        esc_attr( $extra_class ),
+        esc_attr( $data['bg'] ),
+        esc_attr( $data['color'] ),
+        esc_attr( $data['border'] ),
+        esc_attr( $data['icon'] ),
+        esc_attr( $data['icon_color'] ),
+        esc_html( $data['label'] )
+    );
+}
+
+/**
+ * Render Badge Tingkat Kejuaraan (Tampil Jelas, Tajam, dan Kontras Tinggi)
  */
 function mtsn1_render_tingkat_badge( $tingkat, $extra_class = '' ) {
     $clean = strtolower( trim( $tingkat ) );
@@ -194,47 +313,74 @@ function mtsn1_render_tingkat_badge( $tingkat, $extra_class = '' ) {
         case 'internasional':
         case 'international':
         case 'world':
-            $label = 'Internasional';
-            $icon  = 'fa-solid fa-globe';
-            $style = 'bg-purple-950/90 text-purple-200 border-purple-400/60 shadow-purple-950/40';
+            $label      = 'Internasional';
+            $icon       = 'fa-solid fa-globe';
+            $bg         = '#4c1d95';
+            $text       = '#ffffff';
+            $border     = '#a855f7';
+            $icon_color = '#e9d5ff';
             break;
         case 'nasional':
         case 'national':
-            $label = 'Nasional';
-            $icon  = 'fa-solid fa-flag';
-            $style = 'bg-rose-950/90 text-rose-200 border-rose-400/60 shadow-rose-950/40';
+            $label      = 'Nasional';
+            $icon       = 'fa-solid fa-flag';
+            $bg         = '#881337';
+            $text       = '#ffffff';
+            $border     = '#f43f5e';
+            $icon_color = '#fecdd3';
             break;
         case 'provinsi':
         case 'karesidenan':
         case 'se-jatim':
         case 'jawa timur':
         case 'jatim':
-            $label = 'Provinsi';
-            $icon  = 'fa-solid fa-award';
-            $style = 'bg-blue-950/90 text-blue-200 border-blue-400/60 shadow-blue-950/40';
+            $label      = 'Provinsi';
+            $icon       = 'fa-solid fa-award';
+            $bg         = '#1e3a8a';
+            $text       = '#ffffff';
+            $border     = '#3b82f6';
+            $icon_color = '#93c5fd';
             break;
         case 'kecamatan':
         case 'kec':
-            $label = 'Kecamatan';
-            $icon  = 'fa-solid fa-location-dot';
-            $style = 'bg-teal-950/90 text-teal-200 border-teal-400/60 shadow-teal-950/40';
+            $label      = 'Kecamatan';
+            $icon       = 'fa-solid fa-location-dot';
+            $bg         = '#134e4a';
+            $text       = '#ffffff';
+            $border     = '#14b8a6';
+            $icon_color = '#99f6e4';
+            break;
+        case 'sekolah':
+        case 'internal':
+            $label      = 'Sekolah';
+            $icon       = 'fa-solid fa-school';
+            $bg         = '#1e293b';
+            $text       = '#ffffff';
+            $border     = '#64748b';
+            $icon_color = '#cbd5e1';
             break;
         case 'kabupaten':
         case 'kota':
         case 'kab/kota':
         case 'kabupaten/kota':
         default:
-            $label = 'Kab/Kota';
-            $icon  = 'fa-solid fa-medal';
-            $style = 'bg-amber-950/90 text-amber-200 border-amber-400/60 shadow-amber-950/40';
+            $label      = 'Kab/Kota';
+            $icon       = 'fa-solid fa-medal';
+            $bg         = '#064e3b';
+            $text       = '#ffffff';
+            $border     = '#10b981';
+            $icon_color = '#6ee7b7';
             break;
     }
 
     return sprintf(
-        '<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-md border shadow-md flex items-center gap-1.5 %s %s"><i class="%s text-xs"></i> <span>%s</span></span>',
-        esc_attr( $style ),
+        '<span class="shrink-0 %s" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2; background-color: %s; color: %s; border: 1px solid %s; box-shadow: 0 1px 2px rgba(0,0,0,0.1);"><i class="%s" style="font-size: 11px; color: %s;"></i> <span>%s</span></span>',
         esc_attr( $extra_class ),
+        esc_attr( $bg ),
+        esc_attr( $text ),
+        esc_attr( $border ),
         esc_attr( $icon ),
+        esc_attr( $icon_color ),
         esc_html( $label )
     );
 }

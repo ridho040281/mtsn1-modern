@@ -93,12 +93,9 @@ $total_prestasi = $prestasi_query->found_posts;
                data-tingkat="<?php echo esc_attr( strtolower( $tingkat ) ); ?>">
 
             <div>
-              <!-- Header Badges Bar di Atas Flyer (Sama Persis dengan Single Flyer, Bebas Tutupan Gambar) -->
+              <!-- Header Badges Bar di Atas Flyer: Peringkat Juara & Tingkat Kejuaraan -->
               <div class="mb-3 flex items-center justify-between gap-2 px-0.5">
-                <span class="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 shadow-sm flex items-center gap-1.5 shrink-0">
-                  <i class="fa-solid fa-trophy text-amber-600 text-xs"></i>
-                  <span>Prestasi Juara</span>
-                </span>
+                <?php echo mtsn1_render_peringkat_badge( $id ); ?>
                 <div class="shrink-0">
                   <?php echo mtsn1_render_tingkat_badge( $tingkat ); ?>
                 </div>

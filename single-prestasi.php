@@ -31,12 +31,9 @@ get_header();
           <!-- Left Column: Instagram Flyer Display (Full Uncut Flyer) -->
           <div class="lg:col-span-6 flex flex-col items-center">
 
-            <!-- Header Badges Bar di Atas Flyer (Tidak Menutupi Gambar Flyer Sama Sekali) -->
+            <!-- Header Badges Bar di Atas Flyer: Peringkat Juara & Tingkat Kejuaraan -->
             <div class="w-full max-w-md mb-3 flex items-center justify-between gap-2 px-1">
-              <span class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 shadow-sm flex items-center gap-1.5">
-                <i class="fa-solid fa-trophy text-amber-600"></i>
-                <span>Prestasi Juara</span>
-              </span>
+              <?php echo mtsn1_render_peringkat_badge( $id ); ?>
               <div>
                 <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ) ); ?>
               </div>
@@ -84,9 +81,10 @@ get_header();
           <div class="lg:col-span-6 space-y-6">
             <div>
               <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">
+                <span class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
                   Hall of Fame
                 </span>
+                <?php echo mtsn1_render_peringkat_badge( $id ); ?>
                 <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ) ); ?>
                 <span class="text-xs text-slate-400">
                   <i class="fa-regular fa-calendar text-amber-600 mr-1"></i> <?php echo get_the_date( 'd F Y' ); ?>
@@ -162,9 +160,7 @@ get_header();
                   <a href="<?php the_permalink(); ?>" class="bg-white rounded-2xl p-3 border border-slate-200 hover:border-amber-400 hover:shadow-lg transition group flex flex-col justify-between">
                     <div>
                       <div class="mb-2 flex items-center justify-between gap-1">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-amber-800 flex items-center gap-1">
-                          <i class="fa-solid fa-trophy text-amber-500 text-[10px]"></i> Juara
-                        </span>
+                        <?php echo mtsn1_render_peringkat_badge( get_the_ID() ); ?>
                         <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( get_the_ID() ) ); ?>
                       </div>
                       <div class="aspect-[4/5] rounded-xl overflow-hidden bg-slate-950 mb-2 relative flex items-center justify-center">
