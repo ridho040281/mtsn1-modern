@@ -30,11 +30,24 @@ get_header();
 
           <!-- Left Column: Instagram Flyer Display (Full Uncut Flyer) -->
           <div class="lg:col-span-6 flex flex-col items-center">
+
+            <!-- Header Badges Bar di Atas Flyer (Tidak Menutupi Gambar Flyer Sama Sekali) -->
+            <div class="w-full max-w-md mb-3 flex items-center justify-between gap-2 px-1">
+              <span class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 shadow-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-trophy text-amber-600"></i>
+                <span>Prestasi Juara</span>
+              </span>
+              <div>
+                <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ) ); ?>
+              </div>
+            </div>
+
+            <!-- Frame Flyer Bersih 100% Tanpa Ada Elemen Overlay yang Menutupi Foto -->
             <div class="w-full max-w-md rounded-3xl overflow-hidden bg-slate-950 shadow-2xl border-4 border-amber-400/40 relative group flex items-center justify-center">
               <?php if ( $thumb ) : ?>
                 <!-- Ambient Backdrop Blur -->
                 <img src="<?php echo esc_url( $thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 pointer-events-none" aria-hidden="true">
-                <!-- Main Flyer: Natural Full Ratio (Zero Crop) -->
+                <!-- Main Flyer: Natural Full Ratio (Zero Crop & Zero Overlay) -->
                 <img src="<?php echo esc_url( $thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-auto max-h-[750px] object-contain block mx-auto group-hover:scale-102 transition-transform duration-500">
               <?php else : ?>
                 <div class="w-full aspect-[4/5] bg-gradient-to-b from-amber-600 to-amber-900 flex flex-col items-center justify-center text-white p-8 text-center relative z-10">
@@ -44,37 +57,25 @@ get_header();
                   <h3 class="text-xl font-black"><?php the_title(); ?></h3>
                 </div>
               <?php endif; ?>
-
-              <!-- Badge Header Bar (Flex Responsive, Zero Overlap on Mobile) -->
-              <div class="absolute top-2.5 sm:top-3.5 inset-x-2.5 sm:inset-x-3.5 z-20 flex items-center justify-between gap-2 pointer-events-none">
-                <span class="px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-slate-950/85 backdrop-blur-md text-amber-400 border border-amber-400/50 shadow-lg flex items-center gap-1.5 shrink-0 pointer-events-auto">
-                  <i class="fa-solid fa-trophy text-amber-400 text-[10px] sm:text-xs"></i>
-                  <span class="hidden sm:inline">Prestasi Juara</span>
-                  <span class="sm:hidden">Juara</span>
-                </span>
-                <div class="shrink-0 pointer-events-auto">
-                  <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ), 'text-[10px] sm:text-xs px-2.5 py-1 sm:px-3 sm:py-1.5 shadow-lg' ); ?>
-                </div>
-              </div>
             </div>
 
             <!-- Download / Open Fullsize / Instagram Buttons -->
             <div class="mt-4 flex items-center gap-2 w-full max-w-md">
               <?php if ( $thumb ) : ?>
-                <a href="<?php echo esc_url( $thumb ); ?>" target="_blank" class="flex-1 py-2.5 px-2 sm:px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] sm:text-xs font-bold text-center flex items-center justify-center gap-1.5 transition">
+                <a href="<?php echo esc_url( $thumb ); ?>" target="_blank" class="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center flex items-center justify-center gap-1.5 transition">
                   <i class="fa-solid fa-expand text-xs"></i>
-                  <span class="hidden sm:inline">Buka</span> Flyer
+                  <span>Buka Flyer</span>
                 </a>
               <?php endif; ?>
               <?php if ( $ig_url ) : ?>
-                <a href="<?php echo esc_url( $ig_url ); ?>" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-2 sm:px-4 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:opacity-90 text-white text-[11px] sm:text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
+                <a href="<?php echo esc_url( $ig_url ); ?>" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:opacity-90 text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
                   <i class="fa-brands fa-instagram text-xs"></i>
-                  <span class="hidden sm:inline">Cek di</span> IG
+                  <span>Cek di IG</span>
                 </a>
               <?php endif; ?>
-              <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . ' - MTsN 1 Blitar: ' . get_permalink() ); ?>" target="_blank" class="flex-1 py-2.5 px-2 sm:px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] sm:text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
+              <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . ' - MTsN 1 Blitar: ' . get_permalink() ); ?>" target="_blank" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
                 <i class="fa-brands fa-whatsapp text-xs"></i>
-                <span class="hidden sm:inline">Bagikan</span><span class="sm:hidden">Share</span>
+                <span>Bagikan</span>
               </a>
             </div>
           </div>
