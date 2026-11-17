@@ -29,6 +29,18 @@ get_header();
         ?>
           <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
             <div>
+              <?php if ( $is_prestasi ) : ?>
+                <div class="mb-3 flex items-center justify-between gap-2 px-0.5">
+                  <span class="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 shadow-sm flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-trophy text-amber-600 text-xs"></i>
+                    <span>Prestasi Juara</span>
+                  </span>
+                  <div class="shrink-0">
+                    <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( get_the_ID() ) ); ?>
+                  </div>
+                </div>
+              <?php endif; ?>
+
               <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $aspect_ratio ); ?> bg-slate-950 mb-4 relative flex items-center justify-center">
                 <?php if ( has_post_thumbnail() ) : ?>
                   <?php if ( $is_prestasi ) : ?>
@@ -39,12 +51,6 @@ get_header();
                   <?php endif; ?>
                 <?php else : ?>
                   <img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/santri.jpg' ) ); ?>" class="w-full h-full object-cover">
-                <?php endif; ?>
-
-                <?php if ( $is_prestasi ) : ?>
-                  <div class="absolute top-2.5 right-2.5 z-20">
-                    <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( get_the_ID() ) ); ?>
-                  </div>
                 <?php endif; ?>
               </div>
 

@@ -93,7 +93,18 @@ $total_prestasi = $prestasi_query->found_posts;
                data-tingkat="<?php echo esc_attr( strtolower( $tingkat ) ); ?>">
 
             <div>
-              <!-- Instagram Flyer Image Container (Aspect Ratio 4:5 with Zero Crop) -->
+              <!-- Header Badges Bar di Atas Flyer (Sama Persis dengan Single Flyer, Bebas Tutupan Gambar) -->
+              <div class="mb-3 flex items-center justify-between gap-2 px-0.5">
+                <span class="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 shadow-sm flex items-center gap-1.5 shrink-0">
+                  <i class="fa-solid fa-trophy text-amber-600 text-xs"></i>
+                  <span>Prestasi Juara</span>
+                </span>
+                <div class="shrink-0">
+                  <?php echo mtsn1_render_tingkat_badge( $tingkat ); ?>
+                </div>
+              </div>
+
+              <!-- Instagram Flyer Image Container (Aspect Ratio 4:5 with Zero Crop & Zero Overlay) -->
               <a href="<?php the_permalink(); ?>" class="block overflow-hidden rounded-2xl aspect-[4/5] bg-slate-950 mb-4 relative shadow-md group-hover:shadow-lg transition flex items-center justify-center">
                 <?php if ( $thumb ) : ?>
                   <!-- Ambient blurred background fills any letterbox with matching flyer colors -->
@@ -111,17 +122,6 @@ $total_prestasi = $prestasi_query->found_posts;
                     <h4 class="text-sm font-black mt-2 leading-snug line-clamp-2"><?php the_title(); ?></h4>
                   </div>
                 <?php endif; ?>
-
-                <!-- Badges Overlay Bar (Flex Responsive, Zero Overlap) -->
-                <div class="absolute top-2 sm:top-2.5 inset-x-2 sm:inset-x-2.5 z-20 flex items-center justify-between gap-1 pointer-events-none">
-                  <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-400/40 shadow-sm flex items-center gap-1 shrink-0">
-                    <i class="fa-solid fa-trophy text-amber-400 text-[9px] sm:text-xs"></i>
-                    <span>Juara</span>
-                  </span>
-                  <div class="shrink-0">
-                    <?php echo mtsn1_render_tingkat_badge( $tingkat, 'text-[9px] sm:text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1' ); ?>
-                  </div>
-                </div>
               </a>
 
               <!-- Peraih Prestasi (Student Name) -->

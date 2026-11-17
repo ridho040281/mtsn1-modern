@@ -159,20 +159,23 @@ get_header();
               while ( $other_q->have_posts() ) : $other_q->the_post();
                   $o_thumb = get_the_post_thumbnail_url( get_the_ID(), 'full' );
                   ?>
-                  <a href="<?php the_permalink(); ?>" class="bg-white rounded-2xl p-3 border border-slate-200 hover:border-amber-400 hover:shadow-lg transition group block">
-                    <div class="aspect-[4/5] rounded-xl overflow-hidden bg-slate-950 mb-2 relative flex items-center justify-center">
-                      <?php if ( $o_thumb ) : ?>
-                        <img src="<?php echo esc_url( $o_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-md opacity-35 scale-110 pointer-events-none" aria-hidden="true">
-                        <img src="<?php echo esc_url( $o_thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain group-hover:scale-105 transition duration-500">
-                      <?php else : ?>
-                        <div class="w-full h-full flex items-center justify-center bg-amber-500 text-white relative z-10">
-                          <i class="fa-solid fa-trophy text-2xl"></i>
-                        </div>
-                      <?php endif; ?>
-
-                      <!-- Tingkat Kejuaraan Badge -->
-                      <div class="absolute top-2 right-2 z-20">
+                  <a href="<?php the_permalink(); ?>" class="bg-white rounded-2xl p-3 border border-slate-200 hover:border-amber-400 hover:shadow-lg transition group flex flex-col justify-between">
+                    <div>
+                      <div class="mb-2 flex items-center justify-between gap-1">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-amber-800 flex items-center gap-1">
+                          <i class="fa-solid fa-trophy text-amber-500 text-[10px]"></i> Juara
+                        </span>
                         <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( get_the_ID() ) ); ?>
+                      </div>
+                      <div class="aspect-[4/5] rounded-xl overflow-hidden bg-slate-950 mb-2 relative flex items-center justify-center">
+                        <?php if ( $o_thumb ) : ?>
+                          <img src="<?php echo esc_url( $o_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-md opacity-35 scale-110 pointer-events-none" aria-hidden="true">
+                          <img src="<?php echo esc_url( $o_thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain group-hover:scale-105 transition duration-500">
+                        <?php else : ?>
+                          <div class="w-full h-full flex items-center justify-center bg-amber-500 text-white relative z-10">
+                            <i class="fa-solid fa-trophy text-2xl"></i>
+                          </div>
+                        <?php endif; ?>
                       </div>
                     </div>
                     <h5 class="text-xs font-black text-slate-900 group-hover:text-amber-700 line-clamp-2 leading-snug"><?php the_title(); ?></h5>
