@@ -229,4 +229,5 @@ function mtsn1_opengraph_meta_tags() {
     <!-- End Open Graph & Social Media Preview Meta -->
     <?php
 }
-add_action( 'wp_head', 'mtsn1_opengraph_meta_tags', 1 );
+// Catatan: mtsn1_opengraph_meta_tags() dipanggil langsung di header.php
+// paling atas di dalam <head> agar dieksekusi sebelum tag link icon dan script lain.

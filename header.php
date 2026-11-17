@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html <?php language_attributes(); ?>>
+<html <?php language_attributes(); ?> prefix="og: https://ogp.me/ns#">
 <head>
   <meta charset="<?php bloginfo( 'charset' ); ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="profile" href="https://gmpg.org/xfn/11">
+  <?php if ( function_exists( 'mtsn1_opengraph_meta_tags' ) ) { mtsn1_opengraph_meta_tags(); } ?>
+
   <!-- PWA & Mobile Capabilities -->
   <link rel="manifest" href="<?php echo esc_url( home_url( '/manifest.json' ) ); ?>">
   <meta name="theme-color" content="#064e3b">
