@@ -129,11 +129,112 @@ function mtsn1_render_prestasi_admin_columns( $column, $post_id ) {
             echo '<span style="color: #94a3b8; font-style: italic;">(Belum diisi)</span>';
         }
     } elseif ( 'tingkat' === $column ) {
-        $tingkat = get_post_meta( $post_id, '_tingkat', true );
+        $tingkat = mtsn1_get_tingkat_prestasi( $post_id );
         if ( ! empty( $tingkat ) ) {
             echo '<span style="background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700;">' . esc_html( $tingkat ) . '</span>';
         } else {
             echo '-';
         }
     }
+}
+
+/**
+ * Dapatkan Tingkat Kejuaraan (Auto-detect jika belum terisi di meta)
+ */
+function mtsn1_get_tingkat_prestasi( $post_id ) {
+    $tingkat = get_post_meta( $post_id, '_tingkat', true );
+    if ( ! empty( $tingkat ) ) {
+        $lower = strtolower( trim( $tingkat ) );
+        if ( in_array( $lower, [ 'kabupaten', 'kota', 'kabupaten/kota', 'kab/kota', 'blitar' ], true ) ) {
+            return 'Kab/Kota';
+        }
+        if ( in_array( $lower, [ 'karesidenan', 'se-jatim', 'jawa timur', 'jatim', 'regional' ], true ) ) {
+            return 'Provinsi';
+        }
+        if ( in_array( $lower, [ 'kecamatan', 'kec' ], true ) ) {
+            return 'Kecamatan';
+        }
+        if ( in_array( $lower, [ 'nasional', 'national', 'indonesia' ], true ) ) {
+            return 'Nasional';
+        }
+        if ( in_array( $lower, [ 'internasional', 'international', 'world' ], true ) ) {
+            return 'Internasional';
+        }
+        return ucfirst( $tingkat );
+    }
+
+    // Auto-detect dari judul dan konten
+    $title = get_the_title( $post_id );
+    $content = get_post_field( 'post_content', $post_id );
+    $text = strtoupper( $title . ' ' . wp_strip_all_tags( $content ) );
+
+    if ( strpos( $text, 'INTERNASIONAL' ) !== false || strpos( $text, 'INTERNATIONAL' ) !== false || strpos( $text, 'WORLD' ) !== false ) {
+        return 'Internasional';
+    }
+    if ( strpos( $text, 'NASIONAL' ) !== false || strpos( $text, 'INDONESIA' ) !== false || strpos( $text, 'SE-INDONESIA' ) !== false ) {
+        return 'Nasional';
+    }
+    if ( strpos( $text, 'PROVINSI' ) !== false || strpos( $text, 'JAWA TIMUR' ) !== false || strpos( $text, 'JATIM' ) !== false || strpos( $text, 'KARESIDENAN' ) !== false || strpos( $text, 'SE-EKS' ) !== false || strpos( $text, 'REGIONAL' ) !== false || strpos( $text, 'SE-JAWA' ) !== false ) {
+        return 'Provinsi';
+    }
+    if ( strpos( $text, 'KECAMATAN' ) !== false || strpos( $text, 'KEC.' ) !== false || strpos( $text, 'WONODADI' ) !== false || strpos( $text, 'SE-KECAMATAN' ) !== false ) {
+        return 'Kecamatan';
+    }
+
+    return 'Kab/Kota';
+}
+
+/**
+ * Render Badge Tingkat Kejuaraan untuk Flyer (Pojok Kanan Atas)
+ */
+function mtsn1_render_tingkat_badge( $tingkat, $extra_class = '' ) {
+    $clean = strtolower( trim( $tingkat ) );
+
+    switch ( $clean ) {
+        case 'internasional':
+        case 'international':
+        case 'world':
+            $label = 'Internasional';
+            $icon  = 'fa-solid fa-globe';
+            $style = 'bg-purple-950/90 text-purple-200 border-purple-400/60 shadow-purple-950/40';
+            break;
+        case 'nasional':
+        case 'national':
+            $label = 'Nasional';
+            $icon  = 'fa-solid fa-flag';
+            $style = 'bg-rose-950/90 text-rose-200 border-rose-400/60 shadow-rose-950/40';
+            break;
+        case 'provinsi':
+        case 'karesidenan':
+        case 'se-jatim':
+        case 'jawa timur':
+        case 'jatim':
+            $label = 'Provinsi';
+            $icon  = 'fa-solid fa-award';
+            $style = 'bg-blue-950/90 text-blue-200 border-blue-400/60 shadow-blue-950/40';
+            break;
+        case 'kecamatan':
+        case 'kec':
+            $label = 'Kecamatan';
+            $icon  = 'fa-solid fa-location-dot';
+            $style = 'bg-teal-950/90 text-teal-200 border-teal-400/60 shadow-teal-950/40';
+            break;
+        case 'kabupaten':
+        case 'kota':
+        case 'kab/kota':
+        case 'kabupaten/kota':
+        default:
+            $label = 'Kab/Kota';
+            $icon  = 'fa-solid fa-medal';
+            $style = 'bg-amber-950/90 text-amber-200 border-amber-400/60 shadow-amber-950/40';
+            break;
+    }
+
+    return sprintf(
+        '<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-md border shadow-md flex items-center gap-1.5 %s %s"><i class="%s text-xs"></i> <span>%s</span></span>',
+        esc_attr( $style ),
+        esc_attr( $extra_class ),
+        esc_attr( $icon ),
+        esc_html( $label )
+    );
 }

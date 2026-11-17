@@ -42,10 +42,8 @@ get_header();
                 <?php endif; ?>
 
                 <?php if ( $is_prestasi ) : ?>
-                  <div class="absolute top-2.5 right-2.5">
-                    <span class="w-7 h-7 rounded-full bg-slate-950/70 backdrop-blur-md text-pink-400 flex items-center justify-center text-xs shadow-md">
-                      <i class="fa-brands fa-instagram"></i>
-                    </span>
+                  <div class="absolute top-2.5 right-2.5 z-20">
+                    <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( get_the_ID() ) ); ?>
                   </div>
                 <?php endif; ?>
               </div>

@@ -47,10 +47,15 @@ get_header();
 
               <!-- Badge Overlay -->
               <div class="absolute top-4 left-4 z-20">
-                <span class="px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-gold-400 border border-gold-400/50 shadow-lg flex items-center gap-2">
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-400/50 shadow-lg flex items-center gap-2">
                   <i class="fa-solid fa-trophy text-amber-400"></i>
                   <span>Prestasi Juara</span>
                 </span>
+              </div>
+
+              <!-- Tingkat Kejuaraan Badge in Top Right -->
+              <div class="absolute top-4 right-4 z-20">
+                <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ), 'text-xs px-3.5 py-1.5' ); ?>
               </div>
             </div>
 
@@ -75,10 +80,11 @@ get_header();
           <!-- Right Column: Details & Student Peraih -->
           <div class="lg:col-span-6 space-y-6">
             <div>
-              <div class="flex items-center gap-2 mb-2">
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">
                   Hall of Fame
                 </span>
+                <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ) ); ?>
                 <span class="text-xs text-slate-400">
                   <i class="fa-regular fa-calendar text-amber-600 mr-1"></i> <?php echo get_the_date( 'd F Y' ); ?>
                 </span>
@@ -160,6 +166,11 @@ get_header();
                           <i class="fa-solid fa-trophy text-2xl"></i>
                         </div>
                       <?php endif; ?>
+
+                      <!-- Tingkat Kejuaraan Badge -->
+                      <div class="absolute top-2 right-2 z-20">
+                        <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( get_the_ID() ) ); ?>
+                      </div>
                     </div>
                     <h5 class="text-xs font-black text-slate-900 group-hover:text-amber-700 line-clamp-2 leading-snug"><?php the_title(); ?></h5>
                   </a>

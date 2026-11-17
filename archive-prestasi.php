@@ -47,13 +47,23 @@ $total_prestasi = $prestasi_query->found_posts;
           Dokumentasi dan apresiasi atas dedikasi serta torehan medali juara putra-putri MTsN 1 Blitar di berbagai bidang akademik, keagamaan, olahraga, seni, dan riset robotik.
         </p>
 
-        <!-- Quick Search Bar -->
-        <div class="mt-6">
+        <!-- Quick Search Bar & Tingkat Filter -->
+        <div class="mt-6 flex flex-col gap-3">
           <div class="relative max-w-md">
             <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
               <i class="fa-solid fa-magnifying-glass text-sm"></i>
             </span>
             <input type="text" id="prestasi-search" placeholder="Cari nama peraih juara atau kejuaraan..." class="w-full pl-11 pr-4 py-3 bg-white text-slate-900 rounded-2xl text-xs sm:text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 shadow-md">
+          </div>
+
+          <!-- Filter Tingkat Kejuaraan -->
+          <div class="flex flex-wrap gap-2 items-center pt-1" id="prestasi-filters">
+            <button type="button" class="prestasi-filter-pill px-3.5 py-1.5 rounded-full text-xs font-black transition-all bg-amber-400 text-slate-950 shadow-md cursor-pointer" data-filter="all">Semua</button>
+            <button type="button" class="prestasi-filter-pill px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-white/20 text-white hover:bg-white/30 backdrop-blur-md cursor-pointer" data-filter="internasional"><i class="fa-solid fa-globe mr-1 text-purple-300"></i> Internasional</button>
+            <button type="button" class="prestasi-filter-pill px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-white/20 text-white hover:bg-white/30 backdrop-blur-md cursor-pointer" data-filter="nasional"><i class="fa-solid fa-flag mr-1 text-rose-300"></i> Nasional</button>
+            <button type="button" class="prestasi-filter-pill px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-white/20 text-white hover:bg-white/30 backdrop-blur-md cursor-pointer" data-filter="provinsi"><i class="fa-solid fa-award mr-1 text-blue-300"></i> Provinsi</button>
+            <button type="button" class="prestasi-filter-pill px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-white/20 text-white hover:bg-white/30 backdrop-blur-md cursor-pointer" data-filter="kab/kota"><i class="fa-solid fa-medal mr-1 text-amber-300"></i> Kab/Kota</button>
+            <button type="button" class="prestasi-filter-pill px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-white/20 text-white hover:bg-white/30 backdrop-blur-md cursor-pointer" data-filter="kecamatan"><i class="fa-solid fa-location-dot mr-1 text-teal-300"></i> Kecamatan</button>
           </div>
         </div>
       </div>
@@ -73,11 +83,14 @@ $total_prestasi = $prestasi_query->found_posts;
         <?php while ( $prestasi_query->have_posts() ) : $prestasi_query->the_post();
             $id = get_the_ID();
             $peraih = get_post_meta( $id, '_peraih', true );
+            $tingkat = mtsn1_get_tingkat_prestasi( $id );
             $thumb = get_the_post_thumbnail_url( $id, 'full' );
+            $ig_url = get_post_meta( $id, '_instagram_url', true );
         ?>
           <div class="prestasi-card bg-white rounded-3xl p-5 shadow-sm border border-slate-200 hover:shadow-2xl hover:border-amber-400 transition-all duration-300 flex flex-col justify-between group"
                data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>"
-               data-peraih="<?php echo esc_attr( strtolower( $peraih ) ); ?>">
+               data-peraih="<?php echo esc_attr( strtolower( $peraih ) ); ?>"
+               data-tingkat="<?php echo esc_attr( strtolower( $tingkat ) ); ?>">
 
             <div>
               <!-- Instagram Flyer Image Container (Aspect Ratio 4:5 with Zero Crop) -->
@@ -99,19 +112,17 @@ $total_prestasi = $prestasi_query->found_posts;
                   </div>
                 <?php endif; ?>
 
-                <!-- Trophy Overlay Badge -->
-                <div class="absolute top-3 left-3">
-                  <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-gold-400 border border-gold-400/40 shadow-md flex items-center gap-1.5">
+                <!-- Trophy Overlay Badge (Top Left) -->
+                <div class="absolute top-3 left-3 z-20">
+                  <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-400/40 shadow-md flex items-center gap-1.5">
                     <i class="fa-solid fa-trophy text-amber-400 text-xs"></i>
                     <span>Juara</span>
                   </span>
                 </div>
 
-                <!-- Instagram Badge -->
-                <div class="absolute top-3 right-3">
-                  <span class="w-7 h-7 rounded-full bg-slate-950/70 backdrop-blur-md text-pink-400 flex items-center justify-center text-xs shadow-md">
-                    <i class="fa-brands fa-instagram"></i>
-                  </span>
+                <!-- Tingkat Kejuaraan Badge in Top Right -->
+                <div class="absolute top-3 right-3 z-20">
+                  <?php echo mtsn1_render_tingkat_badge( $tingkat ); ?>
                 </div>
               </a>
 
@@ -154,7 +165,14 @@ $total_prestasi = $prestasi_query->found_posts;
                 <span>Lihat Detail Flyer</span>
                 <i class="fa-solid fa-arrow-right text-[10px]"></i>
               </a>
-              <span class="text-[11px] text-slate-400 font-medium">Prestasi Siswa</span>
+              <?php if ( $ig_url ) : ?>
+                <a href="<?php echo esc_url( $ig_url ); ?>" target="_blank" rel="noopener noreferrer" class="text-xs text-pink-600 hover:text-pink-700 font-bold flex items-center gap-1 hover:underline" title="Lihat postingan asli di Instagram">
+                  <i class="fa-brands fa-instagram text-sm"></i>
+                  <span class="text-[11px]">Instagram</span>
+                </a>
+              <?php else : ?>
+                <span class="text-[11px] text-slate-400 font-medium">Prestasi Siswa</span>
+              <?php endif; ?>
             </div>
 
           </div>
@@ -194,20 +212,23 @@ document.addEventListener('DOMContentLoaded', function () {
   const cards = Array.from(document.querySelectorAll('.prestasi-card'));
   const countEl = document.getElementById('prestasi-count');
   const emptyEl = document.getElementById('prestasi-empty');
+  const filterPills = Array.from(document.querySelectorAll('.prestasi-filter-pill'));
 
-  if (!searchInput) return;
+  let activeFilter = 'all';
 
-  searchInput.addEventListener('input', function () {
-    const q = this.value.toLowerCase().trim();
+  function filterCards() {
+    const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
     let visibleCount = 0;
 
     cards.forEach(card => {
       const title = card.dataset.title || '';
       const peraih = card.dataset.peraih || '';
+      const tingkat = (card.dataset.tingkat || '').toLowerCase();
 
-      const match = !q || title.includes(q) || peraih.includes(q);
+      const matchSearch = !q || title.includes(q) || peraih.includes(q) || tingkat.includes(q);
+      const matchFilter = (activeFilter === 'all') || (tingkat === activeFilter);
 
-      if (match) {
+      if (matchSearch && matchFilter) {
         card.style.display = '';
         visibleCount++;
       } else {
@@ -223,6 +244,26 @@ document.addEventListener('DOMContentLoaded', function () {
         emptyEl.classList.add('hidden');
       }
     }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', filterCards);
+  }
+
+  filterPills.forEach(pill => {
+    pill.addEventListener('click', function () {
+      activeFilter = (this.getAttribute('data-filter') || 'all').toLowerCase();
+
+      filterPills.forEach(p => {
+        p.classList.remove('bg-amber-400', 'text-slate-950', 'shadow-md');
+        p.classList.add('bg-white/20', 'text-white');
+      });
+
+      this.classList.remove('bg-white/20', 'text-white');
+      this.classList.add('bg-amber-400', 'text-slate-950', 'shadow-md');
+
+      filterCards();
+    });
   });
 });
 </script>
