@@ -161,8 +161,11 @@ get_header();
               $editorial_headline = get_the_excerpt();
           }
 
-          // Ambil gambar utama (Featured Image / Gambar Unggulan)
-          if ( has_post_thumbnail() ) {
+          // Cek foto potret khusus beranda atau gambar utama
+          $custom_foto_depan = get_post_meta( get_the_ID(), '_foto_kepala_depan', true );
+          if ( ! empty( $custom_foto_depan ) ) {
+              $editorial_img = $custom_foto_depan;
+          } elseif ( has_post_thumbnail() ) {
               $editorial_img = get_the_post_thumbnail_url( get_the_ID(), 'full' );
           }
       }
