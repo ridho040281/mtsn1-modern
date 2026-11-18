@@ -540,7 +540,7 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 margin-top: 8px;
             }
             .article-official-seal .seal-source {
-                max-width: 65%;
+                max-width: 100%;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -784,9 +784,6 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 <div class="seal-source">
                     <i class="fa-solid fa-circle-check text-emerald-600"></i>
                     <span>Sumber rilis: <?php echo esc_url( $permalink ); ?></span>
-                </div>
-                <div class="seal-time">
-                    <span>Dicetak: <?php echo esc_html( $print_time ); ?> WIB</span>
                 </div>
             </div>
 
