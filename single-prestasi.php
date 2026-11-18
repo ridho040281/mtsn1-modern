@@ -12,6 +12,12 @@ get_header();
         $id = get_the_ID();
         $peraih = get_post_meta( $id, '_peraih', true );
         $thumb = get_the_post_thumbnail_url( $id, 'full' );
+        if ( ! $thumb ) {
+            $cat = get_post_meta( $id, '_kategori_prestasi', true );
+            if ( $cat && file_exists( get_template_directory() . '/assets/images/prestasi/flyer_' . $cat . '.webp' ) ) {
+                $thumb = get_template_directory_uri() . '/assets/images/prestasi/flyer_' . $cat . '.webp';
+            }
+        }
         $ig_url = get_post_meta( $id, '_instagram_url', true );
     ?>
 
@@ -156,6 +162,12 @@ get_header();
           if ( $other_q->have_posts() ) :
               while ( $other_q->have_posts() ) : $other_q->the_post();
                   $o_thumb = get_the_post_thumbnail_url( get_the_ID(), 'full' );
+                  if ( ! $o_thumb ) {
+                      $o_cat = get_post_meta( get_the_ID(), '_kategori_prestasi', true );
+                      if ( $o_cat && file_exists( get_template_directory() . '/assets/images/prestasi/flyer_' . $o_cat . '.webp' ) ) {
+                          $o_thumb = get_template_directory_uri() . '/assets/images/prestasi/flyer_' . $o_cat . '.webp';
+                      }
+                  }
                   ?>
                   <a href="<?php the_permalink(); ?>" class="bg-white rounded-2xl p-3 border border-slate-200 hover:border-amber-400 hover:shadow-lg transition group flex flex-col justify-between">
                     <div>

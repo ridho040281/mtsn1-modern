@@ -85,6 +85,12 @@ $total_prestasi = $prestasi_query->found_posts;
             $peraih = get_post_meta( $id, '_peraih', true );
             $tingkat = mtsn1_get_tingkat_prestasi( $id );
             $thumb = get_the_post_thumbnail_url( $id, 'full' );
+            if ( ! $thumb ) {
+                $cat = get_post_meta( $id, '_kategori_prestasi', true );
+                if ( $cat && file_exists( get_template_directory() . '/assets/images/prestasi/flyer_' . $cat . '.webp' ) ) {
+                    $thumb = get_template_directory_uri() . '/assets/images/prestasi/flyer_' . $cat . '.webp';
+                }
+            }
             $ig_url = get_post_meta( $id, '_instagram_url', true );
         ?>
           <div class="prestasi-card bg-white rounded-3xl p-5 shadow-sm border border-slate-200 hover:shadow-2xl hover:border-amber-400 transition-all duration-300 flex flex-col justify-between group"

@@ -334,12 +334,16 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 overflow: hidden;
                 border: 1px solid #cbd5e1;
                 background: #f8fafc;
+                text-align: center;
             }
             .featured-image-box img {
-                width: 100%;
-                max-height: 280px;
-                object-fit: cover;
+                max-width: 100%;
+                width: auto;
+                height: auto;
+                max-height: 380px;
+                object-fit: contain;
                 display: block;
+                margin: 0 auto;
             }
             .featured-image-caption {
                 padding: 5px 10px;
@@ -348,6 +352,7 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 font-style: italic;
                 background: #f8fafc;
                 border-top: 1px solid #e2e8f0;
+                text-align: center;
             }
 
             /* Badan Konten Teks */
@@ -668,21 +673,28 @@ function mtsn1_render_print_berita_page( $post_id ) {
                     margin-bottom: 10px !important;
                 }
 
-                /* Batasi tinggi foto utama pada mode print agar tidak memakan separuh halaman */
+                /* Batasi tinggi foto utama pada mode print agar proporsional dan tidak terpotong */
                 .featured-image-box {
                     margin-bottom: 10px !important;
                     border-radius: 4px !important;
                     break-inside: avoid;
                     page-break-inside: avoid;
+                    background: transparent !important;
+                    text-align: center !important;
                 }
                 .featured-image-box img {
-                    max-height: 200px !important;
-                    width: 100% !important;
-                    object-fit: cover !important;
+                    max-height: 320px !important;
+                    max-width: 100% !important;
+                    width: auto !important;
+                    height: auto !important;
+                    object-fit: contain !important;
+                    margin: 0 auto !important;
+                    display: block !important;
                 }
                 .featured-image-caption {
                     font-size: 8.5pt !important;
                     padding: 3px 6px !important;
+                    text-align: center !important;
                 }
 
                 .article-content {
