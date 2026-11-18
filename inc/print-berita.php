@@ -86,6 +86,10 @@ function mtsn1_render_print_berita_page( $post_id ) {
     // Logo Madrasah
     $logo_url = home_url( '/wp-content/uploads/2024/01/ikon_mtsn1blitar.png' );
 
+    // Alamat Madrasah (Sesuai Pengaturan Website & Footer)
+    $medsos_data     = function_exists( 'mtsn1_get_medsos' ) ? mtsn1_get_medsos() : array();
+    $madrasah_alamat = ! empty( $medsos_data['alamat'] ) ? $medsos_data['alamat'] : 'Jl. Raya Kunir No. 01, Wonodadi, Blitar, Jatim';
+
     // Konten Berita
     $content = apply_filters( 'the_content', $post->post_content );
 
@@ -713,7 +717,7 @@ function mtsn1_render_print_berita_page( $post_id ) {
                     <h4>Kementerian Agama Republik Indonesia</h4>
                     <h3>Kantor Kementerian Agama Kabupaten Blitar</h3>
                     <h2>Madrasah Tsanawiyah Negeri 1 Blitar</h2>
-                    <p>Warta & Publikasi Resmi &bull; Jl. Raya Kuningan, Kanigoro, Blitar &bull; Website: mtsn1blitar.sch.id</p>
+                    <p>Warta &amp; Publikasi Resmi &bull; <?php echo esc_html( $madrasah_alamat ); ?> &bull; Website: mtsn1blitar.sch.id</p>
                 </div>
             </header>
 
