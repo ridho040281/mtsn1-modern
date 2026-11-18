@@ -85,6 +85,29 @@ foreach ( $available_years as $yr ) {
     );
 }
 
+// Tambahkan data agregat bulanan untuk opsi "Semua Tahun"
+$b_all = $wpdb->get_results( "SELECT MONTH(post_date) as bln, count(*) as c FROM {$wpdb->posts} WHERE post_type = 'post' and post_status = 'publish' GROUP BY MONTH(post_date)" );
+$p_all = $wpdb->get_results( "SELECT MONTH(post_date) as bln, count(*) as c FROM {$wpdb->posts} WHERE post_type = 'prestasi' and post_status = 'publish' GROUP BY MONTH(post_date)" );
+
+$m_all_map = array();
+$max_all_v = 1;
+for ( $m = 1; $m <= 12; $m++ ) {
+    $bc = 0; $pc = 0;
+    foreach ( $b_all as $r ) { if ( (int) $r->bln === $m ) { $bc = (int) $r->c; break; } }
+    foreach ( $p_all as $r ) { if ( (int) $r->bln === $m ) { $pc = (int) $r->c; break; } }
+    if ( $bc > $max_all_v ) $max_all_v = $bc;
+    if ( $pc > $max_all_v ) $max_all_v = $pc;
+    $m_all_map[$m] = array( 'nama' => $nama_bulan[$m], 'berita' => $bc, 'prestasi' => $pc, 'total' => $bc + $pc );
+}
+$chart_all_years[''] = array(
+    'max'            => $max_all_v,
+    'months'         => $m_all_map,
+    'total_berita'   => array_sum( array_column( $m_all_map, 'berita' ) ),
+    'total_prestasi' => array_sum( array_column( $m_all_map, 'prestasi' ) ),
+    'total_semua'    => array_sum( array_column( $m_all_map, 'total' ) ),
+);
+$chart_all_years['all'] = $chart_all_years[''];
+
 // 5. Query Seluruh Prestasi
 $all_prestasi = get_posts( array(
     'post_type'      => 'prestasi',
@@ -531,11 +554,12 @@ $all_berita = get_posts( array(
           <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
             <div>
               <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
-                <span>Aktivitas Rilis Publikasi Tahun</span>
+                <span>Aktivitas Rilis Publikasi</span>
                 <!-- Selector Tahun untuk Grafik -->
                 <select id="chart-year-select" onchange="switchChartYear(this.value)" class="stat-select bg-emerald-50 border border-emerald-300 rounded-xl px-2.5 py-1 text-xs font-black text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                  <option value="">📅 Semua Tahun</option>
                   <?php foreach ( $available_years as $yr ) : ?>
-                    <option value="<?php echo esc_attr( $yr ); ?>" <?php selected( $yr, $default_year ); ?>><?php echo esc_html( $yr ); ?></option>
+                    <option value="<?php echo esc_attr( $yr ); ?>"><?php echo esc_html( $yr ); ?></option>
                   <?php endforeach; ?>
                 </select>
               </h3>
@@ -843,7 +867,8 @@ function renderChart(year) {
 
   container.innerHTML = html;
   if (summaryText) {
-    summaryText.innerHTML = `Total Rilis Tahun ${year}: <strong class="text-emerald-700">${dataYear.total_semua} Publikasi</strong> (${dataYear.total_berita} Berita, ${dataYear.total_prestasi} Prestasi)`;
+    const labelYear = year ? `Tahun ${year}` : 'Semua Tahun';
+    summaryText.innerHTML = `Total Rilis ${labelYear}: <strong class="text-emerald-700">${dataYear.total_semua} Publikasi</strong> (${dataYear.total_berita} Berita, ${dataYear.total_prestasi} Prestasi)`;
   }
 }
 
@@ -1022,11 +1047,9 @@ function onFilterChange() {
 
   // Sinkronkan selector chart jika tahun diubah dari filter tabel
   const chartSelect = document.getElementById('chart-year-select');
-  if (chartSelect && selYear && chartAllYears[selYear]) {
-    if (chartSelect.value != selYear) {
-      chartSelect.value = selYear;
-      renderChart(selYear);
-    }
+  if (chartSelect && chartSelect.value !== selYear) {
+    chartSelect.value = selYear;
+    renderChart(selYear);
   }
 
   // Update metrik angka kartu (5 kartu tingkat, 2 kartu utama, dan sidebar) sesuai filter tahun
@@ -1098,7 +1121,7 @@ function resetFilters() {
 
 // Inisialisasi saat Halaman Selesai Dimuat
 document.addEventListener('DOMContentLoaded', function() {
-  renderChart(<?php echo (int) $default_year; ?>);
+  renderChart('');
   onFilterChange();
 });
 </script>
