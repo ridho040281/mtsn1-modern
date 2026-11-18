@@ -316,10 +316,10 @@ $all_berita = get_posts( array(
             </span>
             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">Kabar Berita</span>
           </div>
-          <div class="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
+          <div id="card-count-total-berita" class="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
             <?php echo number_format_i18n( $total_berita ); ?>
           </div>
-          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Berita Terpublikasi</h3>
+          <h3 id="card-label-total-berita" class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Berita Terpublikasi</h3>
           <p class="text-[11px] text-slate-400 mt-0.5">Kegiatan, liputan resmi, & artikel madrasah</p>
         </div>
         <div class="hidden sm:flex w-14 h-14 rounded-3xl bg-emerald-50 items-center justify-center text-emerald-600/30 text-2xl">
@@ -336,10 +336,10 @@ $all_berita = get_posts( array(
             </span>
             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">Semua Prestasi</span>
           </div>
-          <div class="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
+          <div id="card-count-total-prestasi" class="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
             <?php echo number_format_i18n( $total_prestasi ); ?>
           </div>
-          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Capaian Prestasi</h3>
+          <h3 id="card-label-total-prestasi" class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Capaian Prestasi</h3>
           <p class="text-[11px] text-slate-400 mt-0.5">Medali & penghargaan siswa terverifikasi</p>
         </div>
         <div class="hidden sm:flex w-14 h-14 rounded-3xl bg-amber-50 items-center justify-center text-amber-600/30 text-2xl">
@@ -355,6 +355,7 @@ $all_berita = get_posts( array(
         <div class="flex items-center gap-2">
           <span class="w-2 h-4 rounded-full bg-amber-500"></span>
           <h2 class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wider">Capaian Prestasi Berdasarkan Tingkat Kejuaraan</h2>
+          <span id="badge-tingkat-year" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 transition-colors">Semua Tahun</span>
         </div>
         <span class="text-[11px] font-bold text-slate-400 hidden sm:inline"><i class="fa-solid fa-hand-pointer text-amber-500 mr-1"></i> Klik kartu untuk filter tabel</span>
       </div>
@@ -370,7 +371,7 @@ $all_berita = get_posts( array(
               </span>
               <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-purple-100 text-purple-800">Dunia</span>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-purple-600 transition">
+            <div id="card-count-internasional" class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-purple-600 transition">
               <?php echo number_format_i18n( $tingkat_data['internasional'] ); ?>
             </div>
             <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Internasional</h3>
@@ -391,7 +392,7 @@ $all_berita = get_posts( array(
               </span>
               <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-100 text-rose-800">Nasional</span>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-rose-600 transition">
+            <div id="card-count-nasional" class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-rose-600 transition">
               <?php echo number_format_i18n( $tingkat_data['nasional'] ); ?>
             </div>
             <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Nasional</h3>
@@ -412,7 +413,7 @@ $all_berita = get_posts( array(
               </span>
               <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-800">Provinsi</span>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-blue-600 transition">
+            <div id="card-count-provinsi" class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-blue-600 transition">
               <?php echo number_format_i18n( $tingkat_data['provinsi'] ); ?>
             </div>
             <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Provinsi</h3>
@@ -433,7 +434,7 @@ $all_berita = get_posts( array(
               </span>
               <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">Kab / Kota</span>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-amber-600 transition">
+            <div id="card-count-kabupaten" class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-amber-600 transition">
               <?php echo number_format_i18n( $tingkat_data['kabupaten/kota'] ); ?>
             </div>
             <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Kab / Kota</h3>
@@ -454,7 +455,7 @@ $all_berita = get_posts( array(
               </span>
               <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">Kecamatan</span>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-emerald-600 transition">
+            <div id="card-count-kecamatan" class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-emerald-600 transition">
               <?php echo number_format_i18n( $tingkat_data['kecamatan'] ); ?>
             </div>
             <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Kecamatan</h3>
@@ -478,7 +479,7 @@ $all_berita = get_posts( array(
           <div class="flex items-center justify-between mb-5 pb-3.5 border-b border-slate-100">
             <div>
               <h3 class="text-base font-black text-slate-900">Rincian Prestasi per Tingkat</h3>
-              <p class="text-xs text-slate-500">Distribusi jenjang kompetisi siswa</p>
+              <p class="text-xs text-slate-500">Distribusi jenjang kompetisi siswa <span id="sidebar-year-label" class="font-bold text-amber-700"></span></p>
             </div>
             <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm shadow-sm">
               <i class="fa-solid fa-medal"></i>
@@ -505,11 +506,11 @@ $all_berita = get_posts( array(
                     <?php echo esc_html( $lvl['label'] ); ?>
                   </span>
                   <span class="text-slate-900 font-black">
-                    <?php echo esc_html( $lvl['count'] ); ?> <span class="text-[10px] text-slate-400 font-semibold">(<?php echo esc_html( $pct ); ?>%)</span>
+                    <span id="sidebar-count-<?php echo esc_attr( $lvl['slug'] ); ?>"><?php echo esc_html( $lvl['count'] ); ?></span> <span class="text-[10px] text-slate-400 font-semibold">(<span id="sidebar-pct-<?php echo esc_attr( $lvl['slug'] ); ?>"><?php echo esc_html( $pct ); ?></span>%)</span>
                   </span>
                 </div>
                 <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                  <div class="h-2.5 rounded-full transition-all duration-500" style="width: <?php echo esc_attr( max( 4, $pct ) ); ?>%; background-color: <?php echo esc_attr( $lvl['bar'] ); ?>;"></div>
+                  <div id="sidebar-bar-<?php echo esc_attr( $lvl['slug'] ); ?>" class="h-2.5 rounded-full transition-all duration-500" style="width: <?php echo esc_attr( max( 4, $pct ) ); ?>%; background-color: <?php echo esc_attr( $lvl['bar'] ); ?>;"></div>
                 </div>
               </div>
             <?php endforeach; ?>
@@ -899,20 +900,137 @@ function quickFilterTingkat(tingkatSlug) {
   }
 }
 
-// 5. Fungsi Utama Filter Tabel
+// 5. Update Metrik Kartu Sesuai Tahun yang Dipilih
+function updateStatMetrics(selYear) {
+  const tableP = document.getElementById('table-prestasi');
+  const tableB = document.getElementById('table-berita');
+  if (!tableP) return;
+
+  const pRows = tableP.querySelectorAll('.stat-row');
+  const bRows = tableB ? tableB.querySelectorAll('.stat-row') : [];
+
+  let countInter = 0;
+  let countNas = 0;
+  let countProv = 0;
+  let countKab = 0;
+  let countKec = 0;
+  let totalP = 0;
+  let totalB = 0;
+
+  pRows.forEach(function(row) {
+    const rowYear = (row.getAttribute('data-year') || '').trim();
+    if (!selYear || rowYear === selYear) {
+      totalP++;
+      const t = (row.getAttribute('data-tingkat') || '').toLowerCase().trim();
+      if (t.indexOf('internasional') !== -1 || t.indexOf('international') !== -1 || t.indexOf('world') !== -1) {
+        countInter++;
+      } else if (t.indexOf('nasional') !== -1 || t.indexOf('national') !== -1) {
+        countNas++;
+      } else if (t.indexOf('provinsi') !== -1 || t.indexOf('jatim') !== -1 || t.indexOf('regional') !== -1) {
+        countProv++;
+      } else if (t.indexOf('kab') !== -1 || t.indexOf('kota') !== -1 || t.indexOf('blitar') !== -1) {
+        countKab++;
+      } else if (t.indexOf('kecamatan') !== -1 || t.indexOf('wonodadi') !== -1) {
+        countKec++;
+      } else {
+        countKab++;
+      }
+    }
+  });
+
+  bRows.forEach(function(row) {
+    const rowYear = (row.getAttribute('data-year') || '').trim();
+    if (!selYear || rowYear === selYear) {
+      totalB++;
+    }
+  });
+
+  // 1. Update 5 Kartu Tingkat
+  const elInter = document.getElementById('card-count-internasional');
+  const elNas = document.getElementById('card-count-nasional');
+  const elProv = document.getElementById('card-count-provinsi');
+  const elKab = document.getElementById('card-count-kabupaten');
+  const elKec = document.getElementById('card-count-kecamatan');
+
+  if (elInter) elInter.textContent = countInter;
+  if (elNas) elNas.textContent = countNas;
+  if (elProv) elProv.textContent = countProv;
+  if (elKab) elKab.textContent = countKab;
+  if (elKec) elKec.textContent = countKec;
+
+  // 2. Update Badge Tahun di Header Kartu Tingkat
+  const badgeYear = document.getElementById('badge-tingkat-year');
+  if (badgeYear) {
+    if (selYear) {
+      badgeYear.textContent = 'Tahun ' + selYear;
+      badgeYear.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-xs transition-colors';
+    } else {
+      badgeYear.textContent = 'Semua Tahun';
+      badgeYear.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 transition-colors';
+    }
+  }
+
+  // 3. Update 2 Kartu Utama Atas (Total Berita & Total Prestasi)
+  const elTotalB = document.getElementById('card-count-total-berita');
+  const elTotalP = document.getElementById('card-count-total-prestasi');
+  const labelTotalB = document.getElementById('card-label-total-berita');
+  const labelTotalP = document.getElementById('card-label-total-prestasi');
+
+  if (elTotalB) elTotalB.textContent = totalB;
+  if (elTotalP) elTotalP.textContent = totalP;
+  if (labelTotalB) labelTotalB.textContent = selYear ? 'Total Berita Tahun ' + selYear : 'Total Berita Terpublikasi';
+  if (labelTotalP) labelTotalP.textContent = selYear ? 'Total Prestasi Tahun ' + selYear : 'Total Capaian Prestasi';
+
+  // 4. Update Tab Counters
+  const tabCountP = document.getElementById('total-count-prestasi');
+  const tabCountB = document.getElementById('total-count-berita');
+  if (tabCountP) tabCountP.textContent = totalP;
+  if (tabCountB) tabCountB.textContent = totalB;
+
+  // 5. Update Sidebar "Rincian Prestasi per Tingkat"
+  const sideYearLabel = document.getElementById('sidebar-year-label');
+  if (sideYearLabel) {
+    sideYearLabel.textContent = selYear ? '(Tahun ' + selYear + ')' : '(Semua Tahun)';
+  }
+
+  const levels = [
+    { slug: 'internasional', count: countInter },
+    { slug: 'nasional', count: countNas },
+    { slug: 'provinsi', count: countProv },
+    { slug: 'kabupaten', count: countKab },
+    { slug: 'kecamatan', count: countKec }
+  ];
+
+  levels.forEach(function(lvl) {
+    const elC = document.getElementById('sidebar-count-' + lvl.slug);
+    const elP = document.getElementById('sidebar-pct-' + lvl.slug);
+    const elB = document.getElementById('sidebar-bar-' + lvl.slug);
+    const pct = totalP > 0 ? ((lvl.count / totalP) * 100).toFixed(1) : 0;
+
+    if (elC) elC.textContent = lvl.count;
+    if (elP) elP.textContent = pct;
+    if (elB) elB.style.width = Math.max(4, pct) + '%';
+  });
+}
+
+// 6. Fungsi Utama Filter Tabel
 function onFilterChange() {
   const selYear = (document.getElementById('filter-year').value || '').trim();
   const selMonth = (document.getElementById('filter-month').value || '').trim();
   const selTingkat = (document.getElementById('filter-tingkat').value || '').toLowerCase().trim();
   const query = (document.getElementById('stat-search').value || '').toLowerCase().trim();
 
-  // Jika tahun diubah dan grafik ada datanya, update grafik juga
-  if (selYear && chartAllYears[selYear]) {
-    const chartSelect = document.getElementById('chart-year-select');
-    if (chartSelect && chartSelect.value != selYear) {
+  // Sinkronkan selector chart jika tahun diubah dari filter tabel
+  const chartSelect = document.getElementById('chart-year-select');
+  if (chartSelect && selYear && chartAllYears[selYear]) {
+    if (chartSelect.value != selYear) {
+      chartSelect.value = selYear;
       renderChart(selYear);
     }
   }
+
+  // Update metrik angka kartu (5 kartu tingkat, 2 kartu utama, dan sidebar) sesuai filter tahun
+  updateStatMetrics(selYear);
 
   const table = document.getElementById('table-' + currentTab);
   if (!table) return;
