@@ -64,6 +64,7 @@ function mtsn1_word_editor_register_plugins( $plugins ) {
         'visualchars'    => 'visualchars/plugin.min.js',
         'advlist'        => 'advlist/plugin.min.js',
         'wptadv'         => 'wptadv/plugin.min.js',
+        'contextmenu'    => 'contextmenu/plugin.min.js',
     );
 
     foreach ( $needed as $name => $rel ) {
@@ -72,47 +73,51 @@ function mtsn1_word_editor_register_plugins( $plugins ) {
         }
     }
 
+    // Plugin Tata Letak & Pengaturan Gambar ala Microsoft Word
+    $plugins['mtsn1_word_img'] = $theme_uri . 'mtsn1_word_img/plugin.js';
+
     return $plugins;
 }
 
 /**
  * 3. Konfigurasi Toolbar TinyMCE Berderet Kompak (1 Baris Mengalir Rapi)
- * Termasuk tombol "Tambah Media" langsung di dalam toolbar.
+ * Termasuk tombol "Tambah Media" & "Tata Letak Gambar" langsung di toolbar.
  */
 add_filter( 'mce_buttons', 'mtsn1_word_editor_buttons_row_1', 9999, 2 );
 function mtsn1_word_editor_buttons_row_1( $buttons, $editor_id = 'content' ) {
     return array(
-        'mtsn1_add_media',  // Tombol Tambah Media Langsung di Baris Toolbar
-        'fontselect',       // Pilihan Font (Calibri, Arial, Times New Roman, dll.)
-        'fontsizeselect',   // Ukuran Font (8pt - 72pt)
-        'formatselect',     // Paragraf, Heading 1 - 6
-        'bold',             // Tebal
-        'italic',           // Miring
-        'underline',        // Garis Bawah
-        'strikethrough',    // Coret Teks
-        'forecolor',        // Warna Teks
-        'backcolor',        // Warna Sorotan / Highlight Teks ala Word
-        'alignleft',        // Rata Kiri
-        'aligncenter',      // Rata Tengah
-        'alignright',       // Rata Kanan
-        'alignjustify',     // RATA KIRI-KANAN (JUSTIFY)
-        'bullist',          // Daftar Poin (Bullets)
-        'numlist',          // Daftar Angka (Numbering)
-        'outdent',          // Kurangi Inden (Geser Kiri)
-        'indent',           // Tambah Inden (Geser Kanan)
-        'blockquote',       // Kutipan
-        'hr',               // Garis Pembatas Horizontal
-        'table',            // MENU & TABEL LENGKAP (Insert Table, Kolom, Baris, Sel)
-        'link',             // Sisipkan Tautan
-        'unlink',           // Hapus Tautan
-        'charmap',          // Karakter Khusus / Simbol
-        'subscript',        // Teks Bawah (Subscript)
-        'superscript',      // Teks Atas (Superscript)
-        'searchreplace',    // Cari & Ganti Kata
-        'removeformat',     // Hapus Format
-        'undo',             // Batalkan (Undo)
-        'redo',             // Ulangi (Redo)
-        'fullscreen',       // Mode Menulis Layar Penuh
+        'mtsn1_add_media',     // Tombol Tambah Media Langsung di Baris Toolbar
+        'mtsn1_image_layout',  // TOMBOL TATA LETAK & WRAP TEXT GAMBAR ALA MICROSOFT WORD
+        'fontselect',          // Pilihan Font (Calibri, Arial, Times New Roman, dll.)
+        'fontsizeselect',      // Ukuran Font (8pt - 72pt)
+        'formatselect',        // Paragraf, Heading 1 - 6
+        'bold',                // Tebal
+        'italic',              // Miring
+        'underline',           // Garis Bawah
+        'strikethrough',       // Coret Teks
+        'forecolor',           // Warna Teks
+        'backcolor',           // Warna Sorotan / Highlight Teks ala Word
+        'alignleft',           // Rata Kiri
+        'aligncenter',         // Rata Tengah
+        'alignright',          // Rata Kanan
+        'alignjustify',        // RATA KIRI-KANAN (JUSTIFY)
+        'bullist',             // Daftar Poin (Bullets)
+        'numlist',             // Daftar Angka (Numbering)
+        'outdent',             // Kurangi Inden (Geser Kiri)
+        'indent',              // Tambah Inden (Geser Kanan)
+        'blockquote',          // Kutipan
+        'hr',                  // Garis Pembatas Horizontal
+        'table',               // MENU & TABEL LENGKAP (Insert Table, Kolom, Baris, Sel)
+        'link',                // Sisipkan Tautan
+        'unlink',              // Hapus Tautan
+        'charmap',             // Karakter Khusus / Simbol
+        'subscript',           // Teks Bawah (Subscript)
+        'superscript',         // Teks Atas (Superscript)
+        'searchreplace',       // Cari & Ganti Kata
+        'removeformat',        // Hapus Format
+        'undo',                // Batalkan (Undo)
+        'redo',                // Ulangi (Redo)
+        'fullscreen',          // Mode Menulis Layar Penuh
     );
 }
 
@@ -134,17 +139,20 @@ function mtsn1_word_editor_buttons_row_3( $buttons, $editor_id = 'content' ) {
  */
 add_filter( 'tiny_mce_before_init', 'mtsn1_word_editor_tinymce_init', 9999 );
 function mtsn1_word_editor_tinymce_init( $init ) {
-    // 1. Tampilkan Menubar Lengkap ala Microsoft Word
-    $init['menubar'] = true;
+    // 1. Tampilkan Menubar Lengkap ala Microsoft Word termasuk Menu Format Gambar
+    $init['menubar'] = 'file edit view insert format tools table gambar';
 
-    // 2. Pastikan Toolbar Terbuka
+    // 2. Context Menu Lengkap saat Klik Kanan pada Gambar atau Tabel
+    $init['contextmenu'] = 'mtsn1_menu_wrap_text | mtsn1_menu_edit_picture mtsn1_menu_caption | mtsn1_menu_delete | inserttable cell row column deletetable';
+
+    // 3. Pastikan Toolbar Terbuka
     $init['wordpress_adv_hidden'] = false;
 
-    // 3. Matikan Autoresize yang Menyebabkan Toolbar Mengambang & Teks Tembus saat di-scroll
+    // 4. Matikan Autoresize yang Menyebabkan Toolbar Mengambang & Teks Tembus saat di-scroll
     $init['wp_autoresize_on'] = false;
     $init['height'] = 650;
 
-    // 4. Tambahkan Tombol "Tambah Media" Langsung di Dalam Toolbar TinyMCE
+    // 5. Tambahkan Tombol "Tambah Media" Langsung di Dalam Toolbar TinyMCE
     $init['setup'] = 'function(editor) {
         editor.addButton("mtsn1_add_media", {
             text: "Tambah Media",
@@ -403,6 +411,73 @@ function mtsn1_word_editor_admin_styles() {
         .mce-btn[aria-label*="Tambah Media"]:hover {
             background: #059669 !important;
             border-color: #047857 !important;
+        }
+
+        /* Tombol Pengaturan & Tata Letak Gambar Spesial di Toolbar */
+        .mce-btn[aria-label*="Tata Letak Gambar"] {
+            background: #ecfdf5 !important;
+            border: 1px solid #a7f3d0 !important;
+            border-radius: 5px !important;
+            margin-right: 4px !important;
+        }
+        .mce-btn[aria-label*="Tata Letak Gambar"] .mce-ico {
+            color: #047857 !important;
+        }
+        .mce-btn[aria-label*="Tata Letak Gambar"] .mce-txt {
+            color: #065f46 !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            padding-left: 2px !important;
+        }
+        .mce-btn[aria-label*="Tata Letak Gambar"]:hover {
+            background: #d1fae5 !important;
+            border-color: #6ee7b7 !important;
+        }
+
+        /* Toolbar Mengambang Gambar (Inline Floating Toolbar ala Microsoft Word) */
+        .mce-toolbar-grp.inline-toolbar-grp {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.14) !important;
+            padding: 3px 4px !important;
+            z-index: 99999 !important;
+        }
+        .inline-toolbar-grp .mce-btn {
+            border-radius: 4px !important;
+            margin: 1px !important;
+            background: transparent !important;
+            border: 1px solid transparent !important;
+            transition: all 0.15s ease !important;
+        }
+        .inline-toolbar-grp .mce-btn:hover {
+            background: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+        }
+        .inline-toolbar-grp .mce-btn.mce-active {
+            background: #047857 !important;
+            border-color: #064e3b !important;
+        }
+        .inline-toolbar-grp .mce-btn.mce-active .dashicons,
+        .inline-toolbar-grp .mce-btn.mce-active .mce-ico {
+            color: #ffffff !important;
+        }
+        .inline-toolbar-grp .mce-btn[aria-label*="Edit"] {
+            background: #ecfdf5 !important;
+            border-color: #a7f3d0 !important;
+        }
+        .inline-toolbar-grp .mce-btn[aria-label*="Edit"] .dashicons,
+        .inline-toolbar-grp .mce-btn[aria-label*="Edit"] .mce-ico {
+            color: #047857 !important;
+        }
+        .inline-toolbar-grp .mce-btn[aria-label*="Hapus"],
+        .inline-toolbar-grp .mce-btn[aria-label*="Remove"] {
+            background: #fef2f2 !important;
+            border-color: #fecaca !important;
+        }
+        .inline-toolbar-grp .mce-btn[aria-label*="Hapus"] .dashicons,
+        .inline-toolbar-grp .mce-btn[aria-label*="Remove"] .dashicons {
+            color: #ef4444 !important;
         }
 
         /* Statusbar Baris Bawah */
