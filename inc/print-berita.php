@@ -97,7 +97,9 @@ function mtsn1_render_print_berita_page( $post_id ) {
     $has_thumb   = has_post_thumbnail( $post_id );
     $thumb_url   = $has_thumb ? get_the_post_thumbnail_url( $post_id, 'full' ) : '';
     $thumb_cap   = $has_thumb ? get_the_post_thumbnail_caption( $post_id ) : '';
-    $print_time  = date_i18n( 'd F Y, H:i' );
+    // Waktu Publikasi Resmi Berita (Diselaraskan dengan Tanggal Terbit Berita)
+    $post_pub_time = get_the_time( 'H:i', $post_id );
+    $print_time    = get_the_date( 'd F Y', $post_id ) . ( $post_pub_time ? ', ' . $post_pub_time : '' );
     ?>
     <!DOCTYPE html>
     <html lang="id">
