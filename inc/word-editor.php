@@ -217,63 +217,127 @@ function mtsn1_word_editor_admin_styles() {
             display: none !important;
         }
 
-        /* Satukan tabs Visual / Code di sebelah kanan atas dengan latar solid (Anti-Tembus) */
-        #wp-content-editor-tools {
-            background: #e2e8f0 !important;
-            border: 1px solid #cbd5e1 !important;
-            border-bottom: none !important;
-            border-radius: 8px 8px 0 0 !important;
-            padding: 4px 8px !important;
-            display: flex !important;
-            justify-content: flex-end !important;
-            align-items: center !important;
-            position: static !important;
-            box-sizing: border-box !important;
-        }
-        .wp-editor-tabs {
-            float: none !important;
-            margin: 0 !important;
-        }
-        .wp-editor-tabs .wp-switch-editor {
-            border-radius: 6px 6px 0 0 !important;
-            font-weight: 600 !important;
-            font-size: 12px !important;
-            padding: 4px 14px !important;
-            height: 28px !important;
-            line-height: 20px !important;
-            background: #cbd5e1 !important;
-            border-color: #94a3b8 !important;
-            color: #334155 !important;
-        }
-        .wp-editor-tabs .wp-switch-editor.html-active,
-        .wp-editor-tabs .wp-switch-editor.tmce-active {
-            background: #ffffff !important;
-            color: #047857 !important;
-            border-bottom-color: #ffffff !important;
-        }
-
-        /* Frame Editor Kontainer: Solid 100% Mengunci Posisi */
+        /* Frame Editor Kontainer: Mengunci Posisi Rapi & Modern */
         #wp-content-wrap {
             position: relative !important;
             background: #ffffff !important;
             border-radius: 8px !important;
             box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
         }
+        #wp-content-editor-container {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        /* Pindahkan Tabs Switcher [Visual | Code] Menyatu di Sudut Kanan Menubar */
+        #wp-content-editor-tools {
+            position: absolute !important;
+            top: 4px !important;
+            right: 8px !important;
+            z-index: 30 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            height: auto !important;
+            line-height: 1 !important;
+            display: inline-flex !important;
+            justify-content: flex-end !important;
+            align-items: center !important;
+            pointer-events: auto !important;
+        }
+
+        /* Segmented Pill Capsule Modern untuk Tabs Visual & Code */
+        .wp-editor-tabs {
+            float: none !important;
+            margin: 0 !important;
+            background: #f1f5f9 !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 20px !important;
+            padding: 2px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 2px !important;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        }
+        .wp-editor-tabs .wp-switch-editor {
+            float: none !important;
+            position: static !important;
+            top: auto !important;
+            margin: 0 !important;
+            border: none !important;
+            background: transparent !important;
+            color: #64748b !important;
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+            padding: 0 12px !important;
+            height: 24px !important;
+            line-height: 24px !important;
+            border-radius: 14px !important;
+            cursor: pointer !important;
+            transition: all 0.15s ease-in-out !important;
+            box-shadow: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-sizing: border-box !important;
+            outline: none !important;
+            text-decoration: none !important;
+        }
+        .wp-editor-tabs #content-tmce::before {
+            content: "\f177";
+            font-family: dashicons;
+            font-size: 13px;
+            margin-right: 5px;
+            line-height: 1;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .wp-editor-tabs #content-html::before {
+            content: "\f475";
+            font-family: dashicons;
+            font-size: 13px;
+            margin-right: 5px;
+            line-height: 1;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .wp-editor-tabs .wp-switch-editor:hover {
+            color: #0f172a !important;
+            background: rgba(255, 255, 255, 0.75) !important;
+        }
+        .wp-editor-tabs .wp-switch-editor.html-active,
+        .wp-editor-tabs .wp-switch-editor.tmce-active {
+            background: #047857 !important;
+            color: #ffffff !important;
+            box-shadow: 0 1px 4px rgba(4, 120, 87, 0.35) !important;
+        }
+
+        /* TinyMCE Shell Container */
         .mce-tinymce {
             border: 1px solid #cbd5e1 !important;
-            border-radius: 0 0 8px 8px !important;
+            border-radius: 8px !important;
             background: #ffffff !important;
             position: static !important;
+            overflow: hidden !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
         }
         .mce-top-part {
             background: #ffffff !important;
             position: static !important;
         }
+
+        /* Menubar ala Microsoft Word dengan Ruang Khusus Pill Tabs di Kanan */
         .mce-menubar {
             background: #ffffff !important;
             border-bottom: 1px solid #e2e8f0 !important;
-            padding: 3px 6px !important;
+            padding: 3px 180px 3px 8px !important;
             position: static !important;
+            border-radius: 8px 8px 0 0 !important;
+            min-height: 34px !important;
+            box-sizing: border-box !important;
         }
         .mce-menubar .mce-menubtn {
             margin-right: 2px !important;
@@ -341,12 +405,78 @@ function mtsn1_word_editor_admin_styles() {
             border-color: #047857 !important;
         }
 
+        /* Statusbar Baris Bawah */
+        .mce-statusbar {
+            background: #f8fafc !important;
+            border-top: 1px solid #e2e8f0 !important;
+            border-radius: 0 0 8px 8px !important;
+        }
+
         /* Iframe Editor Area: Terkunci Rapi dengan Scroll di Dalam (Persis Microsoft Word) */
         #content_ifr {
             background: #f1f5f9 !important;
             height: 650px !important;
             min-height: 500px !important;
             display: block !important;
+        }
+
+        /* Dukungan Mode Code (HTML / Quicktags) saat Switch */
+        .quicktags-toolbar {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 4px 180px 4px 8px !important;
+            min-height: 36px !important;
+            box-sizing: border-box !important;
+            position: static !important;
+        }
+        .quicktags-toolbar input.button {
+            background: #f8fafc !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 4px !important;
+            color: #334155 !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            padding: 2px 8px !important;
+            height: 26px !important;
+            line-height: 24px !important;
+            margin: 1px 2px !important;
+            cursor: pointer !important;
+            box-shadow: none !important;
+        }
+        .quicktags-toolbar input.button:hover {
+            background: #e2e8f0 !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+        #wp-content-wrap.html-active textarea#content {
+            border-radius: 0 0 8px 8px !important;
+            border: 1px solid #cbd5e1 !important;
+            border-top: none !important;
+            font-family: Consolas, Monaco, 'Courier New', monospace !important;
+            font-size: 13px !important;
+            line-height: 1.6 !important;
+            padding: 16px !important;
+            background: #ffffff !important;
+            height: 600px !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Responsif untuk Layar Tablet / Ponsel */
+        @media screen and (max-width: 782px) {
+            #wp-content-editor-tools {
+                position: static !important;
+                background: #f8fafc !important;
+                border-bottom: 1px solid #cbd5e1 !important;
+                padding: 6px 8px !important;
+            }
+            .mce-menubar {
+                padding-right: 8px !important;
+            }
+            .quicktags-toolbar {
+                padding-right: 8px !important;
+            }
         }
     </style>
     <?php
