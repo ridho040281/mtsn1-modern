@@ -44,7 +44,37 @@ function mtsn1_print_berita_submitbox_action( $post ) {
 }
 
 /**
- * 3. Handle Template Redirect ketika parameter ?print=berita dipanggil
+ * 3. Tambahkan Tombol "Cetak Berita (A4)" di Admin Bar (Khusus Pengguna Login: Admin, Editor, Author)
+ */
+add_action( 'admin_bar_menu', 'mtsn1_print_berita_admin_bar_menu', 95 );
+function mtsn1_print_berita_admin_bar_menu( $wp_admin_bar ) {
+    if ( ! is_user_logged_in() || ! current_user_can( 'edit_posts' ) ) {
+        return;
+    }
+
+    $post_id = 0;
+    if ( is_admin() ) {
+        $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+        if ( $screen && $screen->base === 'post' && get_post_type() === 'post' ) {
+            $post_id = get_the_ID();
+        }
+    } elseif ( is_singular( 'post' ) ) {
+        $post_id = get_the_ID();
+    }
+
+    if ( $post_id && get_post_status( $post_id ) === 'publish' ) {
+        $print_url = add_query_arg( 'print', 'berita', get_permalink( $post_id ) );
+        $wp_admin_bar->add_node( array(
+            'id'    => 'mtsn1_print_berita_top',
+            'title' => '<span class="ab-icon dashicons dashicons-printer" style="margin-top:2px;"></span><span class="ab-label" style="font-weight:700;">Cetak Berita (A4)</span>',
+            'href'  => esc_url( $print_url ),
+            'meta'  => array( 'target' => '_blank', 'title' => 'Cetak Lembar Dokumen Berita Resmi A4' ),
+        ) );
+    }
+}
+
+/**
+ * 4. Handle Template Redirect ketika parameter ?print=berita dipanggil
  */
 add_action( 'template_redirect', 'mtsn1_print_berita_template_redirect' );
 function mtsn1_print_berita_template_redirect() {
@@ -55,7 +85,7 @@ function mtsn1_print_berita_template_redirect() {
 }
 
 /**
- * 4. Render Halaman Cetak Berita Format Dokumen A4 Resmi
+ * 5. Render Halaman Cetak Berita Format Dokumen A4 Resmi
  */
 function mtsn1_render_print_berita_page( $post_id ) {
     $post = get_post( $post_id );

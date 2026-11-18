@@ -117,6 +117,18 @@ function mtsn1_berita_redaksi_render_metabox( $post ) {
                    placeholder="Default: Tim Media MTsN 1 Blitar" 
                    style="width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; font-size: 12px;" />
         </div>
+
+        <?php if ( $post->post_status === 'publish' ) : 
+            $print_url = add_query_arg( 'print', 'berita', get_permalink( $post->ID ) );
+        ?>
+            <!-- Tombol Cetak Berita A4 untuk Admin / Editor / Author -->
+            <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; text-align: center;">
+                <a href="<?php echo esc_url( $print_url ); ?>" target="_blank" class="button" style="width: 100%; background: #047857; color: #ffffff; border-color: #047857; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+                    <span class="dashicons dashicons-printer" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;"></span>
+                    <span>Cetak Lembar Berita (A4)</span>
+                </a>
+            </div>
+        <?php endif; ?>
     </div>
     <?php
 }

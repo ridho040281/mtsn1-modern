@@ -61,10 +61,6 @@ get_header();
             </span>
           <?php endif; ?>
           <span><i class="fa-regular fa-clock text-emerald-600 mr-1"></i> <?php echo esc_html( mtsn1_reading_time() ); ?></span>
-          <span class="text-slate-300">•</span>
-          <a href="<?php echo esc_url( add_query_arg( 'print', 'berita', get_permalink() ) ); ?>" target="_blank" class="hover:text-emerald-700 transition inline-flex items-center gap-1 font-semibold text-emerald-700" title="Cetak Format Lembar Berita A4">
-            <i class="fa-solid fa-print text-emerald-600"></i> Cetak A4
-          </a>
         </div>
 
         <!-- Title -->
@@ -166,10 +162,6 @@ get_header();
             <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . ' ' . get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition shadow-xs" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
             <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode( get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition shadow-xs" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
             <a href="https://twitter.com/intent/tweet?text=<?php echo urlencode( get_the_title() ); ?>&url=<?php echo urlencode( get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center hover:bg-sky-600 transition shadow-xs" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
-            <span class="text-slate-300">|</span>
-            <a href="<?php echo esc_url( add_query_arg( 'print', 'berita', get_permalink() ) ); ?>" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-800 transition flex items-center gap-1.5 border border-emerald-200 shadow-xs" title="Cetak Format Lembar Berita A4">
-              <i class="fa-solid fa-print"></i> Cetak Berita (A4)
-            </a>
           </div>
 
           <a href="<?php echo esc_url( home_url( '/#berita' ) ); ?>" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-emerald-600 hover:text-white text-xs font-bold text-slate-700 transition flex items-center gap-1.5">
