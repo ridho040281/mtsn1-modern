@@ -114,10 +114,10 @@ while ( have_posts() ) : the_post();
 
       </div>
 
-      <!-- Optional Featured Image -->
+      <!-- Optional Featured Image Dinamis (Tanpa Terpotong) -->
       <?php if ( has_post_thumbnail() ) : ?>
-        <div class="rounded-2xl overflow-hidden mb-8 shadow-md aspect-video sm:aspect-[21/9] bg-slate-100">
-          <?php the_post_thumbnail( 'full', array( 'class' => 'w-full h-full object-cover' ) ); ?>
+        <div class="rounded-2xl overflow-hidden mb-8 shadow-sm border border-slate-200/80 bg-slate-900/5 flex items-center justify-center">
+          <?php the_post_thumbnail( 'full', array( 'class' => 'w-full h-auto max-h-[640px] object-contain rounded-2xl block mx-auto' ) ); ?>
         </div>
       <?php endif; ?>
 
