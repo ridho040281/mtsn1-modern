@@ -560,26 +560,11 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 font-weight: 800;
                 font-size: 11.5px;
                 display: block;
-                margin-bottom: 2px;
-            }
-            .footer-left p {
-                font-size: 10px;
-                color: #64748b;
             }
             .footer-right {
                 text-align: right;
                 font-size: 10px;
                 color: #64748b;
-            }
-            .footer-right .page-badge {
-                display: inline-block;
-                background: #f0fdf4;
-                border: 1px solid #bbf7d0;
-                color: #047857;
-                font-weight: 700;
-                padding: 1px 7px;
-                border-radius: 4px;
-                margin-bottom: 2px;
             }
 
             /* =========================================================================
@@ -807,11 +792,9 @@ function mtsn1_render_print_berita_page( $post_id ) {
             <footer class="official-print-footer screen-only-footer">
                 <div class="footer-left">
                     <strong>Dokumentasi Publikasi Humas MTsN 1 Blitar &bull; Tahun <?php echo esc_html( $post_year ); ?></strong>
-                    <p>Format Cetak Lembar Berita Resmi A4 &bull; Kemenag Kab. Blitar</p>
                 </div>
                 <div class="footer-right">
-                    <div class="page-badge"><i class="fa-solid fa-print"></i> Format Cetak Resmi A4</div>
-                    <div><?php echo esc_html( $print_time ); ?> WIB</div>
+                    <div>Dicetak pada: <?php echo esc_html( $print_time ); ?> WIB</div>
                 </div>
             </footer>
 
