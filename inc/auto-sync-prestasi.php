@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_action( 'init', 'mtsn1_sync_prestasi_2024_2025_ig', 20 );
 function mtsn1_sync_prestasi_2024_2025_ig() {
-    $sync_version = 'v3_authentic_ig_clean';
+    $sync_version = 'v4_fix_flyer_mismatch';
     if ( get_option( 'mtsn1_prestasi_sync_version_ig' ) === $sync_version ) {
         return;
     }
@@ -52,6 +52,32 @@ function mtsn1_sync_prestasi_2024_2025_ig() {
     }
 
     delete_option( 'mtsn1_prestasi_sync_version_2024_2025' );
+    delete_option( 'mtsn1_prestasi_sync_version_ig' ); // reset semua versi lama
+
+    // Hapus SEMUA post prestasi IG yang sudah ada (clean slate)
+    $all_ig_posts = $wpdb->get_col( "
+        SELECT DISTINCT p.ID 
+        FROM {$wpdb->posts} p
+        INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_flyer_ig_filename'
+        WHERE p.post_type = 'prestasi' AND p.post_status != 'trash'
+    " );
+    if ( ! empty( $all_ig_posts ) ) {
+        foreach ( $all_ig_posts as $old_id ) {
+            wp_delete_post( (int) $old_id, true );
+        }
+    }
+
+    // Hapus juga post prestasi yang memakai flyer non-prestasi (Dokumen Sumatif, PKKM)
+    $bad_flyers = array( 'flyer_DDZqcrdTM0E.webp', 'flyer_DDXLSL4TPal.webp', 'flyer_DDMDajgxvfS.webp', 'flyer_DFwSaNizIj2.webp' );
+    foreach ( $bad_flyers as $bad_flyer ) {
+        $bad_posts = $wpdb->get_col( $wpdb->prepare(
+            "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_flyer_ig_filename' AND meta_value = %s",
+            $bad_flyer
+        ) );
+        foreach ( $bad_posts as $bp_id ) {
+            wp_delete_post( (int) $bp_id, true );
+        }
+    }
 
     require_once ABSPATH . 'wp-admin/includes/image.php';
     require_once ABSPATH . 'wp-admin/includes/file.php';
