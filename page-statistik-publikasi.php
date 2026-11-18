@@ -48,74 +48,56 @@ foreach ( $tingkat_raw as $tr ) {
 $tingkat_unggulan = $tingkat_data['internasional'] + $tingkat_data['nasional'];
 $tingkat_regional = $tingkat_data['provinsi'] + $tingkat_data['kabupaten/kota'] + $tingkat_data['kecamatan'];
 
-// 3. Data Publikasi per Bulan (Tahun Berjalan 2026)
-$current_year = date( 'Y' );
-$berita_monthly_raw = $wpdb->get_results(
-    $wpdb->prepare(
-        "SELECT MONTH(post_date) as bulan, COUNT(*) as total 
-         FROM {$wpdb->posts} 
-         WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = %d 
-         GROUP BY MONTH(post_date)",
-        $current_year
-    )
+// 3. Ambil Semua Tahun yang Tersedia untuk Filter
+$available_years = $wpdb->get_col(
+    "SELECT DISTINCT YEAR(post_date) as th 
+     FROM {$wpdb->posts} 
+     WHERE post_type IN ('post', 'prestasi') AND post_status = 'publish' 
+     ORDER BY th DESC"
 );
+$default_year = ! empty( $available_years ) ? (int) $available_years[0] : (int) date( 'Y' );
 
-$prestasi_monthly_raw = $wpdb->get_results(
-    $wpdb->prepare(
-        "SELECT MONTH(post_date) as bulan, COUNT(*) as total 
-         FROM {$wpdb->posts} 
-         WHERE post_type = 'prestasi' AND post_status = 'publish' AND YEAR(post_date) = %d 
-         GROUP BY MONTH(post_date)",
-        $current_year
-    )
-);
-
+// 4. Hitung Data Grafik Bulanan untuk Semua Tahun
 $nama_bulan = array( 1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des' );
-$chart_data = array();
-$max_single_val = 1;
+$chart_all_years = array();
 
-for ( $m = 1; $m <= 12; $m++ ) {
-    $b_count = 0;
-    $p_count = 0;
-    foreach ( $berita_monthly_raw as $row ) {
-        if ( (int) $row->bulan === $m ) {
-            $b_count = (int) $row->total;
-            break;
-        }
+foreach ( $available_years as $yr ) {
+    $yr = (int) $yr;
+    $b_rows = $wpdb->get_results( $wpdb->prepare( "SELECT MONTH(post_date) as bln, count(*) as c FROM {$wpdb->posts} WHERE post_type = 'post' and post_status = 'publish' and YEAR(post_date) = %d GROUP BY MONTH(post_date)", $yr ) );
+    $p_rows = $wpdb->get_results( $wpdb->prepare( "SELECT MONTH(post_date) as bln, count(*) as c FROM {$wpdb->posts} WHERE post_type = 'prestasi' and post_status = 'publish' and YEAR(post_date) = %d GROUP BY MONTH(post_date)", $yr ) );
+
+    $m_map = array();
+    $max_v = 1;
+    for ( $m = 1; $m <= 12; $m++ ) {
+        $bc = 0; $pc = 0;
+        foreach ( $b_rows as $r ) { if ( (int) $r->bln === $m ) { $bc = (int) $r->c; break; } }
+        foreach ( $p_rows as $r ) { if ( (int) $r->bln === $m ) { $pc = (int) $r->c; break; } }
+        if ( $bc > $max_v ) $max_v = $bc;
+        if ( $pc > $max_v ) $max_v = $pc;
+        $m_map[$m] = array( 'nama' => $nama_bulan[$m], 'berita' => $bc, 'prestasi' => $pc, 'total' => $bc + $pc );
     }
-    foreach ( $prestasi_monthly_raw as $row ) {
-        if ( (int) $row->bulan === $m ) {
-            $p_count = (int) $row->total;
-            break;
-        }
-    }
-    if ( $b_count > $max_single_val ) {
-        $max_single_val = $b_count;
-    }
-    if ( $p_count > $max_single_val ) {
-        $max_single_val = $p_count;
-    }
-    $chart_data[$m] = array(
-        'nama'     => $nama_bulan[$m],
-        'berita'   => $b_count,
-        'prestasi' => $p_count,
-        'total'    => $b_count + $p_count,
+    $chart_all_years[$yr] = array(
+        'max'            => $max_v,
+        'months'         => $m_map,
+        'total_berita'   => array_sum( array_column( $m_map, 'berita' ) ),
+        'total_prestasi' => array_sum( array_column( $m_map, 'prestasi' ) ),
+        'total_semua'    => array_sum( array_column( $m_map, 'total' ) ),
     );
 }
 
-// 4. Query Daftar Rekap Prestasi Terkini (Limit 20)
-$recent_prestasi = get_posts( array(
+// 5. Query Seluruh Prestasi
+$all_prestasi = get_posts( array(
     'post_type'      => 'prestasi',
-    'posts_per_page' => 20,
+    'posts_per_page' => -1,
     'post_status'    => 'publish',
     'orderby'        => 'date',
     'order'          => 'DESC',
 ) );
 
-// 5. Query Daftar Rekap Berita Terkini (Limit 20)
-$recent_berita = get_posts( array(
+// 6. Query Seluruh Berita
+$all_berita = get_posts( array(
     'post_type'      => 'post',
-    'posts_per_page' => 20,
+    'posts_per_page' => -1,
     'post_status'    => 'publish',
     'orderby'        => 'date',
     'order'          => 'DESC',
@@ -123,7 +105,7 @@ $recent_berita = get_posts( array(
 ?>
 
 <style>
-/* CSS Mandiri untuk Grafik & Layout Dashboard agar 100% konsisten */
+/* CSS Mandiri Dashboard & Bar Chart */
 .stat-layout-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -227,6 +209,29 @@ $recent_berita = get_posts( array(
 .stat-chart-col:hover .stat-tooltip {
   opacity: 1;
 }
+
+/* Custom Select Dropdowns */
+.stat-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2364748b'%3e%3cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 1rem 1rem;
+  padding-right: 2rem;
+}
+
+/* Sticky Table Header */
+.stat-table-scroll {
+  max-height: 650px;
+  overflow-y: auto;
+}
+.stat-table-scroll thead th {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 20;
+  box-shadow: 0 1px 0 #e2e8f0;
+}
 </style>
 
 <div class="py-8 sm:py-12 bg-slate-100 min-h-screen">
@@ -261,7 +266,7 @@ $recent_berita = get_posts( array(
 
         <div class="flex flex-wrap items-center gap-3 sm:gap-5 mt-5 pt-3 border-t border-emerald-800/60 text-xs text-emerald-200 font-medium">
           <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-check-double text-emerald-400"></i> Data Terupdate Otomatis</span>
-          <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-calendar-check text-amber-400"></i> Periode Tahun <?php echo esc_html( $current_year ); ?></span>
+          <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-calendar-check text-amber-400"></i> Terbitan s.d. Tahun <?php echo esc_html( $default_year ); ?></span>
           <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-school text-sky-400"></i> MTsN 1 Blitar</span>
         </div>
       </div>
@@ -332,7 +337,7 @@ $recent_berita = get_posts( array(
 
     </div>
 
-    <!-- Rincian Tingkat Prestasi & Grafik Publikasi Bulanan (Menggunakan Grid Mandiri) -->
+    <!-- Rincian Tingkat Prestasi & Grafik Publikasi Bulanan -->
     <div class="stat-layout-grid mb-8">
 
       <!-- Kolom Kiri: Rincian Tingkat Prestasi -->
@@ -351,17 +356,17 @@ $recent_berita = get_posts( array(
           <div class="space-y-4">
             <?php
             $levels = array(
-                array( 'label' => 'Internasional', 'count' => $tingkat_data['internasional'], 'bar' => '#9333ea', 'bg' => '#f3e8ff', 'text' => '#6b21a8' ),
-                array( 'label' => 'Nasional', 'count' => $tingkat_data['nasional'], 'bar' => '#f43f5e', 'bg' => '#ffe4e6', 'text' => '#9f1239' ),
-                array( 'label' => 'Provinsi', 'count' => $tingkat_data['provinsi'], 'bar' => '#2563eb', 'bg' => '#dbeafe', 'text' => '#1e40af' ),
-                array( 'label' => 'Kabupaten / Kota', 'count' => $tingkat_data['kabupaten/kota'], 'bar' => '#f59e0b', 'bg' => '#fef3c7', 'text' => '#92400e' ),
-                array( 'label' => 'Kecamatan / Sub-Rayon', 'count' => $tingkat_data['kecamatan'], 'bar' => '#059669', 'bg' => '#d1fae5', 'text' => '#065f46' ),
+                array( 'label' => 'Internasional', 'count' => $tingkat_data['internasional'], 'bar' => '#9333ea', 'slug' => 'internasional' ),
+                array( 'label' => 'Nasional', 'count' => $tingkat_data['nasional'], 'bar' => '#f43f5e', 'slug' => 'nasional' ),
+                array( 'label' => 'Provinsi', 'count' => $tingkat_data['provinsi'], 'bar' => '#2563eb', 'slug' => 'provinsi' ),
+                array( 'label' => 'Kabupaten / Kota', 'count' => $tingkat_data['kabupaten/kota'], 'bar' => '#f59e0b', 'slug' => 'kabupaten' ),
+                array( 'label' => 'Kecamatan / Sub-Rayon', 'count' => $tingkat_data['kecamatan'], 'bar' => '#059669', 'slug' => 'kecamatan' ),
             );
 
             foreach ( $levels as $lvl ) :
                 $pct = $total_prestasi > 0 ? round( ( $lvl['count'] / $total_prestasi ) * 100, 1 ) : 0;
             ?>
-              <div>
+              <div class="cursor-pointer hover:bg-slate-50 p-1.5 -mx-1.5 rounded-xl transition" onclick="quickFilterTingkat('<?php echo esc_js( $lvl['slug'] ); ?>')">
                 <div class="flex items-center justify-between text-xs font-bold mb-1.5">
                   <span class="text-slate-700 flex items-center gap-1.5">
                     <span class="w-2.5 h-2.5 rounded-full" style="background-color: <?php echo esc_attr( $lvl['bar'] ); ?>"></span>
@@ -392,7 +397,15 @@ $recent_berita = get_posts( array(
         <div>
           <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
             <div>
-              <h3 class="text-base font-black text-slate-900">Aktivitas Rilis Publikasi Tahun <?php echo esc_html( $current_year ); ?></h3>
+              <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
+                <span>Aktivitas Rilis Publikasi Tahun</span>
+                <!-- Selector Tahun untuk Grafik -->
+                <select id="chart-year-select" onchange="switchChartYear(this.value)" class="stat-select bg-emerald-50 border border-emerald-300 rounded-xl px-2.5 py-1 text-xs font-black text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                  <?php foreach ( $available_years as $yr ) : ?>
+                    <option value="<?php echo esc_attr( $yr ); ?>" <?php selected( $yr, $default_year ); ?>><?php echo esc_html( $yr ); ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </h3>
               <p class="text-xs text-slate-500">Jumlah terbitan berita dan capaian prestasi per bulan</p>
             </div>
             <div class="flex items-center gap-4 text-xs font-bold">
@@ -403,102 +416,140 @@ $recent_berita = get_posts( array(
 
           <!-- Bar Chart Mandiri (Tampil Rapi di Semua Device) -->
           <div class="overflow-x-auto pb-2">
-            <div class="stat-chart-wrapper">
-              <?php foreach ( $chart_data as $m => $cd ) :
-                  $b_pct = $max_single_val > 0 ? ( $cd['berita'] / $max_single_val ) * 100 : 0;
-                  $p_pct = $max_single_val > 0 ? ( $cd['prestasi'] / $max_single_val ) * 100 : 0;
-                  $is_current_month = ( (int) date( 'n' ) === $m );
-              ?>
-                <div class="stat-chart-col">
-                  <!-- Tooltip Angka -->
-                  <div class="stat-tooltip">
-                    <?php echo esc_html( $cd['nama'] ); ?>: <?php echo esc_html( $cd['berita'] ); ?> Berita, <?php echo esc_html( $cd['prestasi'] ); ?> Prestasi
-                  </div>
-
-                  <!-- Wadah Batang Bar -->
-                  <div class="stat-bars-box" style="<?php echo $is_current_month ? 'border-color: #10b981; background-color: #ecfdf5;' : ''; ?>">
-                    <!-- Bar Berita -->
-                    <div class="stat-bar stat-bar-b" title="Berita: <?php echo esc_attr( $cd['berita'] ); ?>" style="height: <?php echo esc_attr( max( 4, round( $b_pct ) ) ); ?>%;">
-                      <?php if ( $cd['berita'] > 0 ) : ?>
-                        <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] font-black text-emerald-800 pointer-events-none"><?php echo esc_html( $cd['berita'] ); ?></span>
-                      <?php endif; ?>
-                    </div>
-                    <!-- Bar Prestasi -->
-                    <div class="stat-bar stat-bar-p" title="Prestasi: <?php echo esc_attr( $cd['prestasi'] ); ?>" style="height: <?php echo esc_attr( max( 4, round( $p_pct ) ) ); ?>%;">
-                      <?php if ( $cd['prestasi'] > 0 ) : ?>
-                        <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] font-black text-amber-800 pointer-events-none"><?php echo esc_html( $cd['prestasi'] ); ?></span>
-                      <?php endif; ?>
-                    </div>
-                  </div>
-
-                  <!-- Label Bulan -->
-                  <span class="stat-col-label <?php echo $is_current_month ? 'current-m' : ''; ?>">
-                    <?php echo esc_html( $cd['nama'] ); ?>
-                  </span>
-                </div>
-              <?php endforeach; ?>
+            <div class="stat-chart-wrapper" id="stat-chart-container">
+              <!-- Bar chart diinjeksi secara dinamis via JavaScript sesuai pilihan tahun -->
             </div>
           </div>
         </div>
 
         <div class="mt-4 pt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500">
           <span>* Arahkan kursor atau sentuh diagram untuk melihat rincian terbitan</span>
-          <span class="font-bold text-slate-800">Total Rilis <?php echo esc_html( $current_year ); ?>: <strong class="text-emerald-700"><?php echo esc_html( array_sum( array_column( $chart_data, 'total' ) ) ); ?> Publikasi</strong></span>
+          <span class="font-bold text-slate-800" id="chart-summary-text">
+            Total Rilis Tahun <?php echo esc_html( $default_year ); ?>: <strong class="text-emerald-700"><?php echo esc_html( $chart_all_years[$default_year]['total_semua'] ?? 0 ); ?> Publikasi</strong>
+          </span>
         </div>
       </div>
 
     </div>
 
-    <!-- Tab Section: Daftar Rekapitulasi Berita & Prestasi Terbaru -->
+    <!-- TAB & FILTER SECTION: REKAPITULASI BERITA & PRESTASI -->
     <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200">
       
-      <!-- Tab Header Buttons -->
-      <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+      <!-- Baris 1: Tombol Tab & Filter Dropdown (Tahun, Bulan, Tingkat) -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-slate-100">
+        
+        <!-- Tab Selector: Prestasi vs Berita -->
         <div class="flex items-center gap-2">
           <button type="button" onclick="switchStatTab('prestasi')" id="btn-tab-prestasi" class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-amber-500 text-slate-950 shadow-md cursor-pointer flex items-center gap-2">
             <i class="fa-solid fa-trophy"></i>
-            <span>Rekap Prestasi Terbaru (20)</span>
+            <span>Rekap Prestasi (<span id="total-count-prestasi"><?php echo count( $all_prestasi ); ?></span>)</span>
           </button>
           <button type="button" onclick="switchStatTab('berita')" id="btn-tab-berita" class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2">
             <i class="fa-solid fa-newspaper"></i>
-            <span>Rekap Berita Terbaru (20)</span>
+            <span>Rekap Berita (<span id="total-count-berita"><?php echo count( $all_berita ); ?></span>)</span>
           </button>
         </div>
 
-        <!-- Live Search Filter -->
-        <div class="relative w-full sm:w-72">
+        <!-- Opsi Filter Dropdowns (Sesuai 3 Kotak Merah Pengguna) -->
+        <div class="flex flex-wrap items-center gap-2">
+          
+          <!-- Kotak 1: Filter Tahun -->
+          <div class="relative">
+            <select id="filter-year" onchange="onFilterChange()" class="stat-select bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer" title="Filter per Tahun">
+              <option value="">📅 Semua Tahun</option>
+              <?php foreach ( $available_years as $yr ) : ?>
+                <option value="<?php echo esc_attr( $yr ); ?>"><?php echo esc_html( $yr ); ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <!-- Kotak 2: Filter Bulan -->
+          <div class="relative">
+            <select id="filter-month" onchange="onFilterChange()" class="stat-select bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer" title="Filter per Bulan">
+              <option value="">🗓️ Semua Bulan</option>
+              <option value="1">Januari</option>
+              <option value="2">Februari</option>
+              <option value="3">Maret</option>
+              <option value="4">April</option>
+              <option value="5">Mei</option>
+              <option value="6">Juni</option>
+              <option value="7">Juli</option>
+              <option value="8">Agustus</option>
+              <option value="9">September</option>
+              <option value="10">Oktober</option>
+              <option value="11">November</option>
+              <option value="12">Desember</option>
+            </select>
+          </div>
+
+          <!-- Kotak 3: Filter Tingkat Kejuaraan (Aktif saat Tab Prestasi dipilih) -->
+          <div id="wrap-filter-tingkat" class="relative">
+            <select id="filter-tingkat" onchange="onFilterChange()" class="stat-select bg-amber-50 border border-amber-200 hover:border-amber-300 rounded-xl px-3 py-2 text-xs font-bold text-amber-900 shadow-xs focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer" title="Filter Tingkat Kejuaraan">
+              <option value="">🏅 Semua Tingkat</option>
+              <option value="internasional">Internasional</option>
+              <option value="nasional">Nasional</option>
+              <option value="provinsi">Provinsi</option>
+              <option value="kabupaten">Kabupaten / Kota</option>
+              <option value="kecamatan">Kecamatan</option>
+            </select>
+          </div>
+
+          <!-- Tombol Reset Filter -->
+          <button type="button" onclick="resetFilters()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs" title="Reset Semua Filter">
+            <i class="fa-solid fa-rotate-left text-[11px]"></i>
+            <span class="hidden sm:inline">Reset</span>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Baris 2: Pencarian Cepat & Keterangan Hasil Filter -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div class="relative w-full sm:w-80">
           <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
             <i class="fa-solid fa-magnifying-glass"></i>
           </span>
-          <input type="text" id="stat-search" onkeyup="filterStatRows()" placeholder="Cari dalam tabel rekap..." class="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
+          <input type="text" id="stat-search" onkeyup="onFilterChange()" placeholder="Ketik kata kunci judul, peraih juara, dll..." class="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
+        </div>
+
+        <!-- Indikator Jumlah Data yang Ditampilkan -->
+        <div id="stat-counter-badge" class="text-xs font-bold text-slate-500">
+          Menampilkan <span id="count-visible" class="text-emerald-700 font-black"><?php echo count( $all_prestasi ); ?></span> data
         </div>
       </div>
 
-      <!-- Tab Content: Prestasi -->
+      <!-- Tab Content: Tabel Prestasi -->
       <div id="tab-content-prestasi">
-        <div class="overflow-x-auto">
+        <div class="stat-table-scroll border border-slate-100 rounded-2xl">
           <table class="w-full text-left text-xs" id="table-prestasi">
             <thead>
               <tr class="border-b border-slate-200 text-slate-400 uppercase tracking-wider font-extrabold text-[11px]">
-                <th class="py-3 px-3">No</th>
+                <th class="py-3 px-3 w-12">No</th>
                 <th class="py-3 px-3">Nama Kejuaraan / Prestasi</th>
                 <th class="py-3 px-3">Peraih Juara</th>
                 <th class="py-3 px-3">Tingkat</th>
-                <th class="py-3 px-3">Tanggal Terbit</th>
+                <th class="py-3 px-3 whitespace-nowrap">Tanggal Terbit</th>
                 <th class="py-3 px-3 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
               <?php
               $no = 1;
-              foreach ( $recent_prestasi as $prestasi ) :
+              foreach ( $all_prestasi as $prestasi ) :
                   $pid     = $prestasi->ID;
                   $peraih  = get_post_meta( $pid, '_peraih', true );
                   $tingkat = function_exists( 'mtsn1_get_tingkat_prestasi' ) ? mtsn1_get_tingkat_prestasi( $pid ) : get_post_meta( $pid, '_tingkat', true );
+                  $year    = get_the_date( 'Y', $pid );
+                  $month   = get_the_date( 'n', $pid );
                   $date    = get_the_date( 'd M Y', $pid );
               ?>
-                <tr class="stat-row hover:bg-slate-50/80 transition" data-search="<?php echo esc_attr( strtolower( $prestasi->post_title . ' ' . $peraih . ' ' . $tingkat ) ); ?>">
-                  <td class="py-3 px-3 font-bold text-slate-400"><?php echo esc_html( $no++ ); ?></td>
+                <tr class="stat-row hover:bg-amber-50/40 transition"
+                    data-year="<?php echo esc_attr( $year ); ?>"
+                    data-month="<?php echo esc_attr( $month ); ?>"
+                    data-tingkat="<?php echo esc_attr( strtolower( $tingkat ) ); ?>"
+                    data-search="<?php echo esc_attr( strtolower( $prestasi->post_title . ' ' . $peraih . ' ' . $tingkat . ' ' . $year ) ); ?>">
+                  <td class="py-3 px-3 font-bold text-slate-400 row-number"><?php echo esc_html( $no++ ); ?></td>
                   <td class="py-3 px-3">
                     <a href="<?php echo esc_url( get_permalink( $pid ) ); ?>" class="font-bold text-slate-900 hover:text-amber-600 transition line-clamp-1">
                       <?php echo esc_html( $prestasi->post_title ); ?>
@@ -528,34 +579,46 @@ $recent_berita = get_posts( array(
             </tbody>
           </table>
         </div>
+        <!-- Pesan Kosong Jika Filter Tidak Ditemukan -->
+        <div id="stat-empty-prestasi" class="hidden p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 mt-3">
+          <i class="fa-solid fa-trophy text-slate-300 text-3xl mb-2"></i>
+          <p class="text-xs font-bold text-slate-600">Tidak ada data prestasi yang cocok dengan pilihan tahun, bulan, atau tingkat kejuaraan.</p>
+          <button type="button" onclick="resetFilters()" class="mt-3 px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-black text-xs">Reset Filter</button>
+        </div>
       </div>
 
-      <!-- Tab Content: Berita (Hidden by default) -->
+      <!-- Tab Content: Tabel Berita (Hidden by default) -->
       <div id="tab-content-berita" class="hidden">
-        <div class="overflow-x-auto">
+        <div class="stat-table-scroll border border-slate-100 rounded-2xl">
           <table class="w-full text-left text-xs" id="table-berita">
             <thead>
               <tr class="border-b border-slate-200 text-slate-400 uppercase tracking-wider font-extrabold text-[11px]">
-                <th class="py-3 px-3">No</th>
+                <th class="py-3 px-3 w-12">No</th>
                 <th class="py-3 px-3">Judul Berita</th>
                 <th class="py-3 px-3">Kategori</th>
                 <th class="py-3 px-3">Penulis / Redaksi</th>
-                <th class="py-3 px-3">Tanggal Terbit</th>
+                <th class="py-3 px-3 whitespace-nowrap">Tanggal Terbit</th>
                 <th class="py-3 px-3 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
               <?php
               $no_b = 1;
-              foreach ( $recent_berita as $berita ) :
-                  $bid   = $berita->ID;
-                  $cats  = get_the_category( $bid );
+              foreach ( $all_berita as $berita ) :
+                  $bid      = $berita->ID;
+                  $cats     = get_the_category( $bid );
                   $cat_name = ! empty( $cats ) ? $cats[0]->name : 'Berita';
                   $author   = get_the_author_meta( 'display_name', $berita->post_author );
+                  $year_b   = get_the_date( 'Y', $bid );
+                  $month_b  = get_the_date( 'n', $bid );
                   $date_b   = get_the_date( 'd M Y', $bid );
               ?>
-                <tr class="stat-row hover:bg-slate-50/80 transition" data-search="<?php echo esc_attr( strtolower( $berita->post_title . ' ' . $cat_name . ' ' . $author ) ); ?>">
-                  <td class="py-3 px-3 font-bold text-slate-400"><?php echo esc_html( $no_b++ ); ?></td>
+                <tr class="stat-row hover:bg-emerald-50/40 transition"
+                    data-year="<?php echo esc_attr( $year_b ); ?>"
+                    data-month="<?php echo esc_attr( $month_b ); ?>"
+                    data-tingkat=""
+                    data-search="<?php echo esc_attr( strtolower( $berita->post_title . ' ' . $cat_name . ' ' . $author . ' ' . $year_b ) ); ?>">
+                  <td class="py-3 px-3 font-bold text-slate-400 row-number"><?php echo esc_html( $no_b++ ); ?></td>
                   <td class="py-3 px-3">
                     <a href="<?php echo esc_url( get_permalink( $bid ) ); ?>" class="font-bold text-slate-900 hover:text-emerald-700 transition line-clamp-1">
                       <?php echo esc_html( $berita->post_title ); ?>
@@ -583,6 +646,12 @@ $recent_berita = get_posts( array(
             </tbody>
           </table>
         </div>
+        <!-- Pesan Kosong Jika Filter Berita Tidak Ditemukan -->
+        <div id="stat-empty-berita" class="hidden p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 mt-3">
+          <i class="fa-solid fa-newspaper text-slate-300 text-3xl mb-2"></i>
+          <p class="text-xs font-bold text-slate-600">Tidak ada berita yang cocok dengan filter tahun atau bulan yang dipilih.</p>
+          <button type="button" onclick="resetFilters()" class="mt-3 px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-black text-xs">Reset Filter</button>
+        </div>
       </div>
 
     </div>
@@ -591,40 +660,186 @@ $recent_berita = get_posts( array(
 </div>
 
 <script>
+// Data Grafik Semua Tahun dari PHP
+const chartAllYears = <?php echo json_encode( $chart_all_years ); ?>;
+let currentTab = 'prestasi';
+const currentYearNow = <?php echo (int) date( 'Y' ); ?>;
+const currentMonthNow = <?php echo (int) date( 'n' ); ?>;
+
+// 1. Render Bar Chart untuk Tahun Tertentu
+function renderChart(year) {
+  const container = document.getElementById('stat-chart-container');
+  const summaryText = document.getElementById('chart-summary-text');
+  const chartSelect = document.getElementById('chart-year-select');
+  if (chartSelect && chartSelect.value != year) {
+    chartSelect.value = year;
+  }
+
+  const dataYear = chartAllYears[year] || chartAllYears[Object.keys(chartAllYears)[0]];
+  if (!dataYear || !container) return;
+
+  const maxVal = dataYear.max || 1;
+  let html = '';
+
+  for (let m = 1; m <= 12; m++) {
+    const cd = dataYear.months[m] || { nama: '', berita: 0, prestasi: 0, total: 0 };
+    const bPct = Math.round((cd.berita / maxVal) * 100);
+    const pPct = Math.round((cd.prestasi / maxVal) * 100);
+    const isThisMonth = (year == currentYearNow && m === currentMonthNow);
+    const boxHighlight = isThisMonth ? 'border-color: #10b981; background-color: #ecfdf5;' : '';
+
+    html += `
+      <div class="stat-chart-col">
+        <div class="stat-tooltip">
+          ${cd.nama}: ${cd.berita} Berita, ${cd.prestasi} Prestasi
+        </div>
+        <div class="stat-bars-box" style="${boxHighlight}">
+          <div class="stat-bar stat-bar-b" title="Berita: ${cd.berita}" style="height: ${Math.max(4, bPct)}%;">
+            ${cd.berita > 0 ? `<span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] font-black text-emerald-800 pointer-events-none">${cd.berita}</span>` : ''}
+          </div>
+          <div class="stat-bar stat-bar-p" title="Prestasi: ${cd.prestasi}" style="height: ${Math.max(4, pPct)}%;">
+            ${cd.prestasi > 0 ? `<span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] font-black text-amber-800 pointer-events-none">${cd.prestasi}</span>` : ''}
+          </div>
+        </div>
+        <span class="stat-col-label ${isThisMonth ? 'current-m' : ''}">
+          ${cd.nama}
+        </span>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+  if (summaryText) {
+    summaryText.innerHTML = `Total Rilis Tahun ${year}: <strong class="text-emerald-700">${dataYear.total_semua} Publikasi</strong> (${dataYear.total_berita} Berita, ${dataYear.total_prestasi} Prestasi)`;
+  }
+}
+
+// 2. Ganti Tahun Grafik dari Dropdown di Header Grafik
+function switchChartYear(year) {
+  renderChart(year);
+  // Sinkronkan juga filter tahun di tabel bawah
+  const filterYear = document.getElementById('filter-year');
+  if (filterYear) {
+    filterYear.value = year;
+    onFilterChange();
+  }
+}
+
+// 3. Tab Switcher (Prestasi / Berita)
 function switchStatTab(tab) {
+  currentTab = tab;
   const btnPrestasi = document.getElementById('btn-tab-prestasi');
   const btnBerita = document.getElementById('btn-tab-berita');
   const tabPrestasi = document.getElementById('tab-content-prestasi');
   const tabBerita = document.getElementById('tab-content-berita');
-  const searchInput = document.getElementById('stat-search');
-  if (searchInput) searchInput.value = '';
+  const wrapTingkat = document.getElementById('wrap-filter-tingkat');
 
   if (tab === 'prestasi') {
     btnPrestasi.className = 'px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-amber-500 text-slate-950 shadow-md cursor-pointer flex items-center gap-2';
     btnBerita.className = 'px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2';
     tabPrestasi.classList.remove('hidden');
     tabBerita.classList.add('hidden');
+    if (wrapTingkat) wrapTingkat.style.display = 'block';
   } else {
     btnBerita.className = 'px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-emerald-600 text-white shadow-md cursor-pointer flex items-center gap-2';
     btnPrestasi.className = 'px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2';
     tabBerita.classList.remove('hidden');
     tabPrestasi.classList.add('hidden');
+    if (wrapTingkat) wrapTingkat.style.display = 'none'; // Sembunyikan filter tingkat untuk tab berita
   }
-  filterStatRows();
+  onFilterChange();
 }
 
-function filterStatRows() {
+// 4. Klik Cepat Tingkat dari Kolom Kiri
+function quickFilterTingkat(tingkatSlug) {
+  if (currentTab !== 'prestasi') {
+    switchStatTab('prestasi');
+  }
+  const selTingkat = document.getElementById('filter-tingkat');
+  if (selTingkat) {
+    selTingkat.value = tingkatSlug;
+  }
+  onFilterChange();
+  // Scroll mulus ke tabel
+  const tabSection = document.getElementById('tab-content-prestasi');
+  if (tabSection) {
+    tabSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// 5. Fungsi Utama Filter Tabel
+function onFilterChange() {
+  const selYear = (document.getElementById('filter-year').value || '').trim();
+  const selMonth = (document.getElementById('filter-month').value || '').trim();
+  const selTingkat = (document.getElementById('filter-tingkat').value || '').toLowerCase().trim();
   const query = (document.getElementById('stat-search').value || '').toLowerCase().trim();
-  const rows = document.querySelectorAll('.stat-row');
+
+  // Jika tahun diubah dan grafik ada datanya, update grafik juga
+  if (selYear && chartAllYears[selYear]) {
+    const chartSelect = document.getElementById('chart-year-select');
+    if (chartSelect && chartSelect.value != selYear) {
+      renderChart(selYear);
+    }
+  }
+
+  const table = document.getElementById('table-' + currentTab);
+  if (!table) return;
+
+  const rows = table.querySelectorAll('.stat-row');
+  let visibleCount = 0;
+  let rowNumber = 1;
+
   rows.forEach(function(row) {
-    const text = row.getAttribute('data-search') || '';
-    if (!query || text.indexOf(query) !== -1) {
+    const rowYear = (row.getAttribute('data-year') || '').trim();
+    const rowMonth = (row.getAttribute('data-month') || '').trim();
+    const rowTingkat = (row.getAttribute('data-tingkat') || '').toLowerCase().trim();
+    const rowSearch = (row.getAttribute('data-search') || '').toLowerCase().trim();
+
+    const matchYear = (!selYear || rowYear === selYear);
+    const matchMonth = (!selMonth || rowMonth === selMonth);
+    const matchTingkat = (currentTab === 'berita' || !selTingkat || rowTingkat.indexOf(selTingkat) !== -1);
+    const matchSearch = (!query || rowSearch.indexOf(query) !== -1);
+
+    if (matchYear && matchMonth && matchTingkat && matchSearch) {
       row.style.display = '';
+      visibleCount++;
+      const numCell = row.querySelector('.row-number');
+      if (numCell) numCell.textContent = rowNumber++;
     } else {
       row.style.display = 'none';
     }
   });
+
+  // Update Counter Badge
+  const countVisibleEl = document.getElementById('count-visible');
+  const countBadgeEl = document.getElementById('stat-counter-badge');
+  const labelKategori = currentTab === 'prestasi' ? 'Prestasi' : 'Berita';
+  if (countVisibleEl && countBadgeEl) {
+    countVisibleEl.textContent = visibleCount;
+    countBadgeEl.innerHTML = `Menampilkan <strong class="${currentTab === 'prestasi' ? 'text-amber-600' : 'text-emerald-700'}">${visibleCount}</strong> dari ${rows.length} ${labelKategori}`;
+  }
+
+  // Tampilkan pesan kosong jika 0
+  const emptyBox = document.getElementById('stat-empty-' + currentTab);
+  if (emptyBox) {
+    emptyBox.classList.toggle('hidden', visibleCount > 0);
+  }
 }
+
+// 6. Reset Seluruh Filter
+function resetFilters() {
+  document.getElementById('filter-year').value = '';
+  document.getElementById('filter-month').value = '';
+  document.getElementById('filter-tingkat').value = '';
+  document.getElementById('stat-search').value = '';
+  onFilterChange();
+}
+
+// Inisialisasi saat Halaman Selesai Dimuat
+document.addEventListener('DOMContentLoaded', function() {
+  renderChart(<?php echo (int) $default_year; ?>);
+  onFilterChange();
+});
 </script>
 
 <?php
