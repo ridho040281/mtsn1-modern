@@ -65,6 +65,9 @@ function mtsn1_sync_prestasi_2024_2025_ig() {
     }
 
     $items = array (
+  // ============================================================
+  // 2025
+  // ============================================================
   0 => 
   array (
     'shortcode' => 'DLru60nxwGV',
@@ -78,114 +81,67 @@ function mtsn1_sync_prestasi_2024_2025_ig() {
   ),
   1 => 
   array (
-    'shortcode' => 'DFwSaNizIj2',
-    'flyer' => 'flyer_DFwSaNizIj2.webp',
-    'date' => '2025-02-07 02:16:05',
-    'title' => 'Juara Harapan 1 LKBB SMAN 1 Sooko Mojokerto 2025 - Paskibra MTsN 1 Blitar',
-    'peraih' => 'Tim Paskibra MTsN 1 Blitar',
-    'tingkat' => 'Provinsi',
-    'ig_url' => 'https://www.instagram.com/p/DFwSaNizIj2/',
-    'content' => 'Selamat dan Sukses atas pencapaian Juara Harapan 1 dalam ajang Lomba Ketangkasan Baris Berbaris (LKBB) Tingkat Jawa Timur di SMAN 1 Sooko Mojokerto Tahun 2025 yang diraih oleh Tim Paskibra MTsN 1 Blitar.',
+    // Gambar aktual: Selamat & Sukses - Porseni Jenjang MTs Kab. Blitar 2025 (logo PORSENI MTs)
+    'shortcode' => 'DFufu9uRT94',
+    'flyer' => 'flyer_DFufu9uRT94.webp',
+    'date' => '2025-02-06 11:41:00',
+    'title' => 'Borongan Juara Porseni Jenjang MTs Kab. Blitar 2025 - Kontingen MTsN 1 Blitar',
+    'peraih' => 'Kontingen Porseni MTsN 1 Blitar',
+    'tingkat' => 'Kabupaten/Kota',
+    'ig_url' => 'https://www.instagram.com/p/DFufu9uRT94/',
+    'content' => 'Selamat & Sukses atas perolehan Juara pada berbagai cabang Pekan Olahraga dan Seni (PORSENI) Jenjang MTs Tingkat Kabupaten Blitar Tahun 2025 oleh kontingen atlet dan duta seni MTsN 1 Blitar.',
   ),
   2 => 
   array (
+    // Gambar aktual: Selamat & Sukses - OSSMA DIGNITI (Islamic Science Olympiad Jawa Timur)
     'shortcode' => 'DFuuQ97z6Qa',
     'flyer' => 'flyer_DFuuQ97z6Qa.webp',
-    'date' => '2025-02-06 11:41:00',
-    'title' => 'Borongan Juara 1 Porseni Jenjang MTs Kab. Blitar 2025 - Kontingen MTsN 1 Blitar',
-    'peraih' => 'Kontingen Porseni MTsN 1 Blitar',
-    'tingkat' => 'Kabupaten/Kota',
+    'date' => '2025-02-06 09:35:00',
+    'title' => 'Juara 1 ONSB Digniti Bidang Bahasa Inggris 2024 - Muhammad Fadhlan Azzahir',
+    'peraih' => 'Muhammad Fadhlan Azzahir',
+    'tingkat' => 'Nasional',
     'ig_url' => 'https://www.instagram.com/p/DFuuQ97z6Qa/',
-    'content' => 'Selamat & Sukses atas raihan Juara 1 pada berbagai cabang Pekan Olahraga dan Seni (PORSENI) Jenjang MTs Tingkat Kabupaten Blitar Tahun 2025 oleh kontingen atlet dan duta seni MTsN 1 Blitar.',
+    'content' => 'Selamat & Sukses kepada Muhammad Fadhlan Azzahir atas raihan Juara 1 dalam Olimpiade Nasional Sains & Bahasa (ONSB) Digniti Tingkat Nasional Tahun 2024.',
   ),
   3 => 
   array (
+    // Gambar aktual: Liga Olimpiade - Medali Perak Bidang Bahasa Indonesia
     'shortcode' => 'DFuuQKvzEHZ',
     'flyer' => 'flyer_DFuuQKvzEHZ.webp',
-    'date' => '2025-02-06 11:40:53',
-    'title' => 'Prestasi Juara 2 & 3 Porseni Jenjang MTs Kab. Blitar 2025 - Kontingen MTsN 1 Blitar',
-    'peraih' => 'Kontingen Porseni MTsN 1 Blitar',
-    'tingkat' => 'Kabupaten/Kota',
+    'date' => '2025-02-06 09:34:53',
+    'title' => 'Medali Perak Liga Olimpiade Bahasa Indonesia 2025 - Delegasi MTsN 1 Blitar',
+    'peraih' => 'Delegasi Siswa MTsN 1 Blitar',
+    'tingkat' => 'Nasional',
     'ig_url' => 'https://www.instagram.com/p/DFuuQKvzEHZ/',
-    'content' => 'Selamat & Sukses atas perolehan Juara 2 dan 3 dalam ajang Pekan Olahraga dan Seni (PORSENI) Jenjang MTs Tingkat Kabupaten Blitar Tahun 2025.',
+    'content' => 'Selamat & Sukses atas raihan medali dalam ajang Liga Olimpiade Bidang Studi Bahasa Indonesia Tingkat Nasional Tahun 2025.',
   ),
   4 => 
   array (
+    // Gambar aktual: Medali Emas YAPRESINDO Olimpiade Informatika
     'shortcode' => 'DFuuPVtTISL',
     'flyer' => 'flyer_DFuuPVtTISL.webp',
-    'date' => '2025-02-06 11:40:47',
-    'title' => 'Prestasi Juara Harapan Porseni Jenjang MTs Kab. Blitar 2025 - Kontingen MTsN 1 Blitar',
-    'peraih' => 'Kontingen Porseni MTsN 1 Blitar',
-    'tingkat' => 'Kabupaten/Kota',
+    'date' => '2025-02-06 09:34:01',
+    'title' => 'Medali Emas Pekan Olimpiade Sains Nasional (POSN) Yapresindo Bidang Informatika 2025',
+    'peraih' => 'Delegasi Siswa MTsN 1 Blitar',
+    'tingkat' => 'Nasional',
     'ig_url' => 'https://www.instagram.com/p/DFuuPVtTISL/',
-    'content' => 'Selamat & Sukses atas raihan Juara Harapan pada ajang PORSENI Jenjang MTs Tingkat Kabupaten Blitar Tahun 2025.',
+    'content' => 'Selamat & Sukses atas raihan Medali Emas dalam ajang Pekan Olimpiade Sains Nasional (POSN) Yapresindo bidang Informatika Tingkat Nasional Tahun 2025.',
   ),
   5 => 
   array (
+    // Gambar aktual: Juara 1 OSSMA cabang Luar Negeri Sa'iidatus Sakinah (ada trophei & foto siswi berjilbab)
     'shortcode' => 'DFufxDURGcF',
     'flyer' => 'flyer_DFufxDURGcF.webp',
-    'date' => '2025-02-06 09:34:19',
-    'title' => 'Perolehan Medali Pekan Olimpiade Sains Nasional (POSN) Yapresindo 2025 - Tim Sains MTsN 1 Blitar',
-    'peraih' => 'Delegasi Siswa MTsN 1 Blitar',
-    'tingkat' => 'Nasional',
-    'ig_url' => 'https://www.instagram.com/p/DFufxDURGcF/',
-    'content' => 'Selamat & Sukses atas perolehan medali dalam ajang Pekan Olimpiade Sains Nasional (POSN) Yapresindo Tingkat Nasional Tahun 2025 yang diraih oleh para siswa-siswi berprestasi MTsN 1 Blitar.',
-  ),
-  6 => 
-  array (
-    'shortcode' => 'DFufu9uRT94',
-    'flyer' => 'flyer_DFufu9uRT94.webp',
-    'date' => '2025-02-06 09:34:01',
-    'title' => 'Prestasi Liga Olimpiade Sains & Bahasa Indonesia 2025 - Delegasi MTsN 1 Blitar',
-    'peraih' => 'Delegasi Siswa MTsN 1 Blitar',
-    'tingkat' => 'Nasional',
-    'ig_url' => 'https://www.instagram.com/p/DFufu9uRT94/',
-    'content' => 'Selamat & Sukses atas prestasi membanggakan delegasi MTsN 1 Blitar dalam ajang Liga Olimpiade Sains & Bahasa Indonesia Tingkat Nasional Tahun 2025.',
-  ),
-  7 => 
-  array (
-    'shortcode' => 'DDZqcrxTxVd',
-    'flyer' => 'flyer_DDZqcrxTxVd.webp',
     'date' => '2024-12-10 14:21:00',
     'title' => 'Juara 1 Olimpiade Sains OSSMA MAN 2 Kota Kediri 2024 - Sa\'iidatus Sakinah',
     'peraih' => 'Sa\'iidatus Sakinah (Kelas VII-1)',
     'tingkat' => 'Provinsi',
-    'ig_url' => 'https://www.instagram.com/p/DDZqcrxTxVd/',
+    'ig_url' => 'https://www.instagram.com/p/DFufxDURGcF/',
     'content' => 'Selamat & Sukses kepada Sa\'iidatus Sakinah yang berhasil meraih Juara 1 Olimpiade Sains IPA Terintegrasi dalam ajang OSSMA di MAN 2 Kota Kediri Tingkat Jawa Timur Tahun 2024.',
   ),
-  8 => 
-  array (
-    'shortcode' => 'DDZqcrdTM0E',
-    'flyer' => 'flyer_DDZqcrdTM0E.webp',
-    'date' => '2024-12-10 14:20:48',
-    'title' => 'Juara 1 ONSB Digniti Bidang Bahasa Inggris 2024 - Muhammad Fadhlan Azzahir',
-    'peraih' => 'Muhammad Fadhlan Azzahir',
-    'tingkat' => 'Nasional',
-    'ig_url' => 'https://www.instagram.com/p/DDZqcrdTM0E/',
-    'content' => 'Selamat & Sukses kepada Muhammad Fadhlan Azzahir atas raihan Juara 1 dalam Olimpiade Nasional Sains & Bahasa (ONSB) Digniti Tingkat Nasional Tahun 2024.',
-  ),
-  9 => 
-  array (
-    'shortcode' => 'DDXLSL4TPal',
-    'flyer' => 'flyer_DDXLSL4TPal.webp',
-    'date' => '2024-12-09 15:10:01',
-    'title' => 'Juara 1 & 2 MTQ Festival Pelajar Menulis (FPM) SMK Islam 1 Blitar 2024 - Serly Celsiana & M. Mirzam Hafidzulloh',
-    'peraih' => 'Serly Celsiana Anggraini & M. Mirzam Hafidzulloh',
-    'tingkat' => 'Kabupaten/Kota',
-    'ig_url' => 'https://www.instagram.com/p/DDXLSL4TPal/',
-    'content' => 'Selamat & Sukses kepada Serly Celsiana Anggraini (Juara 1 MTQ Putri) dan M. Mirzam Hafidzulloh (Juara 2 MTQ Putra) dalam ajang Festival Pelajar Menulis (FPM) di SMK Islam 1 Blitar Tahun 2024.',
-  ),
-  10 => 
-  array (
-    'shortcode' => 'DDMDajgxvfS',
-    'flyer' => 'flyer_DDMDajgxvfS.webp',
-    'date' => '2024-12-05 07:29:37',
-    'title' => 'Juara Atletik Lari Sprint 100m Putri Porseni Blitar 2024 - Atlet MTsN 1 Blitar',
-    'peraih' => 'Atlet Lari Putri MTsN 1 Blitar',
-    'tingkat' => 'Kabupaten/Kota',
-    'ig_url' => 'https://www.instagram.com/p/DDMDajgxvfS/',
-    'content' => 'Selamat & Sukses atas raihan Juara Cabang Atletik Lari Sprint 100m Putri pada ajang PORSENI Tingkat Pelajar Kabupaten Blitar Tahun 2024.',
-  ),
+  // ============================================================
+  // 2024
+  // ============================================================
   11 => 
   array (
     'shortcode' => 'DCVLGFyTBBA',
