@@ -53,8 +53,12 @@ get_header();
               $blog_author = function_exists( 'mtsn1_get_blog_author_data' ) ? mtsn1_get_blog_author_data( get_the_ID() ) : array( 'name' => get_the_author() );
           ?>
             <span><i class="fa-solid fa-pen-nib text-emerald-600 mr-1"></i> <?php echo esc_html( $blog_author['name'] ); ?></span>
-          <?php else : ?>
-            <span><i class="fa-regular fa-user text-emerald-600 mr-1"></i> <?php the_author(); ?></span>
+          <?php else : 
+              $redaksi = function_exists( 'mtsn1_get_berita_redaksi' ) ? mtsn1_get_berita_redaksi( get_the_ID() ) : array( 'penulis' => get_the_author(), 'editor' => 'Tim Humas MTsN 1 Blitar', 'foto' => 'Tim Media MTsN 1 Blitar' );
+          ?>
+            <span class="inline-flex items-center gap-1 font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200/60">
+              <i class="fa-solid fa-pen-nib text-emerald-600 mr-0.5"></i> Penulis: <strong class="text-slate-900"><?php echo esc_html( $redaksi['penulis'] ); ?></strong>
+            </span>
           <?php endif; ?>
           <span><i class="fa-regular fa-clock text-emerald-600 mr-1"></i> <?php echo esc_html( mtsn1_reading_time() ); ?></span>
         </div>
@@ -75,6 +79,56 @@ get_header();
         <div class="prose max-w-none text-slate-700 text-sm sm:text-base leading-relaxed">
           <?php the_content(); ?>
         </div>
+
+        <?php if ( get_post_type() === 'post' ) : 
+            $redaksi = function_exists( 'mtsn1_get_berita_redaksi' ) ? mtsn1_get_berita_redaksi( get_the_ID() ) : array( 'penulis' => get_the_author(), 'editor' => 'Tim Humas MTsN 1 Blitar', 'foto' => 'Tim Media MTsN 1 Blitar' );
+        ?>
+          <!-- Kotak Redaksi & Peliputan (Penulis, Editor, Foto) -->
+          <div class="mt-8 mb-2 p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-emerald-50/90 via-slate-50 to-white border border-emerald-100/90 shadow-sm">
+            <div class="flex items-center justify-between gap-2 mb-4 pb-2.5 border-b border-emerald-200/60">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-4 rounded-full bg-emerald-600"></span>
+                <span class="text-xs font-black uppercase tracking-wider text-emerald-950">Tim Liputan & Redaksi Warta</span>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-md">Publikasi Resmi</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <!-- Kolom Penulis -->
+              <div class="flex items-center gap-3 p-3 rounded-xl bg-white border border-emerald-50/80 shadow-xs">
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-sm">
+                  <i class="fa-solid fa-pen-nib"></i>
+                </div>
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Penulis / Pewarta:</span>
+                  <span class="text-xs font-bold text-slate-900 block leading-tight truncate"><?php echo esc_html( $redaksi['penulis'] ); ?></span>
+                </div>
+              </div>
+
+              <!-- Kolom Editor -->
+              <div class="flex items-center gap-3 p-3 rounded-xl bg-white border border-emerald-50/80 shadow-xs">
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-sm">
+                  <i class="fa-solid fa-user-check"></i>
+                </div>
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Editor / Redaktur:</span>
+                  <span class="text-xs font-bold text-slate-900 block leading-tight truncate"><?php echo esc_html( $redaksi['editor'] ); ?></span>
+                </div>
+              </div>
+
+              <!-- Kolom Foto -->
+              <div class="flex items-center gap-3 p-3 rounded-xl bg-white border border-emerald-50/80 shadow-xs">
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-sm">
+                  <i class="fa-solid fa-camera"></i>
+                </div>
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Dokumentasi Foto:</span>
+                  <span class="text-xs font-bold text-slate-900 block leading-tight truncate"><?php echo esc_html( $redaksi['foto'] ); ?></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        <?php endif; ?>
 
         <?php if ( get_post_type() === 'blog' ) : 
             $blog_author = function_exists( 'mtsn1_get_blog_author_data' ) ? mtsn1_get_blog_author_data( get_the_ID() ) : array( 'name' => get_the_author(), 'role' => 'GTK MTsN 1 Blitar', 'photo' => '' );
