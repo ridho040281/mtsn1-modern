@@ -16,7 +16,10 @@
           </p>
           <?php $foot_medsos = function_exists( 'mtsn1_get_medsos' ) ? mtsn1_get_medsos() : []; ?>
           <div class="text-xs text-slate-400 space-y-1.5 pt-2">
-            <p><i class="fa-solid fa-location-dot text-emerald-400 mr-2"></i> Jl. Raya Kunir No. 01, Wonodadi, Blitar, Jatim</p>
+            <?php 
+            $foot_alamat = ! empty( $foot_medsos['alamat'] ) ? $foot_medsos['alamat'] : 'Jl. Raya Kunir No. 01, Wonodadi, Blitar, Jatim';
+            ?>
+            <p><i class="fa-solid fa-location-dot text-emerald-400 mr-2"></i> <?php echo esc_html( $foot_alamat ); ?></p>
             <?php if ( ! empty( $foot_medsos['telepon'] ) ) : ?>
               <p><i class="fa-solid fa-phone text-emerald-400 mr-2"></i> Telepon: <?php echo esc_html( $foot_medsos['telepon'] ); ?></p>
             <?php endif; ?>

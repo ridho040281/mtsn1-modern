@@ -68,8 +68,10 @@ function mtsn1_render_print_berita_page( $post_id ) {
     $post_year     = get_the_date( 'Y', $post_id );
     $date_indo     = get_the_date( 'l, d F Y', $post_id );
     $reading_time  = function_exists( 'mtsn1_reading_time' ) ? mtsn1_reading_time( $post_id ) : '2 menit baca';
+    $author_id     = get_post_field( 'post_author', $post_id );
+    $author_name   = get_the_author_meta( 'display_name', $author_id );
     $redaksi       = function_exists( 'mtsn1_get_berita_redaksi' ) ? mtsn1_get_berita_redaksi( $post_id ) : array(
-        'penulis' => 'Tim Jurnalis MTsN 1 Blitar',
+        'penulis' => $author_name ? $author_name : 'Tim Humas MTsN 1 Blitar',
         'editor'  => 'Tim Humas MTsN 1 Blitar',
         'foto'    => 'Tim Media MTsN 1 Blitar',
     );

@@ -17,6 +17,7 @@ function mtsn1_get_default_medsos() {
         'instagram' => 'https://www.instagram.com/mtsn1blitar69/',
         'facebook'  => 'https://www.facebook.com/mtsn1blitar',
         'tiktok'    => '',
+        'alamat'    => 'Jl. Raya Kunir No. 01, Wonodadi, Blitar, Jatim',
         'whatsapp'  => '6281234567890',
         'telepon'   => '(0342) 801234',
         'email'     => 'info@mtsn1blitar.sch.id',
@@ -71,6 +72,7 @@ function mtsn1_save_medsos_settings() {
     $sanitized['instagram'] = ! empty( $raw['instagram'] ) ? esc_url_raw( trim( $raw['instagram'] ) ) : '';
     $sanitized['facebook']  = ! empty( $raw['facebook'] ) ? esc_url_raw( trim( $raw['facebook'] ) ) : '';
     $sanitized['tiktok']    = ! empty( $raw['tiktok'] ) ? esc_url_raw( trim( $raw['tiktok'] ) ) : '';
+    $sanitized['alamat']    = sanitize_text_field( trim( $raw['alamat'] ?? '' ) );
     $sanitized['whatsapp']  = sanitize_text_field( trim( $raw['whatsapp'] ?? '' ) );
     $sanitized['telepon']   = sanitize_text_field( trim( $raw['telepon'] ?? '' ) );
     $sanitized['email']     = sanitize_email( trim( $raw['email'] ?? '' ) );
@@ -158,6 +160,15 @@ function mtsn1_render_medsos_admin_page() {
                 </h2>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <!-- Alamat Lengkap Footer -->
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">
+                            <i class="fa-solid fa-location-dot" style="color: #059669; margin-right: 4px;"></i> Alamat Lengkap Madrasah (Tampil di Footer)
+                        </label>
+                        <input type="text" name="medsos[alamat]" value="<?php echo esc_attr( $data['alamat'] ?? 'Jl. Raya Kunir No. 01, Wonodadi, Blitar, Jatim' ); ?>" class="widefat" placeholder="Jl. Raya Kunir No. 01, Wonodadi, Blitar, Jatim" style="border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px; font-size: 13px;">
+                        <span style="font-size: 11px; color: #64748b;">Alamat resmi yang tampil di footer kolom 1 website.</span>
+                    </div>
+
                     <div>
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Nomor WhatsApp PTSP / CS</label>
                         <input type="text" name="medsos[whatsapp]" value="<?php echo esc_attr( $data['whatsapp'] ); ?>" class="widefat" placeholder="6281234567890" style="border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px;">
