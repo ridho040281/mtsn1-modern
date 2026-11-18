@@ -22,13 +22,9 @@ function mtsn1_get_berita_redaksi( $post_id = null ) {
     $editor  = get_post_meta( $post_id, '_mtsn1_berita_editor', true );
     $foto    = get_post_meta( $post_id, '_mtsn1_berita_foto', true );
 
-    // Fallback Penulis: Ambil display name author postingan
+    // Fallback Penulis
     if ( empty( $penulis ) ) {
-        $author_id = get_post_field( 'post_author', $post_id );
-        $penulis   = get_the_author_meta( 'display_name', $author_id );
-        if ( empty( $penulis ) ) {
-            $penulis = 'Tim Humas MTsN 1 Blitar';
-        }
+        $penulis = 'Tim Humas MTsN 1 Blitar';
     }
 
     // Fallback Editor
@@ -87,7 +83,7 @@ function mtsn1_berita_redaksi_render_metabox( $post ) {
             </label>
             <input type="text" id="mtsn1_berita_penulis" name="mtsn1_berita_penulis" 
                    value="<?php echo esc_attr( $penulis ); ?>" 
-                   placeholder="Default: <?php echo esc_attr( $author_name ? $author_name : 'Nama Penulis' ); ?>" 
+                   placeholder="Default: Tim Humas MTsN 1 Blitar" 
                    style="width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; font-size: 12px;" />
         </div>
 
