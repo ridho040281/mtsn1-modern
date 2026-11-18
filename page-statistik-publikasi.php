@@ -94,6 +94,38 @@ $all_prestasi = get_posts( array(
     'order'          => 'DESC',
 ) );
 
+// Hitung rincian tingkat prestasi akurat dari seluruh data prestasi
+$tingkat_data = array(
+    'internasional'  => 0,
+    'nasional'       => 0,
+    'provinsi'       => 0,
+    'kabupaten/kota' => 0,
+    'kecamatan'      => 0,
+);
+
+if ( ! empty( $all_prestasi ) ) {
+    foreach ( $all_prestasi as $p_item ) {
+        $t = function_exists( 'mtsn1_get_tingkat_prestasi' ) ? mtsn1_get_tingkat_prestasi( $p_item->ID ) : get_post_meta( $p_item->ID, '_tingkat', true );
+        $lower = strtolower( trim( (string) $t ) );
+        if ( strpos( $lower, 'internasional' ) !== false || strpos( $lower, 'international' ) !== false || strpos( $lower, 'world' ) !== false ) {
+            $tingkat_data['internasional']++;
+        } elseif ( strpos( $lower, 'nasional' ) !== false || strpos( $lower, 'national' ) !== false ) {
+            $tingkat_data['nasional']++;
+        } elseif ( strpos( $lower, 'provinsi' ) !== false || strpos( $lower, 'jatim' ) !== false || strpos( $lower, 'regional' ) !== false ) {
+            $tingkat_data['provinsi']++;
+        } elseif ( strpos( $lower, 'kab' ) !== false || strpos( $lower, 'kota' ) !== false || strpos( $lower, 'blitar' ) !== false ) {
+            $tingkat_data['kabupaten/kota']++;
+        } elseif ( strpos( $lower, 'kecamatan' ) !== false || strpos( $lower, 'wonodadi' ) !== false ) {
+            $tingkat_data['kecamatan']++;
+        } else {
+            $tingkat_data['kabupaten/kota']++;
+        }
+    }
+}
+
+$tingkat_unggulan = $tingkat_data['internasional'] + $tingkat_data['nasional'];
+$tingkat_regional = $tingkat_data['provinsi'] + $tingkat_data['kabupaten/kota'] + $tingkat_data['kecamatan'];
+
 // 6. Query Seluruh Berita
 $all_berita = get_posts( array(
     'post_type'      => 'post',
@@ -272,69 +304,169 @@ $all_berita = get_posts( array(
       </div>
     </div>
 
-    <!-- Ringkasan Angka Utama (4 Kartu Metric) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-8">
+    <!-- Ringkasan Angka Utama (Publikasi & Prestasi) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-6">
       
       <!-- Kartu 1: Total Berita -->
-      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-emerald-500 transition-all">
-        <div class="flex items-center justify-between mb-3">
-          <span class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shadow-inner">
-            <i class="fa-solid fa-newspaper"></i>
-          </span>
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">Kabar Berita</span>
+      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-emerald-500 transition-all flex items-center justify-between">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base shadow-inner">
+              <i class="fa-solid fa-newspaper"></i>
+            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">Kabar Berita</span>
+          </div>
+          <div class="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
+            <?php echo number_format_i18n( $total_berita ); ?>
+          </div>
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Berita Terpublikasi</h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">Kegiatan, liputan resmi, & artikel madrasah</p>
         </div>
-        <div class="text-3xl font-black text-slate-900">
-          <?php echo number_format_i18n( $total_berita ); ?>
+        <div class="hidden sm:flex w-14 h-14 rounded-3xl bg-emerald-50 items-center justify-center text-emerald-600/30 text-2xl">
+          <i class="fa-solid fa-newspaper"></i>
         </div>
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Berita Terpublikasi</h3>
-        <p class="text-[11px] text-slate-400 mt-1.5">Kegiatan, liputan, & opini madrasah</p>
       </div>
 
       <!-- Kartu 2: Total Prestasi -->
-      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-amber-500 transition-all">
-        <div class="flex items-center justify-between mb-3">
-          <span class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg shadow-inner">
-            <i class="fa-solid fa-trophy"></i>
-          </span>
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">Kejuaraan</span>
+      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-amber-500 transition-all flex items-center justify-between">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-base shadow-inner">
+              <i class="fa-solid fa-trophy"></i>
+            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">Semua Prestasi</span>
+          </div>
+          <div class="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
+            <?php echo number_format_i18n( $total_prestasi ); ?>
+          </div>
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Capaian Prestasi</h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">Medali & penghargaan siswa terverifikasi</p>
         </div>
-        <div class="text-3xl font-black text-slate-900">
-          <?php echo number_format_i18n( $total_prestasi ); ?>
+        <div class="hidden sm:flex w-14 h-14 rounded-3xl bg-amber-50 items-center justify-center text-amber-600/30 text-2xl">
+          <i class="fa-solid fa-trophy"></i>
         </div>
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Capaian Prestasi</h3>
-        <p class="text-[11px] text-slate-400 mt-1.5">Medali & penghargaan siswa terverifikasi</p>
       </div>
 
-      <!-- Kartu 3: Prestasi Nasional & Internasional -->
-      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-purple-500 transition-all">
-        <div class="flex items-center justify-between mb-3">
-          <span class="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg shadow-inner">
-            <i class="fa-solid fa-earth-asia"></i>
-          </span>
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-800">Unggulan</span>
+    </div>
+
+    <!-- Ringkasan Prestasi Berdasarkan Tingkat (Terpisah 5 Card) -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-3.5 px-1">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-4 rounded-full bg-amber-500"></span>
+          <h2 class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wider">Capaian Prestasi Berdasarkan Tingkat Kejuaraan</h2>
         </div>
-        <div class="text-3xl font-black text-slate-900">
-          <?php echo number_format_i18n( $tingkat_unggulan ); ?>
-        </div>
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Nasional & Internasional</h3>
-        <p class="text-[11px] text-slate-400 mt-1.5"><?php echo esc_html( $tingkat_data['internasional'] ); ?> Internasional, <?php echo esc_html( $tingkat_data['nasional'] ); ?> Nasional</p>
+        <span class="text-[11px] font-bold text-slate-400 hidden sm:inline"><i class="fa-solid fa-hand-pointer text-amber-500 mr-1"></i> Klik kartu untuk filter tabel</span>
       </div>
 
-      <!-- Kartu 4: Prestasi Tingkat Provinsi & Daerah -->
-      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-blue-500 transition-all">
-        <div class="flex items-center justify-between mb-3">
-          <span class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg shadow-inner">
-            <i class="fa-solid fa-award"></i>
-          </span>
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-800">Regional</span>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
+        
+        <!-- Kartu 1: Tingkat Internasional -->
+        <div onclick="quickFilterTingkat('internasional')" class="group cursor-pointer bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200 hover:shadow-xl hover:border-purple-500 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white flex items-center justify-center text-base shadow-inner transition-colors duration-300">
+                <i class="fa-solid fa-earth-asia"></i>
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-purple-100 text-purple-800">Dunia</span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-purple-600 transition">
+              <?php echo number_format_i18n( $tingkat_data['internasional'] ); ?>
+            </div>
+            <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Internasional</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Kompetisi Global</p>
+          </div>
+          <div class="text-[10px] font-bold text-slate-400 group-hover:text-purple-600 flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 transition">
+            <span>Filter Tabel</span>
+            <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
+          </div>
         </div>
-        <div class="text-3xl font-black text-slate-900">
-          <?php echo number_format_i18n( $tingkat_regional ); ?>
-        </div>
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Provinsi & Kab/Kota</h3>
-        <p class="text-[11px] text-slate-400 mt-1.5"><?php echo esc_html( $tingkat_data['provinsi'] ); ?> Provinsi, <?php echo esc_html( $tingkat_data['kabupaten/kota'] ); ?> Kab/Kota</p>
-      </div>
 
+        <!-- Kartu 2: Tingkat Nasional -->
+        <div onclick="quickFilterTingkat('nasional')" class="group cursor-pointer bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200 hover:shadow-xl hover:border-rose-500 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white flex items-center justify-center text-base shadow-inner transition-colors duration-300">
+                <i class="fa-solid fa-flag"></i>
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-100 text-rose-800">Nasional</span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-rose-600 transition">
+              <?php echo number_format_i18n( $tingkat_data['nasional'] ); ?>
+            </div>
+            <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Nasional</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Ajang Se-Indonesia</p>
+          </div>
+          <div class="text-[10px] font-bold text-slate-400 group-hover:text-rose-600 flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 transition">
+            <span>Filter Tabel</span>
+            <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Kartu 3: Tingkat Provinsi -->
+        <div onclick="quickFilterTingkat('provinsi')" class="group cursor-pointer bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200 hover:shadow-xl hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center text-base shadow-inner transition-colors duration-300">
+                <i class="fa-solid fa-award"></i>
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-800">Provinsi</span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-blue-600 transition">
+              <?php echo number_format_i18n( $tingkat_data['provinsi'] ); ?>
+            </div>
+            <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Provinsi</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Jawa Timur & Regional</p>
+          </div>
+          <div class="text-[10px] font-bold text-slate-400 group-hover:text-blue-600 flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 transition">
+            <span>Filter Tabel</span>
+            <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Kartu 4: Tingkat Kabupaten / Kota -->
+        <div onclick="quickFilterTingkat('kabupaten')" class="group cursor-pointer bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200 hover:shadow-xl hover:border-amber-500 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white flex items-center justify-center text-base shadow-inner transition-colors duration-300">
+                <i class="fa-solid fa-city"></i>
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">Kab / Kota</span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-amber-600 transition">
+              <?php echo number_format_i18n( $tingkat_data['kabupaten/kota'] ); ?>
+            </div>
+            <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Kab / Kota</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Blitar Raya & Sekitar</p>
+          </div>
+          <div class="text-[10px] font-bold text-slate-400 group-hover:text-amber-600 flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 transition">
+            <span>Filter Tabel</span>
+            <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Kartu 5: Tingkat Kecamatan -->
+        <div onclick="quickFilterTingkat('kecamatan')" class="group cursor-pointer bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200 hover:shadow-xl hover:border-emerald-500 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between col-span-2 sm:col-span-1">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-base shadow-inner transition-colors duration-300">
+                <i class="fa-solid fa-location-dot"></i>
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">Kecamatan</span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-emerald-600 transition">
+              <?php echo number_format_i18n( $tingkat_data['kecamatan'] ); ?>
+            </div>
+            <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">Kecamatan</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Kec. Wonodadi & Sub-Rayon</p>
+          </div>
+          <div class="text-[10px] font-bold text-slate-400 group-hover:text-emerald-600 flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 transition">
+            <span>Filter Tabel</span>
+            <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- Rincian Tingkat Prestasi & Grafik Publikasi Bulanan -->
@@ -797,7 +929,18 @@ function onFilterChange() {
 
     const matchYear = (!selYear || rowYear === selYear);
     const matchMonth = (!selMonth || rowMonth === selMonth);
-    const matchTingkat = (currentTab === 'berita' || !selTingkat || rowTingkat.indexOf(selTingkat) !== -1);
+    let matchTingkat = (currentTab === 'berita' || !selTingkat);
+    if (!matchTingkat) {
+      if (selTingkat === 'kabupaten' || selTingkat === 'kab' || selTingkat === 'kab/kota') {
+        matchTingkat = (rowTingkat.indexOf('kab') !== -1 || rowTingkat.indexOf('kota') !== -1 || rowTingkat.indexOf('blitar') !== -1);
+      } else if (selTingkat === 'provinsi') {
+        matchTingkat = (rowTingkat.indexOf('provinsi') !== -1 || rowTingkat.indexOf('jatim') !== -1 || rowTingkat.indexOf('regional') !== -1);
+      } else if (selTingkat === 'kecamatan') {
+        matchTingkat = (rowTingkat.indexOf('kecamatan') !== -1 || rowTingkat.indexOf('wonodadi') !== -1);
+      } else {
+        matchTingkat = (rowTingkat.indexOf(selTingkat) !== -1);
+      }
+    }
     const matchSearch = (!query || rowSearch.indexOf(query) !== -1);
 
     if (matchYear && matchMonth && matchTingkat && matchSearch) {
