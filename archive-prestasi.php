@@ -266,6 +266,16 @@ document.addEventListener('DOMContentLoaded', function () {
       filterCards();
     });
   });
+
+  // Dukungan parameter URL (misal: /prestasi/?tingkat=nasional)
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramTingkat = urlParams.get('tingkat');
+  if (paramTingkat) {
+    const targetPill = filterPills.find(p => (p.getAttribute('data-filter') || '').toLowerCase() === paramTingkat.toLowerCase());
+    if (targetPill) {
+      targetPill.click();
+    }
+  }
 });
 </script>
 
