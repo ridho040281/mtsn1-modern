@@ -48,7 +48,7 @@ foreach ( $tingkat_raw as $tr ) {
 $tingkat_unggulan = $tingkat_data['internasional'] + $tingkat_data['nasional'];
 $tingkat_regional = $tingkat_data['provinsi'] + $tingkat_data['kabupaten/kota'] + $tingkat_data['kecamatan'];
 
-// 3. Data Publikasi per Bulan (Tahun Berjalan)
+// 3. Data Publikasi per Bulan (Tahun Berjalan 2026)
 $current_year = date( 'Y' );
 $berita_monthly_raw = $wpdb->get_results(
     $wpdb->prepare(
@@ -72,7 +72,7 @@ $prestasi_monthly_raw = $wpdb->get_results(
 
 $nama_bulan = array( 1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des' );
 $chart_data = array();
-$max_monthly = 1;
+$max_single_val = 1;
 
 for ( $m = 1; $m <= 12; $m++ ) {
     $b_count = 0;
@@ -89,15 +89,17 @@ for ( $m = 1; $m <= 12; $m++ ) {
             break;
         }
     }
-    $total_m = $b_count + $p_count;
-    if ( $total_m > $max_monthly ) {
-        $max_monthly = $total_m;
+    if ( $b_count > $max_single_val ) {
+        $max_single_val = $b_count;
+    }
+    if ( $p_count > $max_single_val ) {
+        $max_single_val = $p_count;
     }
     $chart_data[$m] = array(
         'nama'     => $nama_bulan[$m],
         'berita'   => $b_count,
         'prestasi' => $p_count,
-        'total'    => $total_m,
+        'total'    => $b_count + $p_count,
     );
 }
 
@@ -120,7 +122,114 @@ $recent_berita = get_posts( array(
 ) );
 ?>
 
-<div class="py-10 bg-slate-100 min-h-screen">
+<style>
+/* CSS Mandiri untuk Grafik & Layout Dashboard agar 100% konsisten */
+.stat-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+@media (min-width: 1024px) {
+  .stat-layout-grid {
+    grid-template-columns: 360px 1fr;
+  }
+}
+.stat-chart-wrapper {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px;
+  height: 220px;
+  padding-top: 28px;
+  padding-bottom: 6px;
+  width: 100%;
+}
+@media (max-width: 640px) {
+  .stat-chart-wrapper {
+    overflow-x: auto;
+    min-width: 540px;
+  }
+}
+.stat-chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+  min-width: 32px;
+}
+.stat-bars-box {
+  width: 100%;
+  height: 160px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 4px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.stat-bars-box:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.stat-bar {
+  flex: 1;
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.4s ease, opacity 0.2s ease;
+  position: relative;
+}
+.stat-bar-b {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+}
+.stat-bar-p {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+}
+.stat-bar:hover {
+  opacity: 0.9;
+}
+.stat-col-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 8px;
+  text-align: center;
+}
+.stat-col-label.current-m {
+  color: #047857;
+  font-weight: 900;
+}
+.stat-tooltip {
+  position: absolute;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 40;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.stat-chart-col:hover .stat-tooltip {
+  opacity: 1;
+}
+</style>
+
+<div class="py-8 sm:py-12 bg-slate-100 min-h-screen">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <!-- Breadcrumb -->
@@ -133,24 +242,24 @@ $recent_berita = get_posts( array(
     </nav>
 
     <!-- Header Banner -->
-    <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden mb-10 border border-emerald-800/40">
-      <div class="absolute -right-12 -bottom-12 w-80 h-80 rounded-full bg-emerald-500/10 pointer-events-none blur-3xl"></div>
-      <div class="absolute right-12 top-1/2 -translate-y-1/2 opacity-10 text-9xl hidden lg:block pointer-events-none text-emerald-300">
+    <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden mb-8 border border-emerald-800/40">
+      <div class="absolute -right-12 -bottom-12 w-72 h-72 rounded-full bg-emerald-500/10 pointer-events-none blur-3xl"></div>
+      <div class="absolute right-10 top-1/2 -translate-y-1/2 opacity-10 text-8xl hidden lg:block pointer-events-none text-emerald-300">
         <i class="fa-solid fa-chart-line"></i>
       </div>
 
       <div class="relative z-10 max-w-3xl">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-950/80 text-gold-400 border border-gold-400/30 mb-4 shadow-sm backdrop-blur-md">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-950/80 text-amber-300 border border-amber-400/30 mb-3 shadow-sm backdrop-blur-md">
           <i class="fa-solid fa-chart-pie text-amber-400"></i> Dashboard Transparansi & Kinerja Publikasi
         </div>
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-sm">
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-sm">
           Statistik Publikasi & Prestasi
         </h1>
-        <p class="text-emerald-100 text-sm sm:text-base mt-3 leading-relaxed">
+        <p class="text-emerald-100 text-xs sm:text-sm sm:leading-relaxed mt-2.5">
           Pusat data publikasi resmi MTsN 1 Blitar. Menyajikan rekapitulasi artikel berita madrasah serta dokumentasi capaian prestasi siswa dari tingkat daerah hingga internasional secara berkala dan transparan.
         </p>
 
-        <div class="flex flex-wrap items-center gap-4 mt-6 pt-4 border-t border-emerald-800/60 text-xs text-emerald-200">
+        <div class="flex flex-wrap items-center gap-3 sm:gap-5 mt-5 pt-3 border-t border-emerald-800/60 text-xs text-emerald-200 font-medium">
           <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-check-double text-emerald-400"></i> Data Terupdate Otomatis</span>
           <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-calendar-check text-amber-400"></i> Periode Tahun <?php echo esc_html( $current_year ); ?></span>
           <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-school text-sky-400"></i> MTsN 1 Blitar</span>
@@ -159,186 +268,198 @@ $recent_berita = get_posts( array(
     </div>
 
     <!-- Ringkasan Angka Utama (4 Kartu Metric) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-8">
       
       <!-- Kartu 1: Total Berita -->
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-emerald-500 transition-all group">
-        <div class="flex items-center justify-between mb-4">
-          <span class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-emerald-500 transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shadow-inner">
             <i class="fa-solid fa-newspaper"></i>
           </span>
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">Aktif</span>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">Kabar Berita</span>
         </div>
-        <div class="text-3xl sm:text-4xl font-black text-slate-900 group-hover:text-emerald-700 transition">
+        <div class="text-3xl font-black text-slate-900">
           <?php echo number_format_i18n( $total_berita ); ?>
         </div>
         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Berita Terpublikasi</h3>
-        <p class="text-[11px] text-slate-400 mt-2">Kabar kegiatan, edukasi, & liputan madrasah</p>
+        <p class="text-[11px] text-slate-400 mt-1.5">Kegiatan, liputan, & opini madrasah</p>
       </div>
 
       <!-- Kartu 2: Total Prestasi -->
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-amber-500 transition-all group">
-        <div class="flex items-center justify-between mb-4">
-          <span class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-amber-500 transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg shadow-inner">
             <i class="fa-solid fa-trophy"></i>
           </span>
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">Juara</span>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800">Kejuaraan</span>
         </div>
-        <div class="text-3xl sm:text-4xl font-black text-slate-900 group-hover:text-amber-600 transition">
+        <div class="text-3xl font-black text-slate-900">
           <?php echo number_format_i18n( $total_prestasi ); ?>
         </div>
         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total Capaian Prestasi</h3>
-        <p class="text-[11px] text-slate-400 mt-2">Medali & penghargaan siswa terverifikasi</p>
+        <p class="text-[11px] text-slate-400 mt-1.5">Medali & penghargaan siswa terverifikasi</p>
       </div>
 
       <!-- Kartu 3: Prestasi Nasional & Internasional -->
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-purple-500 transition-all group">
-        <div class="flex items-center justify-between mb-4">
-          <span class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-purple-500 transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg shadow-inner">
             <i class="fa-solid fa-earth-asia"></i>
           </span>
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-800">Top Level</span>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-800">Unggulan</span>
         </div>
-        <div class="text-3xl sm:text-4xl font-black text-slate-900 group-hover:text-purple-600 transition">
+        <div class="text-3xl font-black text-slate-900">
           <?php echo number_format_i18n( $tingkat_unggulan ); ?>
         </div>
         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Nasional & Internasional</h3>
-        <p class="text-[11px] text-slate-400 mt-2"><?php echo esc_html( $tingkat_data['internasional'] ); ?> Internasional, <?php echo esc_html( $tingkat_data['nasional'] ); ?> Nasional</p>
+        <p class="text-[11px] text-slate-400 mt-1.5"><?php echo esc_html( $tingkat_data['internasional'] ); ?> Internasional, <?php echo esc_html( $tingkat_data['nasional'] ); ?> Nasional</p>
       </div>
 
       <!-- Kartu 4: Prestasi Tingkat Provinsi & Daerah -->
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-blue-500 transition-all group">
-        <div class="flex items-center justify-between mb-4">
-          <span class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-blue-500 transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg shadow-inner">
             <i class="fa-solid fa-award"></i>
           </span>
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-800">Regional</span>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-800">Regional</span>
         </div>
-        <div class="text-3xl sm:text-4xl font-black text-slate-900 group-hover:text-blue-600 transition">
+        <div class="text-3xl font-black text-slate-900">
           <?php echo number_format_i18n( $tingkat_regional ); ?>
         </div>
         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Provinsi & Kab/Kota</h3>
-        <p class="text-[11px] text-slate-400 mt-2"><?php echo esc_html( $tingkat_data['provinsi'] ); ?> Provinsi, <?php echo esc_html( $tingkat_data['kabupaten/kota'] ); ?> Kab/Kota</p>
+        <p class="text-[11px] text-slate-400 mt-1.5"><?php echo esc_html( $tingkat_data['provinsi'] ); ?> Provinsi, <?php echo esc_html( $tingkat_data['kabupaten/kota'] ); ?> Kab/Kota</p>
       </div>
 
     </div>
 
-    <!-- Rincian Tingkat Prestasi & Grafik Publikasi Bulanan -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+    <!-- Rincian Tingkat Prestasi & Grafik Publikasi Bulanan (Menggunakan Grid Mandiri) -->
+    <div class="stat-layout-grid mb-8">
 
-      <!-- Kolom Kiri (1/3): Rincian Tingkat Prestasi -->
-      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-          <div>
-            <h3 class="text-base font-black text-slate-900">Rincian Prestasi per Tingkat</h3>
-            <p class="text-xs text-slate-500">Distribusi jenjang kompetisi siswa</p>
-          </div>
-          <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm shadow-sm">
-            <i class="fa-solid fa-medal"></i>
-          </span>
-        </div>
-
-        <div class="space-y-4">
-          <?php
-          $levels = array(
-              array( 'label' => 'Internasional', 'count' => $tingkat_data['internasional'], 'color' => 'bg-purple-600', 'badge' => 'bg-purple-100 text-purple-800' ),
-              array( 'label' => 'Nasional', 'count' => $tingkat_data['nasional'], 'color' => 'bg-rose-500', 'badge' => 'bg-rose-100 text-rose-800' ),
-              array( 'label' => 'Provinsi', 'count' => $tingkat_data['provinsi'], 'color' => 'bg-blue-600', 'badge' => 'bg-blue-100 text-blue-800' ),
-              array( 'label' => 'Kabupaten / Kota', 'count' => $tingkat_data['kabupaten/kota'], 'color' => 'bg-amber-500', 'badge' => 'bg-amber-100 text-amber-800' ),
-              array( 'label' => 'Kecamatan / Sub-Rayon', 'count' => $tingkat_data['kecamatan'], 'color' => 'bg-emerald-600', 'badge' => 'bg-emerald-100 text-emerald-800' ),
-          );
-
-          foreach ( $levels as $lvl ) :
-              $pct = $total_prestasi > 0 ? round( ( $lvl['count'] / $total_prestasi ) * 100, 1 ) : 0;
-          ?>
+      <!-- Kolom Kiri: Rincian Tingkat Prestasi -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-5 pb-3.5 border-b border-slate-100">
             <div>
-              <div class="flex items-center justify-between text-xs font-bold mb-1.5">
-                <span class="text-slate-700 flex items-center gap-1.5">
-                  <span class="w-2.5 h-2.5 rounded-full <?php echo esc_attr( $lvl['color'] ); ?>"></span>
-                  <?php echo esc_html( $lvl['label'] ); ?>
-                </span>
-                <span class="text-slate-900 font-black">
-                  <?php echo esc_html( $lvl['count'] ); ?> <span class="text-[10px] text-slate-400 font-semibold">(<?php echo esc_html( $pct ); ?>%)</span>
-                </span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                <div class="<?php echo esc_attr( $lvl['color'] ); ?> h-2.5 rounded-full transition-all duration-500" style="width: <?php echo esc_attr( max( 4, $pct ) ); ?>%"></div>
-              </div>
+              <h3 class="text-base font-black text-slate-900">Rincian Prestasi per Tingkat</h3>
+              <p class="text-xs text-slate-500">Distribusi jenjang kompetisi siswa</p>
             </div>
-          <?php endforeach; ?>
+            <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm shadow-sm">
+              <i class="fa-solid fa-medal"></i>
+            </span>
+          </div>
+
+          <div class="space-y-4">
+            <?php
+            $levels = array(
+                array( 'label' => 'Internasional', 'count' => $tingkat_data['internasional'], 'bar' => '#9333ea', 'bg' => '#f3e8ff', 'text' => '#6b21a8' ),
+                array( 'label' => 'Nasional', 'count' => $tingkat_data['nasional'], 'bar' => '#f43f5e', 'bg' => '#ffe4e6', 'text' => '#9f1239' ),
+                array( 'label' => 'Provinsi', 'count' => $tingkat_data['provinsi'], 'bar' => '#2563eb', 'bg' => '#dbeafe', 'text' => '#1e40af' ),
+                array( 'label' => 'Kabupaten / Kota', 'count' => $tingkat_data['kabupaten/kota'], 'bar' => '#f59e0b', 'bg' => '#fef3c7', 'text' => '#92400e' ),
+                array( 'label' => 'Kecamatan / Sub-Rayon', 'count' => $tingkat_data['kecamatan'], 'bar' => '#059669', 'bg' => '#d1fae5', 'text' => '#065f46' ),
+            );
+
+            foreach ( $levels as $lvl ) :
+                $pct = $total_prestasi > 0 ? round( ( $lvl['count'] / $total_prestasi ) * 100, 1 ) : 0;
+            ?>
+              <div>
+                <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+                  <span class="text-slate-700 flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full" style="background-color: <?php echo esc_attr( $lvl['bar'] ); ?>"></span>
+                    <?php echo esc_html( $lvl['label'] ); ?>
+                  </span>
+                  <span class="text-slate-900 font-black">
+                    <?php echo esc_html( $lvl['count'] ); ?> <span class="text-[10px] text-slate-400 font-semibold">(<?php echo esc_html( $pct ); ?>%)</span>
+                  </span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                  <div class="h-2.5 rounded-full transition-all duration-500" style="width: <?php echo esc_attr( max( 4, $pct ) ); ?>%; background-color: <?php echo esc_attr( $lvl['bar'] ); ?>;"></div>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
         </div>
 
-        <div class="mt-8 pt-6 border-t border-slate-100">
-          <a href="<?php echo esc_url( home_url( '/prestasi' ) ); ?>" class="w-full py-3 px-4 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 font-extrabold text-xs flex items-center justify-center gap-2 transition border border-amber-200 shadow-sm">
+        <div class="mt-6 pt-5 border-t border-slate-100">
+          <a href="<?php echo esc_url( home_url( '/prestasi' ) ); ?>" class="w-full py-2.5 px-4 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 font-extrabold text-xs flex items-center justify-center gap-2 transition border border-amber-200 shadow-sm">
             <span>Buka Galeri Prestasi Siswa</span>
             <i class="fa-solid fa-arrow-right text-[11px]"></i>
           </a>
         </div>
       </div>
 
-      <!-- Kolom Kanan (2/3): Grafik Keaktifan Bulanan -->
-      <div class="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 flex flex-col justify-between">
+      <!-- Kolom Kanan: Grafik Keaktifan Bulanan -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
         <div>
-          <div class="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
             <div>
               <h3 class="text-base font-black text-slate-900">Aktivitas Rilis Publikasi Tahun <?php echo esc_html( $current_year ); ?></h3>
-              <p class="text-xs text-slate-500">Jumlah terbitan berita dan prestasi tiap bulan</p>
+              <p class="text-xs text-slate-500">Jumlah terbitan berita dan capaian prestasi per bulan</p>
             </div>
-            <div class="flex items-center gap-3 text-xs font-bold">
-              <span class="flex items-center gap-1.5 text-slate-600"><span class="w-3 h-3 rounded bg-emerald-600"></span> Berita</span>
-              <span class="flex items-center gap-1.5 text-slate-600"><span class="w-3 h-3 rounded bg-amber-500"></span> Prestasi</span>
+            <div class="flex items-center gap-4 text-xs font-bold">
+              <span class="flex items-center gap-1.5 text-slate-700"><span class="w-3 h-3 rounded" style="background-color: #059669;"></span> Berita</span>
+              <span class="flex items-center gap-1.5 text-slate-700"><span class="w-3 h-3 rounded" style="background-color: #d97706;"></span> Prestasi</span>
             </div>
           </div>
 
-          <!-- Bar Chart Sederhana Responsif -->
-          <div class="grid grid-cols-6 sm:grid-cols-12 gap-2 sm:gap-3 items-end h-56 pt-8 pb-2 px-1">
-            <?php foreach ( $chart_data as $m => $cd ) :
-                $b_height = $max_monthly > 0 ? ( $cd['berita'] / $max_monthly ) * 100 : 0;
-                $p_height = $max_monthly > 0 ? ( $cd['prestasi'] / $max_monthly ) * 100 : 0;
-                $is_current_month = ( (int) date( 'n' ) === $m );
-            ?>
-              <div class="flex flex-col items-center gap-1.5 h-full justify-end group/bar relative">
-                <!-- Tooltip Hover -->
-                <div class="opacity-0 group-hover/bar:opacity-100 pointer-events-none absolute -top-12 z-20 bg-slate-900 text-white text-[10px] font-bold rounded-lg py-1 px-2 whitespace-nowrap shadow-xl transition-all">
-                  <?php echo esc_html( $cd['nama'] ); ?>: <?php echo esc_html( $cd['berita'] ); ?> Berita, <?php echo esc_html( $cd['prestasi'] ); ?> Prestasi
-                </div>
+          <!-- Bar Chart Mandiri (Tampil Rapi di Semua Device) -->
+          <div class="overflow-x-auto pb-2">
+            <div class="stat-chart-wrapper">
+              <?php foreach ( $chart_data as $m => $cd ) :
+                  $b_pct = $max_single_val > 0 ? ( $cd['berita'] / $max_single_val ) * 100 : 0;
+                  $p_pct = $max_single_val > 0 ? ( $cd['prestasi'] / $max_single_val ) * 100 : 0;
+                  $is_current_month = ( (int) date( 'n' ) === $m );
+              ?>
+                <div class="stat-chart-col">
+                  <!-- Tooltip Angka -->
+                  <div class="stat-tooltip">
+                    <?php echo esc_html( $cd['nama'] ); ?>: <?php echo esc_html( $cd['berita'] ); ?> Berita, <?php echo esc_html( $cd['prestasi'] ); ?> Prestasi
+                  </div>
 
-                <!-- Combined Bars Container -->
-                <div class="w-full flex items-end justify-center gap-0.5 sm:gap-1 h-44 bg-slate-50 rounded-xl p-1 border <?php echo $is_current_month ? 'border-emerald-300 ring-2 ring-emerald-100' : 'border-slate-100'; ?>">
-                  <!-- Berita Bar -->
-                  <div class="w-1/2 bg-emerald-600 rounded-t-md hover:bg-emerald-500 transition-all" style="height: <?php echo esc_attr( max( 4, $b_height ) ); ?>%"></div>
-                  <!-- Prestasi Bar -->
-                  <div class="w-1/2 bg-amber-500 rounded-t-md hover:bg-amber-400 transition-all" style="height: <?php echo esc_attr( max( 4, $p_height ) ); ?>%"></div>
-                </div>
+                  <!-- Wadah Batang Bar -->
+                  <div class="stat-bars-box" style="<?php echo $is_current_month ? 'border-color: #10b981; background-color: #ecfdf5;' : ''; ?>">
+                    <!-- Bar Berita -->
+                    <div class="stat-bar stat-bar-b" title="Berita: <?php echo esc_attr( $cd['berita'] ); ?>" style="height: <?php echo esc_attr( max( 4, round( $b_pct ) ) ); ?>%;">
+                      <?php if ( $cd['berita'] > 0 ) : ?>
+                        <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] font-black text-emerald-800 pointer-events-none"><?php echo esc_html( $cd['berita'] ); ?></span>
+                      <?php endif; ?>
+                    </div>
+                    <!-- Bar Prestasi -->
+                    <div class="stat-bar stat-bar-p" title="Prestasi: <?php echo esc_attr( $cd['prestasi'] ); ?>" style="height: <?php echo esc_attr( max( 4, round( $p_pct ) ) ); ?>%;">
+                      <?php if ( $cd['prestasi'] > 0 ) : ?>
+                        <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] font-black text-amber-800 pointer-events-none"><?php echo esc_html( $cd['prestasi'] ); ?></span>
+                      <?php endif; ?>
+                    </div>
+                  </div>
 
-                <!-- Month Label -->
-                <span class="text-[11px] font-bold <?php echo $is_current_month ? 'text-emerald-700 font-black' : 'text-slate-500'; ?>">
-                  <?php echo esc_html( $cd['nama'] ); ?>
-                </span>
-              </div>
-            <?php endforeach; ?>
+                  <!-- Label Bulan -->
+                  <span class="stat-col-label <?php echo $is_current_month ? 'current-m' : ''; ?>">
+                    <?php echo esc_html( $cd['nama'] ); ?>
+                  </span>
+                </div>
+              <?php endforeach; ?>
+            </div>
           </div>
         </div>
 
-        <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500">
-          <span>* Rangkuman frekuensi publikasi humas & kesiswaan MTsN 1 Blitar</span>
-          <span class="font-bold text-slate-700">Total Periode Ini: <?php echo esc_html( array_sum( array_column( $chart_data, 'total' ) ) ); ?> Publikasi</span>
+        <div class="mt-4 pt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500">
+          <span>* Arahkan kursor atau sentuh diagram untuk melihat rincian terbitan</span>
+          <span class="font-bold text-slate-800">Total Rilis <?php echo esc_html( $current_year ); ?>: <strong class="text-emerald-700"><?php echo esc_html( array_sum( array_column( $chart_data, 'total' ) ) ); ?> Publikasi</strong></span>
         </div>
       </div>
 
     </div>
 
     <!-- Tab Section: Daftar Rekapitulasi Berita & Prestasi Terbaru -->
-    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200">
+    <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200">
       
       <!-- Tab Header Buttons -->
-      <div class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-100">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
         <div class="flex items-center gap-2">
-          <button type="button" onclick="switchStatTab('prestasi')" id="btn-tab-prestasi" class="px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-amber-500 text-slate-950 shadow-md cursor-pointer flex items-center gap-2">
+          <button type="button" onclick="switchStatTab('prestasi')" id="btn-tab-prestasi" class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-amber-500 text-slate-950 shadow-md cursor-pointer flex items-center gap-2">
             <i class="fa-solid fa-trophy"></i>
             <span>Rekap Prestasi Terbaru (20)</span>
           </button>
-          <button type="button" onclick="switchStatTab('berita')" id="btn-tab-berita" class="px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2">
+          <button type="button" onclick="switchStatTab('berita')" id="btn-tab-berita" class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2">
             <i class="fa-solid fa-newspaper"></i>
             <span>Rekap Berita Terbaru (20)</span>
           </button>
@@ -349,7 +470,7 @@ $recent_berita = get_posts( array(
           <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
             <i class="fa-solid fa-magnifying-glass"></i>
           </span>
-          <input type="text" id="stat-search" onkeyup="filterStatRows()" placeholder="Cari dalam tabel rekap..." class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
+          <input type="text" id="stat-search" onkeyup="filterStatRows()" placeholder="Cari dalam tabel rekap..." class="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
         </div>
       </div>
 
@@ -377,27 +498,27 @@ $recent_berita = get_posts( array(
                   $date    = get_the_date( 'd M Y', $pid );
               ?>
                 <tr class="stat-row hover:bg-slate-50/80 transition" data-search="<?php echo esc_attr( strtolower( $prestasi->post_title . ' ' . $peraih . ' ' . $tingkat ) ); ?>">
-                  <td class="py-3.5 px-3 font-bold text-slate-400"><?php echo esc_html( $no++ ); ?></td>
-                  <td class="py-3.5 px-3">
+                  <td class="py-3 px-3 font-bold text-slate-400"><?php echo esc_html( $no++ ); ?></td>
+                  <td class="py-3 px-3">
                     <a href="<?php echo esc_url( get_permalink( $pid ) ); ?>" class="font-bold text-slate-900 hover:text-amber-600 transition line-clamp-1">
                       <?php echo esc_html( $prestasi->post_title ); ?>
                     </a>
                   </td>
-                  <td class="py-3.5 px-3 text-slate-600">
+                  <td class="py-3 px-3 text-slate-600">
                     <?php echo $peraih ? esc_html( $peraih ) : '<span class="text-slate-400 italic">-</span>'; ?>
                   </td>
-                  <td class="py-3.5 px-3">
+                  <td class="py-3 px-3">
                     <?php if ( function_exists( 'mtsn1_render_tingkat_badge' ) && $tingkat ) : ?>
                       <?php echo mtsn1_render_tingkat_badge( $tingkat ); ?>
                     <?php else : ?>
                       <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700"><?php echo esc_html( $tingkat ?: 'Madrasah' ); ?></span>
                     <?php endif; ?>
                   </td>
-                  <td class="py-3.5 px-3 text-slate-500 whitespace-nowrap">
+                  <td class="py-3 px-3 text-slate-500 whitespace-nowrap">
                     <?php echo esc_html( $date ); ?>
                   </td>
-                  <td class="py-3.5 px-3 text-right">
-                    <a href="<?php echo esc_url( get_permalink( $pid ) ); ?>" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-black text-[11px] transition shadow-xs">
+                  <td class="py-3 px-3 text-right">
+                    <a href="<?php echo esc_url( get_permalink( $pid ) ); ?>" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-black text-[11px] transition shadow-xs">
                       <span>Flyer</span>
                       <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
                     </a>
@@ -434,25 +555,25 @@ $recent_berita = get_posts( array(
                   $date_b   = get_the_date( 'd M Y', $bid );
               ?>
                 <tr class="stat-row hover:bg-slate-50/80 transition" data-search="<?php echo esc_attr( strtolower( $berita->post_title . ' ' . $cat_name . ' ' . $author ) ); ?>">
-                  <td class="py-3.5 px-3 font-bold text-slate-400"><?php echo esc_html( $no_b++ ); ?></td>
-                  <td class="py-3.5 px-3">
+                  <td class="py-3 px-3 font-bold text-slate-400"><?php echo esc_html( $no_b++ ); ?></td>
+                  <td class="py-3 px-3">
                     <a href="<?php echo esc_url( get_permalink( $bid ) ); ?>" class="font-bold text-slate-900 hover:text-emerald-700 transition line-clamp-1">
                       <?php echo esc_html( $berita->post_title ); ?>
                     </a>
                   </td>
-                  <td class="py-3.5 px-3">
+                  <td class="py-3 px-3">
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/60">
                       <?php echo esc_html( $cat_name ); ?>
                     </span>
                   </td>
-                  <td class="py-3.5 px-3 text-slate-600">
+                  <td class="py-3 px-3 text-slate-600">
                     <i class="fa-regular fa-user mr-1 text-slate-400"></i> <?php echo esc_html( $author ); ?>
                   </td>
-                  <td class="py-3.5 px-3 text-slate-500 whitespace-nowrap">
+                  <td class="py-3 px-3 text-slate-500 whitespace-nowrap">
                     <?php echo esc_html( $date_b ); ?>
                   </td>
-                  <td class="py-3.5 px-3 text-right">
-                    <a href="<?php echo esc_url( get_permalink( $bid ) ); ?>" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-black text-[11px] transition shadow-xs">
+                  <td class="py-3 px-3 text-right">
+                    <a href="<?php echo esc_url( get_permalink( $bid ) ); ?>" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-black text-[11px] transition shadow-xs">
                       <span>Baca</span>
                       <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
                     </a>
@@ -479,13 +600,13 @@ function switchStatTab(tab) {
   if (searchInput) searchInput.value = '';
 
   if (tab === 'prestasi') {
-    btnPrestasi.className = 'px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-amber-500 text-slate-950 shadow-md cursor-pointer flex items-center gap-2';
-    btnBerita.className = 'px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2';
+    btnPrestasi.className = 'px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-amber-500 text-slate-950 shadow-md cursor-pointer flex items-center gap-2';
+    btnBerita.className = 'px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2';
     tabPrestasi.classList.remove('hidden');
     tabBerita.classList.add('hidden');
   } else {
-    btnBerita.className = 'px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-emerald-600 text-white shadow-md cursor-pointer flex items-center gap-2';
-    btnPrestasi.className = 'px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2';
+    btnBerita.className = 'px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all bg-emerald-600 text-white shadow-md cursor-pointer flex items-center gap-2';
+    btnPrestasi.className = 'px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer flex items-center gap-2';
     tabBerita.classList.remove('hidden');
     tabPrestasi.classList.add('hidden');
   }
