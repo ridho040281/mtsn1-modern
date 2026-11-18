@@ -54,7 +54,7 @@ get_header();
           ?>
             <span><i class="fa-solid fa-pen-nib text-emerald-600 mr-1"></i> <?php echo esc_html( $blog_author['name'] ); ?></span>
           <?php else : 
-              $redaksi = function_exists( 'mtsn1_get_berita_redaksi' ) ? mtsn1_get_berita_redaksi( get_the_ID() ) : array( 'penulis' => 'Tim Humas MTsN 1 Blitar', 'editor' => 'Tim Humas MTsN 1 Blitar', 'foto' => 'Tim Media MTsN 1 Blitar' );
+              $redaksi = function_exists( 'mtsn1_get_berita_redaksi' ) ? mtsn1_get_berita_redaksi( get_the_ID() ) : array( 'penulis' => 'Tim Jurnalis MTsN 1 Blitar', 'editor' => 'Tim Humas MTsN 1 Blitar', 'foto' => 'Tim Media MTsN 1 Blitar' );
           ?>
             <span class="inline-flex items-center gap-1 font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200/60">
               <i class="fa-solid fa-pen-nib text-emerald-600 mr-0.5"></i> Penulis: <strong class="text-slate-900"><?php echo esc_html( $redaksi['penulis'] ); ?></strong>
@@ -81,7 +81,7 @@ get_header();
         </div>
 
         <?php if ( get_post_type() === 'post' ) : 
-            $redaksi = function_exists( 'mtsn1_get_berita_redaksi' ) ? mtsn1_get_berita_redaksi( get_the_ID() ) : array( 'penulis' => 'Tim Humas MTsN 1 Blitar', 'editor' => 'Tim Humas MTsN 1 Blitar', 'foto' => 'Tim Media MTsN 1 Blitar' );
+            $redaksi = function_exists( 'mtsn1_get_berita_redaksi' ) ? mtsn1_get_berita_redaksi( get_the_ID() ) : array( 'penulis' => 'Tim Jurnalis MTsN 1 Blitar', 'editor' => 'Tim Humas MTsN 1 Blitar', 'foto' => 'Tim Media MTsN 1 Blitar' );
         ?>
           <!-- Kotak Redaksi & Peliputan (Penulis, Editor, Foto) -->
           <div class="mt-8 mb-2 p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-emerald-50/90 via-slate-50 to-white border border-emerald-100/90 shadow-sm">

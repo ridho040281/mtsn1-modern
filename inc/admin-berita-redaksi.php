@@ -24,7 +24,7 @@ function mtsn1_get_berita_redaksi( $post_id = null ) {
 
     // Fallback Penulis
     if ( empty( $penulis ) ) {
-        $penulis = 'Tim Humas MTsN 1 Blitar';
+        $penulis = 'Tim Jurnalis MTsN 1 Blitar';
     }
 
     // Fallback Editor
@@ -83,7 +83,7 @@ function mtsn1_berita_redaksi_render_metabox( $post ) {
             </label>
             <input type="text" id="mtsn1_berita_penulis" name="mtsn1_berita_penulis" 
                    value="<?php echo esc_attr( $penulis ); ?>" 
-                   placeholder="Default: Tim Humas MTsN 1 Blitar" 
+                   placeholder="Default: Tim Jurnalis MTsN 1 Blitar" 
                    style="width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; font-size: 12px;" />
         </div>
 
