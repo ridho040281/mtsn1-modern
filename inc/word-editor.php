@@ -130,17 +130,21 @@ function mtsn1_word_editor_buttons_row_3( $buttons, $editor_id = 'content' ) {
 }
 
 /**
- * 5. Aktifkan Menu Bar Dokumen, Pilihan Font, Ukuran Font & Stylesheet Dokumen Word
+ * 5. Aktifkan Menu Bar Dokumen, Pilihan Font, Ukuran Font & Matikan Autoresize yang Bikin Tembus
  */
 add_filter( 'tiny_mce_before_init', 'mtsn1_word_editor_tinymce_init', 9999 );
 function mtsn1_word_editor_tinymce_init( $init ) {
     // 1. Tampilkan Menubar Lengkap ala Microsoft Word
     $init['menubar'] = true;
 
-    // 2. Pastikan Semua Toolbar Terbuka (Tidak Tersembunyi)
+    // 2. Pastikan Toolbar Terbuka
     $init['wordpress_adv_hidden'] = false;
 
-    // 3. Tambahkan Tombol "Tambah Media" Langsung di Dalam Toolbar TinyMCE
+    // 3. Matikan Autoresize yang Menyebabkan Toolbar Mengambang & Teks Tembus saat di-scroll
+    $init['wp_autoresize_on'] = false;
+    $init['height'] = 650;
+
+    // 4. Tambahkan Tombol "Tambah Media" Langsung di Dalam Toolbar TinyMCE
     $init['setup'] = 'function(editor) {
         editor.addButton("mtsn1_add_media", {
             text: "Tambah Media",
@@ -155,7 +159,7 @@ function mtsn1_word_editor_tinymce_init( $init ) {
         });
     }';
 
-    // 4. Koleksi Font Populer Microsoft Word & Standar Dokumen
+    // 5. Koleksi Font Populer Microsoft Word & Standar Dokumen
     $init['font_formats'] = 'Calibri=calibri,candara,segoe,segoe ui,optima,arial,sans-serif;' .
                             'Times New Roman=times new roman,times,serif;' .
                             'Arial=arial,helvetica,sans-serif;' .
@@ -167,10 +171,10 @@ function mtsn1_word_editor_tinymce_init( $init ) {
                             'Courier New=courier new,courier,monospace;' .
                             'Comic Sans MS=comic sans ms,sans-serif;';
 
-    // 5. Pilihan Ukuran Font Lengkap (pt)
+    // 6. Pilihan Ukuran Font Lengkap (pt)
     $init['fontsize_formats'] = '8pt 9pt 10pt 11pt 12pt 13pt 14pt 16pt 18pt 20pt 24pt 28pt 32pt 36pt 48pt 72pt';
 
-    // 6. Muat Stylesheet Kertas Word ke dalam Editor Iframe (Bebas Error Sintaks JS)
+    // 7. Muat Stylesheet Kertas Word ke dalam Editor Iframe
     $css_url = get_template_directory_uri() . '/assets/css/word-editor-content.css';
     if ( ! empty( $init['content_css'] ) ) {
         $init['content_css'] .= ',' . $css_url;
@@ -182,7 +186,17 @@ function mtsn1_word_editor_tinymce_init( $init ) {
 }
 
 /**
- * 6. Styling Admin: Tata Letak Kompak, Berderet, dan Ramping (Tanpa Memakan Tempat Vertikal)
+ * 6. Nonaktifkan Skrip editor-expand yang Membuat Toolbar Lepas / Tembus
+ */
+add_action( 'admin_enqueue_scripts', 'mtsn1_word_editor_disable_expand', 999 );
+function mtsn1_word_editor_disable_expand( $hook ) {
+    if ( in_array( $hook, array( 'post.php', 'post-new.php' ) ) ) {
+        wp_dequeue_script( 'editor-expand' );
+    }
+}
+
+/**
+ * 7. Styling Admin: Tata Letak Kompak, Berderet, Solid (100% Anti-Tembus saat Scroll)
  */
 add_action( 'admin_head-post.php', 'mtsn1_word_editor_admin_styles' );
 add_action( 'admin_head-post-new.php', 'mtsn1_word_editor_admin_styles' );
@@ -203,14 +217,18 @@ function mtsn1_word_editor_admin_styles() {
             display: none !important;
         }
 
-        /* Satukan tabs Visual / Code di sebelah kanan atas agar tidak makan baris terpisah */
+        /* Satukan tabs Visual / Code di sebelah kanan atas dengan latar solid (Anti-Tembus) */
         #wp-content-editor-tools {
-            padding: 0 !important;
-            background: transparent !important;
-            border: none !important;
-            margin-bottom: -1px !important;
+            background: #e2e8f0 !important;
+            border: 1px solid #cbd5e1 !important;
+            border-bottom: none !important;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 4px 8px !important;
             display: flex !important;
             justify-content: flex-end !important;
+            align-items: center !important;
+            position: static !important;
+            box-sizing: border-box !important;
         }
         .wp-editor-tabs {
             float: none !important;
@@ -223,9 +241,9 @@ function mtsn1_word_editor_admin_styles() {
             padding: 4px 14px !important;
             height: 28px !important;
             line-height: 20px !important;
-            background: #e2e8f0 !important;
-            border-color: #cbd5e1 !important;
-            color: #475569 !important;
+            background: #cbd5e1 !important;
+            border-color: #94a3b8 !important;
+            color: #334155 !important;
         }
         .wp-editor-tabs .wp-switch-editor.html-active,
         .wp-editor-tabs .wp-switch-editor.tmce-active {
@@ -234,11 +252,44 @@ function mtsn1_word_editor_admin_styles() {
             border-bottom-color: #ffffff !important;
         }
 
-        /* Toolbar TinyMCE Berderet Horizontal Compact & Rapi */
+        /* Frame Editor Kontainer: Solid 100% Mengunci Posisi */
+        #wp-content-wrap {
+            position: relative !important;
+            background: #ffffff !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+        }
+        .mce-tinymce {
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 0 0 8px 8px !important;
+            background: #ffffff !important;
+            position: static !important;
+        }
+        .mce-top-part {
+            background: #ffffff !important;
+            position: static !important;
+        }
+        .mce-menubar {
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            padding: 3px 6px !important;
+            position: static !important;
+        }
+        .mce-menubar .mce-menubtn {
+            margin-right: 2px !important;
+        }
+        .mce-menubar .mce-menubtn span {
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            color: #334155 !important;
+        }
+
+        /* Toolbar TinyMCE Berderet Horizontal Compact, Rapi & Solid */
         .mce-toolbar-grp {
             background: #f8fafc !important;
-            border: 1px solid #cbd5e1 !important;
+            border-bottom: 1px solid #cbd5e1 !important;
             padding: 4px 6px !important;
+            position: static !important;
         }
         .mce-toolbar-grp .mce-toolbar {
             display: flex !important;
@@ -258,19 +309,6 @@ function mtsn1_word_editor_admin_styles() {
         }
         .mce-toolbar .mce-btn-group:last-child {
             border-right: none !important;
-        }
-        .mce-menubar {
-            background: #ffffff !important;
-            border-bottom: 1px solid #e2e8f0 !important;
-            padding: 3px 6px !important;
-        }
-        .mce-menubar .mce-menubtn {
-            margin-right: 2px !important;
-        }
-        .mce-menubar .mce-menubtn span {
-            font-size: 12px !important;
-            font-weight: 600 !important;
-            color: #334155 !important;
         }
         .mce-btn {
             border-radius: 4px !important;
@@ -303,21 +341,19 @@ function mtsn1_word_editor_admin_styles() {
             border-color: #047857 !important;
         }
 
-        /* Frame Editor Kontainer */
-        #wp-content-wrap {
-            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
-            border-radius: 8px !important;
-            overflow: hidden !important;
-        }
+        /* Iframe Editor Area: Terkunci Rapi dengan Scroll di Dalam (Persis Microsoft Word) */
         #content_ifr {
             background: #f1f5f9 !important;
+            height: 650px !important;
+            min-height: 500px !important;
+            display: block !important;
         }
     </style>
     <?php
 }
 
 /**
- * 7. Tampilkan Tombol Aksi di Daftar Artikel (Word Editor vs Block Editor)
+ * 8. Tampilkan Tombol Aksi di Daftar Artikel (Word Editor vs Block Editor)
  */
 add_filter( 'post_row_actions', 'mtsn1_word_editor_add_row_actions', 10, 2 );
 function mtsn1_word_editor_add_row_actions( $actions, $post ) {
@@ -340,7 +376,7 @@ function mtsn1_word_editor_add_row_actions( $actions, $post ) {
 }
 
 /**
- * 8. Metabox Pengalih Mode Editor di Sidebar (Word Editor vs Gutenberg)
+ * 9. Metabox Pengalih Mode Editor di Sidebar (Word Editor vs Gutenberg)
  */
 add_action( 'add_meta_boxes', 'mtsn1_word_editor_register_metabox' );
 function mtsn1_word_editor_register_metabox() {
