@@ -13,9 +13,9 @@ get_header();
         $peraih = get_post_meta( $id, '_peraih', true );
         $thumb = get_the_post_thumbnail_url( $id, 'full' );
         if ( ! $thumb ) {
-            $cat = get_post_meta( $id, '_kategori_prestasi', true );
-            if ( $cat && file_exists( get_template_directory() . '/assets/images/prestasi/flyer_' . $cat . '.webp' ) ) {
-                $thumb = get_template_directory_uri() . '/assets/images/prestasi/flyer_' . $cat . '.webp';
+            $flyer_file = get_post_meta( $id, '_flyer_ig_filename', true );
+            if ( $flyer_file && file_exists( get_template_directory() . '/assets/images/prestasi_ig/' . $flyer_file ) ) {
+                $thumb = get_template_directory_uri() . '/assets/images/prestasi_ig/' . $flyer_file;
             }
         }
         $ig_url = get_post_meta( $id, '_instagram_url', true );
@@ -163,9 +163,9 @@ get_header();
               while ( $other_q->have_posts() ) : $other_q->the_post();
                   $o_thumb = get_the_post_thumbnail_url( get_the_ID(), 'full' );
                   if ( ! $o_thumb ) {
-                      $o_cat = get_post_meta( get_the_ID(), '_kategori_prestasi', true );
-                      if ( $o_cat && file_exists( get_template_directory() . '/assets/images/prestasi/flyer_' . $o_cat . '.webp' ) ) {
-                          $o_thumb = get_template_directory_uri() . '/assets/images/prestasi/flyer_' . $o_cat . '.webp';
+                      $o_flyer = get_post_meta( get_the_ID(), '_flyer_ig_filename', true );
+                      if ( $o_flyer && file_exists( get_template_directory() . '/assets/images/prestasi_ig/' . $o_flyer ) ) {
+                          $o_thumb = get_template_directory_uri() . '/assets/images/prestasi_ig/' . $o_flyer;
                       }
                   }
                   ?>

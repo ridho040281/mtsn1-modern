@@ -86,9 +86,9 @@ $total_prestasi = $prestasi_query->found_posts;
             $tingkat = mtsn1_get_tingkat_prestasi( $id );
             $thumb = get_the_post_thumbnail_url( $id, 'full' );
             if ( ! $thumb ) {
-                $cat = get_post_meta( $id, '_kategori_prestasi', true );
-                if ( $cat && file_exists( get_template_directory() . '/assets/images/prestasi/flyer_' . $cat . '.webp' ) ) {
-                    $thumb = get_template_directory_uri() . '/assets/images/prestasi/flyer_' . $cat . '.webp';
+                $flyer_file = get_post_meta( $id, '_flyer_ig_filename', true );
+                if ( $flyer_file && file_exists( get_template_directory() . '/assets/images/prestasi_ig/' . $flyer_file ) ) {
+                    $thumb = get_template_directory_uri() . '/assets/images/prestasi_ig/' . $flyer_file;
                 }
             }
             $ig_url = get_post_meta( $id, '_instagram_url', true );
