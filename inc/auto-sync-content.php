@@ -359,11 +359,11 @@ function mtsn1_sync_all_alqalam_articles() {
 }
 
 /**
- * Auto-fix: Perbaiki slug dummy berita Kemenag & ubah menu Bidang Humas/Kurikulum menjadi Custom Link
+ * Auto-fix: Perbaiki slug dummy berita Kemenag & pindahkan halaman Statistik ke menu Bidang Humas (Opsi 1)
  */
 add_action( 'init', 'mtsn1_sync_fix_menu_and_slugs' );
 function mtsn1_sync_fix_menu_and_slugs() {
-    $fix_version = 'v1_humas_menu_and_slug_fix';
+    $fix_version = 'v2_humas_statistik_opsi1';
     if ( get_option( 'mtsn1_menu_and_slug_fix_version' ) === $fix_version ) {
         return;
     }
@@ -384,7 +384,18 @@ function mtsn1_sync_fix_menu_and_slugs() {
         WHERE ID = 663 OR post_name = 'wuaedam-nonmelius-buam-veteres-kuaedam-relicta'
     " );
 
-    // 3. Ubah menu item 'Bidang Humas' (dan yang tertaut ke post 666) menjadi Custom Link '#'
+    // 3. Cari ID halaman statistik publikasi
+    $stat_page_id = $wpdb->get_var( "
+        SELECT ID FROM {$wpdb->posts} 
+        WHERE post_type = 'page' AND (post_name = 'statistik-publikasi' OR post_title LIKE '%Statistik Publikasi%')
+        LIMIT 1
+    " );
+
+    if ( ! $stat_page_id ) {
+        $stat_page_id = 9346;
+    }
+
+    // 4. Ubah menu item 'Bidang Humas' agar langsung menunjuk ke halaman Statistik Publikasi (page)
     $humas_items = $wpdb->get_col( "
         SELECT p.ID FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_menu_item_object_id'
@@ -394,14 +405,31 @@ function mtsn1_sync_fix_menu_and_slugs() {
 
     if ( ! empty( $humas_items ) ) {
         foreach ( $humas_items as $h_id ) {
-            update_post_meta( $h_id, '_menu_item_type', 'custom' );
-            update_post_meta( $h_id, '_menu_item_object', 'custom' );
-            update_post_meta( $h_id, '_menu_item_object_id', $h_id );
-            update_post_meta( $h_id, '_menu_item_url', '#' );
+            $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->posts} SET post_title = 'Bidang Humas' WHERE ID = %d", $h_id ) );
+            update_post_meta( $h_id, '_menu_item_type', 'post_type' );
+            update_post_meta( $h_id, '_menu_item_object', 'page' );
+            update_post_meta( $h_id, '_menu_item_object_id', $stat_page_id );
+            update_post_meta( $h_id, '_menu_item_url', '' );
         }
     }
 
-    // 4. Ubah menu item 'Bidang Kurikulum' (dan yang tertaut ke post 663) menjadi Custom Link '#'
+    // 5. Hapus menu item 'Statistik Publikasi' dari bawah INFO PUBLIKASI agar tidak dobel
+    $duplicate_stat_menus = $wpdb->get_col( $wpdb->prepare( "
+        SELECT p.ID FROM {$wpdb->posts} p
+        JOIN {$wpdb->postmeta} pm_parent ON p.ID = pm_parent.post_id AND pm_parent.meta_key = '_menu_item_menu_item_parent'
+        JOIN {$wpdb->postmeta} pm_obj ON p.ID = pm_obj.post_id AND pm_obj.meta_key = '_menu_item_object_id'
+        WHERE p.post_type = 'nav_menu_item' 
+          AND pm_obj.meta_value = %s
+          AND p.ID NOT IN (" . ( ! empty( $humas_items ) ? implode( ',', array_map( 'intval', $humas_items ) ) : '0' ) . ")
+    ", (string) $stat_page_id ) );
+
+    if ( ! empty( $duplicate_stat_menus ) ) {
+        foreach ( $duplicate_stat_menus as $del_id ) {
+            wp_delete_post( $del_id, true );
+        }
+    }
+
+    // 6. Ubah menu item 'Bidang Kurikulum' (dan yang tertaut ke post 663) menjadi Custom Link '#'
     $kurikulum_items = $wpdb->get_col( "
         SELECT p.ID FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_menu_item_object_id'

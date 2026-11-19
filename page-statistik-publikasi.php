@@ -296,9 +296,9 @@ $all_berita = get_posts( array(
     <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6">
       <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="hover:text-emerald-700">Beranda</a>
       <span>/</span>
-      <span class="text-slate-600">Info Publikasi</span>
+      <span class="text-slate-600">Program Madrasah</span>
       <span>/</span>
-      <span class="text-emerald-700 font-bold">Statistik Publikasi</span>
+      <span class="text-emerald-700 font-bold">Bidang Humas</span>
     </nav>
 
     <!-- Header Banner -->
@@ -310,13 +310,13 @@ $all_berita = get_posts( array(
 
       <div class="relative z-10 max-w-3xl">
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-950/80 text-amber-300 border border-amber-400/30 mb-3 shadow-sm backdrop-blur-md">
-          <i class="fa-solid fa-chart-pie text-amber-400"></i> Dashboard Transparansi & Kinerja Publikasi
+          <i class="fa-solid fa-chart-pie text-amber-400"></i> Dashboard Transparansi & Kinerja Humas
         </div>
         <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-sm">
           Statistik Publikasi & Prestasi
         </h1>
         <p class="text-emerald-100 text-xs sm:text-sm sm:leading-relaxed mt-2.5">
-          Pusat data publikasi resmi MTsN 1 Blitar. Menyajikan rekapitulasi artikel berita madrasah serta dokumentasi capaian prestasi siswa dari tingkat daerah hingga internasional secara berkala dan transparan.
+          Pusat data publikasi resmi dan kinerja kehumasan MTsN 1 Blitar. Menyajikan rekapitulasi artikel berita madrasah serta dokumentasi capaian prestasi siswa dari tingkat daerah hingga internasional secara berkala dan transparan.
         </p>
 
         <div class="flex flex-wrap items-center gap-3 sm:gap-5 mt-5 pt-3 border-t border-emerald-800/60 text-xs text-emerald-200 font-medium">
