@@ -115,7 +115,7 @@ $categories = get_terms( array(
             $author_role  = $author_data['role'];
 
             // Gambar Banner Artikel (Sama seperti gambar di dalam artikel / Featured Image)
-            $post_thumb = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : $author_photo;
+            $post_thumb = mtsn1_has_post_thumbnail() ? mtsn1_get_post_thumbnail_url( get_the_ID(), 'large' ) : ( ! empty( $author_photo ) ? $author_photo : mtsn1_get_post_thumbnail_url( get_the_ID(), 'large' ) );
             ?>
             <article class="blog-card bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>" data-author="<?php echo esc_attr( strtolower( $author_name ) ); ?>">
               

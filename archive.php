@@ -39,15 +39,12 @@ get_header();
               <?php endif; ?>
 
               <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $aspect_ratio ); ?> bg-slate-950 mb-4 relative flex items-center justify-center">
-                <?php if ( has_post_thumbnail() ) : ?>
-                  <?php if ( $is_prestasi ) : ?>
-                    <img src="<?php echo esc_url( get_the_post_thumbnail_url( get_the_ID(), 'full' ) ); ?>" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true">
-                    <img src="<?php echo esc_url( get_the_post_thumbnail_url( get_the_ID(), 'full' ) ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain p-0.5 group-hover:scale-102 transition duration-500">
-                  <?php else : ?>
-                    <?php the_post_thumbnail( 'mtsn1-card', array( 'class' => 'w-full h-full object-cover group-hover:scale-105 transition duration-500' ) ); ?>
-                  <?php endif; ?>
+                <?php $card_thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), $is_prestasi ? 'full' : 'mtsn1-card' ); ?>
+                <?php if ( $is_prestasi ) : ?>
+                  <img src="<?php echo esc_url( $card_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true">
+                  <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain p-0.5 group-hover:scale-102 transition duration-500">
                 <?php else : ?>
-                  <img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/santri.jpg' ) ); ?>" class="w-full h-full object-cover">
+                  <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                 <?php endif; ?>
               </div>
 

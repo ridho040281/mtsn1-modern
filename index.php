@@ -23,11 +23,8 @@ get_header();
           <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 hover:shadow-xl transition flex flex-col justify-between">
             <div>
               <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100 mb-4">
-                <?php if ( has_post_thumbnail() ) : ?>
-                  <?php the_post_thumbnail( 'mtsn1-card', array( 'class' => 'w-full h-full object-cover' ) ); ?>
-                <?php else : ?>
-                  <img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/santri.jpg' ) ); ?>" class="w-full h-full object-cover">
-                <?php endif; ?>
+                <?php $card_thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), 'mtsn1-card' ); ?>
+                <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover">
               </div>
               <h2 class="text-base font-bold text-slate-900 line-clamp-2">
                 <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>

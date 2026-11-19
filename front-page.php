@@ -25,8 +25,8 @@ get_header();
           if ( $slider_query->have_posts() ) {
               while ( $slider_query->have_posts() ) {
                   $slider_query->the_post();
-                  $thumb = get_the_post_thumbnail_url( get_the_ID(), 'full' );
-                  if ( ! $thumb ) {
+                  $thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), 'full' );
+                  if ( ! $thumb || strpos( $thumb, 'santri.jpg' ) !== false ) {
                       $thumb = home_url( '/wp-content/uploads/2026/07/Slide-Website.webp' );
                   }
                   $slides_data[] = array(
@@ -307,7 +307,7 @@ get_header();
 
         if ( $news_q->have_posts() ) :
             while ( $news_q->have_posts() ) : $news_q->the_post();
-                $thumb = get_the_post_thumbnail_url( get_the_ID(), 'full' );
+                $thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), 'full' );
                 $cats = get_the_category();
                 $cat_name = ! empty( $cats ) ? $cats[0]->name : 'Warta';
                 ?>
@@ -315,11 +315,7 @@ get_header();
                   <div>
                     <!-- Photo Container Aspect 16:10 -->
                     <a href="<?php the_permalink(); ?>" class="block overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100 mb-4 relative shadow-sm">
-                      <?php if ( $thumb ) : ?>
-                        <img src="<?php echo esc_url( $thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                      <?php else : ?>
-                        <img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/santri.jpg' ) ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                      <?php endif; ?>
+                      <img src="<?php echo esc_url( $thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                       <div class="absolute top-3 left-3">
                         <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-md">
                           <?php echo esc_html( $cat_name ); ?>
@@ -999,14 +995,10 @@ get_header();
 
           if ( $galeri_q->have_posts() ) :
               while ( $galeri_q->have_posts() ) : $galeri_q->the_post();
-                  $thumb = get_the_post_thumbnail_url( get_the_ID(), 'mtsn1-card' );
+                  $thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), 'mtsn1-card' );
                   ?>
                   <div class="rounded-2xl overflow-hidden aspect-[4/3] bg-slate-800 relative group cursor-pointer border border-slate-800">
-                    <?php if ( $thumb ) : ?>
-                      <img src="<?php echo esc_url( $thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                    <?php else : ?>
-                      <img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/santri.jpg' ) ); ?>" alt="Foto" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                    <?php endif; ?>
+                    <img src="<?php echo esc_url( $thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                     <a href="<?php the_permalink(); ?>" class="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <i class="fa-solid fa-expand text-white text-xl"></i>
                     </a>

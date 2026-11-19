@@ -158,6 +158,65 @@ function mtsn1_reading_time() {
 }
 
 /**
+ * Helper: Ambil URL thumbnail postingan, atau ekstrak gambar pertama dari isi konten (post_content)
+ * jika tidak ada Featured Image (Gambar Andalan), dan fallback ke default santri.jpg jika kosong sama sekali.
+ */
+function mtsn1_get_post_thumbnail_url( $post_id = null, $size = 'full' ) {
+    $post_id = $post_id ? $post_id : get_the_ID();
+    if ( ! $post_id ) {
+        return home_url( '/wp-content/uploads/2026/10/santri.jpg' );
+    }
+
+    // 1. Cek Featured Image bawaan WordPress
+    if ( has_post_thumbnail( $post_id ) ) {
+        $thumb = get_the_post_thumbnail_url( $post_id, $size );
+        if ( ! empty( $thumb ) ) {
+            return $thumb;
+        }
+    }
+
+    // 2. Ekstrak gambar pertama dari post_content jika ada
+    $post = get_post( $post_id );
+    if ( $post && ! empty( $post->post_content ) ) {
+        if ( preg_match( '/<img[^>]+src=[\'"]([^\'"]+)[\'"]/i', $post->post_content, $matches ) ) {
+            return $matches[1];
+        }
+    }
+
+    // 3. Cek lampiran media gambar pada postingan
+    $attachments = get_posts( array(
+        'post_type'      => 'attachment',
+        'posts_per_page' => 1,
+        'post_parent'    => $post_id,
+        'post_mime_type' => 'image',
+    ) );
+    if ( ! empty( $attachments ) ) {
+        $att_url = wp_get_attachment_image_url( $attachments[0]->ID, $size );
+        if ( ! empty( $att_url ) ) {
+            return $att_url;
+        }
+    }
+
+    // 4. Fallback gambar default
+    return home_url( '/wp-content/uploads/2026/10/santri.jpg' );
+}
+
+/**
+ * Helper: Cek apakah postingan memiliki Featured Image atau gambar di dalam konten
+ */
+function mtsn1_has_post_thumbnail( $post_id = null ) {
+    $post_id = $post_id ? $post_id : get_the_ID();
+    if ( has_post_thumbnail( $post_id ) ) {
+        return true;
+    }
+    $post = get_post( $post_id );
+    if ( $post && ! empty( $post->post_content ) && preg_match( '/<img[^>]+src=[\'"]([^\'"]+)[\'"]/i', $post->post_content ) ) {
+        return true;
+    }
+    return false;
+}
+
+/**
  * Numeric pagination
  */
 function mtsn1_pagination() {
