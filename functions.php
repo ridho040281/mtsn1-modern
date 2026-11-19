@@ -299,6 +299,12 @@ class MTSN1_Walker_Nav_Menu extends Walker_Nav_Menu {
             }
             $output .= "</a>";
         } else {
+            // Cegah submenu "Statistik" ganda muncul di dropdown mana pun
+            if ( stripos( $title, 'Statistik' ) !== false || stripos( $url, 'statistik' ) !== false ) {
+                if ( stripos( $title, 'Humas' ) === false ) {
+                    return;
+                }
+            }
             $output .= "<li>";
             $output .= "<a href=\"{$url}\" class=\"block px-3 py-2 rounded-xl text-xs font-bold text-white hover:text-gold-300 hover:bg-white/10 transition leading-snug\">";
             $output .= "{$title}";
@@ -307,57 +313,60 @@ class MTSN1_Walker_Nav_Menu extends Walker_Nav_Menu {
     }
 
     function end_el( &$output, $item, $depth = 0, $args = null ) {
+        $title = apply_filters( 'the_title', $item->title, $item->ID );
+        $url   = ! empty( $item->url ) ? esc_url( $item->url ) : '#';
+        if ( $depth > 0 && ( stripos( $title, 'Statistik' ) !== false || stripos( $url, 'statistik' ) !== false ) ) {
+            if ( stripos( $title, 'Humas' ) === false ) {
+                return;
+            }
+        }
         $output .= "</li>\n";
     }
 }
 
 /**
- * Filter item menu navigasi:
- * 1. Hapus 'Statistik Publikasi' dari submenu di bawah 'INFO PUBLIKASI' agar tidak dobel.
- * 2. Pastikan submenu 'Bidang Humas' selalu mengarah ke halaman Statistik Publikasi.
+ * Filter objek menu navigasi WordPress:
+ * 1. Buang submenu 'Statistik' dari dropdown manapun (karena sudah diwakili oleh menu 'Bidang Humas').
+ * 2. Pastikan submenu 'Bidang Humas' selalu mengarah ke /statistik-publikasi/.
  */
-add_filter( 'wp_get_nav_menu_items', 'mtsn1_clean_nav_menu_items', 20, 3 );
-function mtsn1_clean_nav_menu_items( $items, $menu, $args ) {
+add_filter( 'wp_nav_menu_objects', 'mtsn1_filter_nav_menu_objects', 20, 2 );
+function mtsn1_filter_nav_menu_objects( $items, $args ) {
     if ( ! is_array( $items ) || empty( $items ) ) {
         return $items;
     }
 
-    // Cari ID menu induk 'INFO PUBLIKASI'
-    $info_publikasi_ids = array();
-    foreach ( $items as $item ) {
-        if ( stripos( $item->title, 'INFO PUBLIKASI' ) !== false || stripos( $item->post_title, 'INFO PUBLIKASI' ) !== false ) {
-            $info_publikasi_ids[] = (int) $item->ID;
-        }
-    }
-
-    $filtered = array();
-    foreach ( $items as $item ) {
-        $parent_id = (int) $item->menu_item_parent;
-        $title     = trim( $item->title );
+    foreach ( $items as $key => $item ) {
+        $title     = trim( apply_filters( 'the_title', $item->title, $item->ID ) );
         $url       = trim( $item->url );
+        $is_child  = ! empty( $item->menu_item_parent );
 
-        // 1. Jika item ini adalah 'Statistik' di bawah INFO PUBLIKASI -> Hapus / Lewati
-        if ( in_array( $parent_id, $info_publikasi_ids, true ) ) {
-            if ( stripos( $title, 'Statistik' ) !== false || stripos( $url, 'statistik' ) !== false ) {
-                continue; // Jangan ditampilkan di bawah Info Publikasi
+        // Jika merupakan submenu dan bernama Statistik atau URL-nya statistik -> buang dari navigasi!
+        if ( $is_child && ( stripos( $title, 'Statistik' ) !== false || stripos( $url, 'statistik' ) !== false ) ) {
+            if ( stripos( $title, 'Humas' ) === false ) {
+                unset( $items[ $key ] );
+                continue;
             }
         }
 
-        // 2. Jika judul atau URL mengandung 'Statistik Publikasi' dan parent-nya adalah INFO PUBLIKASI
-        if ( stripos( $title, 'Statistik' ) !== false && in_array( $parent_id, $info_publikasi_ids, true ) ) {
-            continue;
-        }
-
-        // 3. Pastikan 'Bidang Humas' selalu tertaut ke halaman statistik publikasi
+        // Pastikan menu Bidang Humas mengarah ke halaman statistik publikasi
         if ( stripos( $title, 'Bidang Humas' ) !== false || ( stripos( $title, 'Humas' ) !== false && stripos( $title, 'Bidang' ) !== false ) ) {
             $item->url = home_url( '/statistik-publikasi/' );
         }
-
-        $filtered[] = $item;
     }
 
-    return $filtered;
+    return array_values( $items );
 }
+
+add_filter( 'walker_nav_menu_start_el', function( $item_output, $item, $depth, $args ) {
+    $title = trim( apply_filters( 'the_title', $item->title, $item->ID ) );
+    $url   = trim( $item->url );
+    if ( $depth > 0 && ( stripos( $title, 'Statistik' ) !== false || stripos( $url, 'statistik' ) !== false ) ) {
+        if ( stripos( $title, 'Humas' ) === false ) {
+            return '';
+        }
+    }
+    return $item_output;
+}, 99, 4 );
 
 /**
  * -----------------------------------------------------------------------------
