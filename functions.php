@@ -291,7 +291,7 @@ class MTSN1_Walker_Nav_Menu extends Walker_Nav_Menu {
             $li_classes = 'relative group py-2';
             $a_classes  = 'flex items-center gap-1.5 text-xs 2xl:text-sm font-extrabold text-slate-800 hover:text-emerald-700 transition uppercase tracking-wider whitespace-nowrap';
 
-            $output .= "<li class=\"{$li_classes}\">";
+            $output .= "<li class=\"{$li_classes}\" data-menu=\"" . esc_attr( $title ) . "\">";
             $output .= "<a href=\"{$url}\" class=\"{$a_classes}\">";
             $output .= "<span>{$title}</span>";
             if ( $has_children ) {
@@ -367,6 +367,16 @@ add_filter( 'walker_nav_menu_start_el', function( $item_output, $item, $depth, $
     }
     return $item_output;
 }, 99, 4 );
+
+// Otomatis bersihkan LiteSpeed Cache saat tema diperbarui
+add_action( 'init', function() {
+    if ( get_option( 'mtsn1_lscache_purged_v4' ) !== 'yes' || isset( $_GET['purge_cache'] ) ) {
+        if ( function_exists( 'do_action' ) ) {
+            do_action( 'litespeed_purge_all' );
+        }
+        update_option( 'mtsn1_lscache_purged_v4', 'yes' );
+    }
+}, 1 );
 
 /**
  * -----------------------------------------------------------------------------

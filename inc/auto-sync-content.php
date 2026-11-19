@@ -363,7 +363,7 @@ function mtsn1_sync_all_alqalam_articles() {
  */
 add_action( 'init', 'mtsn1_sync_fix_menu_and_slugs' );
 function mtsn1_sync_fix_menu_and_slugs() {
-    $fix_version = 'v3_force_clean_all_stat_under_info';
+    $fix_version = 'v4_purge_lscache_stat';
     if ( get_option( 'mtsn1_menu_and_slug_fix_version' ) === $fix_version ) {
         return;
     }
@@ -461,6 +461,9 @@ function mtsn1_sync_fix_menu_and_slugs() {
 
     clean_post_cache( 0 );
     wp_cache_flush();
+    if ( function_exists( 'do_action' ) ) {
+        do_action( 'litespeed_purge_all' );
+    }
 
     update_option( 'mtsn1_menu_and_slug_fix_version', $fix_version );
 }

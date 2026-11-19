@@ -41,6 +41,13 @@
     ]
   }
   </script>
+  <!-- Fail-safe: Sembunyikan item Statistik Publikasi di bawah dropdown Info Publikasi -->
+  <style>
+    li[data-menu*="PUBLIKASI"] li:has(a[href*="statistik"]),
+    li[data-menu*="PUBLIKASI"] a[href*="statistik"] {
+      display: none !important;
+    }
+  </style>
   <?php wp_head(); ?>
 </head>
 <body <?php body_class( 'bg-slate-100 text-slate-800 font-sans antialiased selection:bg-madrasah-600 selection:text-white' ); ?>>
