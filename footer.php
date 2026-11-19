@@ -170,6 +170,14 @@
 
   <!-- PWA & SPEED ENHANCEMENT SCRIPTS -->
   <script>
+    // 0. Auto-clean cached navigation items
+    document.querySelectorAll('header nav a, #mobileMenu a').forEach(function(a) {
+      if (a.textContent && a.textContent.trim().toLowerCase() === 'statistik publikasi') {
+        var li = a.closest('li');
+        if (li) li.remove(); else a.remove();
+      }
+    });
+
     // 1. Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {

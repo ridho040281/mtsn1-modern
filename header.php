@@ -48,6 +48,27 @@
       display: none !important;
     }
   </style>
+  <script>
+    (function() {
+      function purgeOldStatMenu() {
+        document.querySelectorAll('header nav a, #mobileMenu a').forEach(function(a) {
+          if (a.textContent && a.textContent.trim().toLowerCase() === 'statistik publikasi') {
+            var li = a.closest('li');
+            if (li) {
+              li.remove();
+            } else {
+              a.remove();
+            }
+          }
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', purgeOldStatMenu);
+      } else {
+        purgeOldStatMenu();
+      }
+    })();
+  </script>
   <?php wp_head(); ?>
 </head>
 <body <?php body_class( 'bg-slate-100 text-slate-800 font-sans antialiased selection:bg-madrasah-600 selection:text-white' ); ?>>
