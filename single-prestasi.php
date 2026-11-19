@@ -11,6 +11,22 @@ get_header();
     <?php while ( have_posts() ) : the_post();
         $id = get_the_ID();
         $peraih = get_post_meta( $id, '_peraih', true );
+        if ( empty( $peraih ) ) {
+            $peraih = get_post_meta( $id, '_nama_siswa', true );
+        }
+        if ( empty( $peraih ) ) {
+            $peraih = get_post_meta( $id, 'peraih', true );
+        }
+        if ( empty( $peraih ) ) {
+            $title = get_the_title( $id );
+            if ( strpos( $title, ' - ' ) !== false ) {
+                $parts = explode( ' - ', $title );
+                $cand = trim( end( $parts ) );
+                if ( ! preg_match( '/\b(tahun|tingkat|blitar|kabupaten|provinsi|nasional|madrasah)\b/i', $cand ) && strlen( $cand ) >= 3 && strlen( $cand ) <= 60 ) {
+                    $peraih = $cand;
+                }
+            }
+        }
         $thumb = get_the_post_thumbnail_url( $id, 'full' );
         if ( ! $thumb ) {
             $flyer_file = get_post_meta( $id, '_flyer_ig_filename', true );

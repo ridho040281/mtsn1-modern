@@ -83,6 +83,22 @@ $total_prestasi = $prestasi_query->found_posts;
         <?php while ( $prestasi_query->have_posts() ) : $prestasi_query->the_post();
             $id = get_the_ID();
             $peraih = get_post_meta( $id, '_peraih', true );
+            if ( empty( $peraih ) ) {
+                $peraih = get_post_meta( $id, '_nama_siswa', true );
+            }
+            if ( empty( $peraih ) ) {
+                $peraih = get_post_meta( $id, 'peraih', true );
+            }
+            if ( empty( $peraih ) ) {
+                $p_title = get_the_title( $id );
+                if ( strpos( $p_title, ' - ' ) !== false ) {
+                    $p_parts = explode( ' - ', $p_title );
+                    $p_cand = trim( end( $p_parts ) );
+                    if ( ! preg_match( '/\b(tahun|tingkat|blitar|kabupaten|provinsi|nasional|madrasah)\b/i', $p_cand ) && strlen( $p_cand ) >= 3 && strlen( $p_cand ) <= 60 ) {
+                        $peraih = $p_cand;
+                    }
+                }
+            }
             $tingkat = mtsn1_get_tingkat_prestasi( $id );
             $thumb = get_the_post_thumbnail_url( $id, 'full' );
             if ( ! $thumb ) {

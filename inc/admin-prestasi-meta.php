@@ -10,6 +10,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * 0. Daftarkan Meta ke REST API untuk Gutenberg & Hapus Metabox Bentrok dari Plugin
+ */
+add_action( 'init', 'mtsn1_register_prestasi_meta_rest', 10 );
+function mtsn1_register_prestasi_meta_rest() {
+    register_post_meta( 'prestasi', '_peraih', array(
+        'show_in_rest'  => true,
+        'single'        => true,
+        'type'          => 'string',
+        'auth_callback' => function() { return current_user_can( 'edit_posts' ); }
+    ) );
+    register_post_meta( 'prestasi', '_nama_siswa', array(
+        'show_in_rest'  => true,
+        'single'        => true,
+        'type'          => 'string',
+        'auth_callback' => function() { return current_user_can( 'edit_posts' ); }
+    ) );
+    register_post_meta( 'prestasi', '_tingkat', array(
+        'show_in_rest'  => true,
+        'single'        => true,
+        'type'          => 'string',
+        'auth_callback' => function() { return current_user_can( 'edit_posts' ); }
+    ) );
+
+    // Hapus hook save_post dari plugin sekolahpro agar tidak menimpa data menjadi kosong
+    remove_action( 'save_post', 'pres_meta', 1 );
+}
+
+// Hapus metabox duplikat lama dari plugin sekolahpro (Achiever / presstutorial)
+add_action( 'add_meta_boxes', 'mtsn1_remove_conflicting_prestasi_metaboxes', 999 );
+function mtsn1_remove_conflicting_prestasi_metaboxes() {
+    remove_meta_box( 'sch_pres', 'prestasi', 'normal' );
+    remove_meta_box( 'presstutorial', 'prestasi', 'normal' );
+}
+
+/**
  * 1. Tambahkan Meta Box di Editor Postingan Prestasi
  */
 add_action( 'add_meta_boxes', 'mtsn1_add_prestasi_meta_box' );
@@ -27,7 +62,14 @@ function mtsn1_add_prestasi_meta_box() {
 function mtsn1_render_prestasi_meta_box( $post ) {
     wp_nonce_field( 'mtsn1_prestasi_nonce_action', 'mtsn1_prestasi_nonce' );
 
-    $peraih  = get_post_meta( $post->ID, '_peraih', true );
+    $peraih = get_post_meta( $post->ID, '_peraih', true );
+    if ( empty( $peraih ) ) {
+        $peraih = get_post_meta( $post->ID, '_nama_siswa', true );
+    }
+    if ( empty( $peraih ) ) {
+        $peraih = get_post_meta( $post->ID, 'peraih', true );
+    }
+
     $tingkat = get_post_meta( $post->ID, '_tingkat', true );
     if ( empty( $tingkat ) ) {
         $tingkat = 'Kabupaten/Kota';
@@ -42,29 +84,30 @@ function mtsn1_render_prestasi_meta_box( $post ) {
         'Internasional'  => 'Tingkat Internasional',
     ];
     ?>
-    <div style="padding: 12px 6px;">
-        <div style="margin-bottom: 18px;">
-            <label for="mtsn1_peraih_prestasi" style="font-weight: 700; font-size: 14px; display: block; margin-bottom: 6px; color: #0f172a;">
+    <div style="padding: 14px 8px;">
+        <div style="margin-bottom: 20px;">
+            <label for="mtsn1_peraih_prestasi" style="font-weight: 800; font-size: 14px; display: block; margin-bottom: 6px; color: #0f172a;">
                 👤 Nama Siswa / Tim Peraih Prestasi:
             </label>
             <input type="text" 
                    id="mtsn1_peraih_prestasi" 
                    name="mtsn1_peraih" 
                    value="<?php echo esc_attr( $peraih ); ?>" 
-                   placeholder="Contoh: Sahal Muamar / Cindy Nur Rahmadhani" 
-                   style="width: 100%; max-width: 650px; padding: 8px 12px; font-size: 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600;">
-            <p style="color: #64748b; font-size: 12px; margin-top: 5px;">
-                * Nama ini yang akan ditampilkan pada label <strong>"PERAIH PRESTASI"</strong> di kartu beranda dan halaman arsip prestasi.
+                   placeholder="Contoh: Ihabillah Akmal Ramadhani / Tim Robotik MTsN 1 Blitar" 
+                   style="width: 100%; max-width: 650px; padding: 10px 14px; font-size: 14px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #0f172a; background: #fff;">
+            <input type="hidden" name="_peraih" value="<?php echo esc_attr( $peraih ); ?>" id="hidden_peraih_sync">
+            <p style="color: #64748b; font-size: 12px; margin-top: 6px;">
+                * Masukkan nama siswa peraih juara di sini. Nama ini akan otomatis tampil di kartu prestasi, detail prestasi, dan tabel rekapitulasi.
             </p>
         </div>
 
         <div>
-            <label for="mtsn1_tingkat_prestasi" style="font-weight: 700; font-size: 14px; display: block; margin-bottom: 6px; color: #0f172a;">
+            <label for="mtsn1_tingkat_prestasi" style="font-weight: 800; font-size: 14px; display: block; margin-bottom: 6px; color: #0f172a;">
                 🏅 Tingkat Kejuaraan:
             </label>
             <select id="mtsn1_tingkat_prestasi" 
                     name="mtsn1_tingkat" 
-                    style="padding: 7px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; min-width: 250px;">
+                    style="padding: 8px 14px; font-size: 13px; font-weight: 700; border: 2px solid #cbd5e1; border-radius: 8px; min-width: 260px; color: #0f172a;">
                 <?php foreach ( $daftar_tingkat as $key => $label ) : ?>
                     <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $tingkat, $key ); ?>>
                         <?php echo esc_html( $label ); ?>
@@ -73,33 +116,80 @@ function mtsn1_render_prestasi_meta_box( $post ) {
             </select>
         </div>
     </div>
+    <script>
+    // Sinkronkan input hidden _peraih secara real-time
+    document.addEventListener('DOMContentLoaded', function() {
+        var inp = document.getElementById('mtsn1_peraih_prestasi');
+        var hid = document.getElementById('hidden_peraih_sync');
+        if (inp && hid) {
+            inp.addEventListener('input', function() {
+                hid.value = this.value;
+            });
+        }
+    });
+    </script>
     <?php
 }
 
 /**
- * 2. Simpan Data Metadata Saat Postingan Prestasi Disimpan
+ * 2. Simpan Data Metadata Saat Postingan Prestasi Disimpan (Robust Support Classic & Gutenberg)
  */
-add_action( 'save_post_prestasi', 'mtsn1_save_prestasi_meta' );
-function mtsn1_save_prestasi_meta( $post_id ) {
-    if ( ! isset( $_POST['mtsn1_prestasi_nonce'] ) || ! wp_verify_nonce( $_POST['mtsn1_prestasi_nonce'], 'mtsn1_prestasi_nonce_action' ) ) {
-        return;
-    }
+add_action( 'save_post_prestasi', 'mtsn1_save_prestasi_meta', 10, 2 );
+add_action( 'save_post', 'mtsn1_save_prestasi_meta', 10, 2 );
+function mtsn1_save_prestasi_meta( $post_id, $post = null ) {
+    // 1. Cegah autosave
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
         return;
     }
+
+    // 2. Jika ini adalah revisi, ambil ID induk utama
+    if ( $parent_id = wp_is_post_revision( $post_id ) ) {
+        $post_id = $parent_id;
+    }
+
+    // 3. Pastikan post type adalah 'prestasi'
+    if ( get_post_type( $post_id ) !== 'prestasi' ) {
+        return;
+    }
+
+    // 4. Cek izin pengguna
     if ( ! current_user_can( 'edit_post', $post_id ) ) {
         return;
     }
 
-    if ( isset( $_POST['mtsn1_peraih'] ) ) {
-        $peraih = sanitize_text_field( wp_unslash( $_POST['mtsn1_peraih'] ) );
-        update_post_meta( $post_id, '_peraih', $peraih );
-        update_post_meta( $post_id, '_nama_siswa', $peraih );
+    // 5. Verifikasi nonce jika ada (form submission standar)
+    if ( isset( $_POST['mtsn1_prestasi_nonce'] ) ) {
+        if ( ! wp_verify_nonce( $_POST['mtsn1_prestasi_nonce'], 'mtsn1_prestasi_nonce_action' ) ) {
+            return;
+        }
     }
 
+    // 6. Ambil nama peraih dari berbagai kemungkinan input name
+    $peraih_input = null;
+    if ( isset( $_POST['mtsn1_peraih'] ) ) {
+        $peraih_input = sanitize_text_field( wp_unslash( $_POST['mtsn1_peraih'] ) );
+    } elseif ( isset( $_POST['_peraih'] ) ) {
+        $peraih_input = sanitize_text_field( wp_unslash( $_POST['_peraih'] ) );
+    } elseif ( isset( $_POST['peraih'] ) ) {
+        $peraih_input = sanitize_text_field( wp_unslash( $_POST['peraih'] ) );
+    }
+
+    // Simpan hanya jika ada data yang dikirim
+    if ( $peraih_input !== null ) {
+        update_post_meta( $post_id, '_peraih', $peraih_input );
+        update_post_meta( $post_id, '_nama_siswa', $peraih_input );
+    }
+
+    // 7. Ambil tingkat kejuaraan
+    $tingkat_input = null;
     if ( isset( $_POST['mtsn1_tingkat'] ) ) {
-        $tingkat = sanitize_text_field( wp_unslash( $_POST['mtsn1_tingkat'] ) );
-        update_post_meta( $post_id, '_tingkat', $tingkat );
+        $tingkat_input = sanitize_text_field( wp_unslash( $_POST['mtsn1_tingkat'] ) );
+    } elseif ( isset( $_POST['_tingkat'] ) ) {
+        $tingkat_input = sanitize_text_field( wp_unslash( $_POST['_tingkat'] ) );
+    }
+
+    if ( $tingkat_input !== null && ! empty( $tingkat_input ) ) {
+        update_post_meta( $post_id, '_tingkat', $tingkat_input );
     }
 }
 
