@@ -357,3 +357,66 @@ function mtsn1_sync_all_alqalam_articles() {
 
     update_option( 'mtsn1_alqalam_sync_version', $current_version );
 }
+
+/**
+ * Auto-fix: Perbaiki slug dummy berita Kemenag & ubah menu Bidang Humas/Kurikulum menjadi Custom Link
+ */
+add_action( 'init', 'mtsn1_sync_fix_menu_and_slugs' );
+function mtsn1_sync_fix_menu_and_slugs() {
+    $fix_version = 'v1_humas_menu_and_slug_fix';
+    if ( get_option( 'mtsn1_menu_and_slug_fix_version' ) === $fix_version ) {
+        return;
+    }
+
+    global $wpdb;
+
+    // 1. Rapikan slug berita Kemenag (ID 666 / post_name quia-dolori-...)
+    $wpdb->query( "
+        UPDATE {$wpdb->posts} 
+        SET post_name = 'pembinaan-peningkatan-mutu-layanan-pendidikan-kemenag-blitar' 
+        WHERE ID = 666 OR post_name = 'quia-dolori-non-voluptas-contrariaest-sedoloris'
+    " );
+
+    // 2. Rapikan slug berita PPDB Prestasi 2024 (ID 663 / post_name wuaedam-...)
+    $wpdb->query( "
+        UPDATE {$wpdb->posts} 
+        SET post_name = 'rangkaian-tes-ppdb-mtsn-1-blitar-jalur-prestasi-2024' 
+        WHERE ID = 663 OR post_name = 'wuaedam-nonmelius-buam-veteres-kuaedam-relicta'
+    " );
+
+    // 3. Ubah menu item 'Bidang Humas' (dan yang tertaut ke post 666) menjadi Custom Link '#'
+    $humas_items = $wpdb->get_col( "
+        SELECT p.ID FROM {$wpdb->posts} p
+        LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_menu_item_object_id'
+        WHERE p.post_type = 'nav_menu_item' 
+          AND (p.post_title LIKE '%Humas%' OR pm.meta_value = '666')
+    " );
+
+    if ( ! empty( $humas_items ) ) {
+        foreach ( $humas_items as $h_id ) {
+            update_post_meta( $h_id, '_menu_item_type', 'custom' );
+            update_post_meta( $h_id, '_menu_item_object', 'custom' );
+            update_post_meta( $h_id, '_menu_item_object_id', $h_id );
+            update_post_meta( $h_id, '_menu_item_url', '#' );
+        }
+    }
+
+    // 4. Ubah menu item 'Bidang Kurikulum' (dan yang tertaut ke post 663) menjadi Custom Link '#'
+    $kurikulum_items = $wpdb->get_col( "
+        SELECT p.ID FROM {$wpdb->posts} p
+        LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_menu_item_object_id'
+        WHERE p.post_type = 'nav_menu_item' 
+          AND (p.post_title LIKE '%Kurikulum%' OR pm.meta_value = '663')
+    " );
+
+    if ( ! empty( $kurikulum_items ) ) {
+        foreach ( $kurikulum_items as $k_id ) {
+            update_post_meta( $k_id, '_menu_item_type', 'custom' );
+            update_post_meta( $k_id, '_menu_item_object', 'custom' );
+            update_post_meta( $k_id, '_menu_item_object_id', $k_id );
+            update_post_meta( $k_id, '_menu_item_url', '#' );
+        }
+    }
+
+    update_option( 'mtsn1_menu_and_slug_fix_version', $fix_version );
+}
