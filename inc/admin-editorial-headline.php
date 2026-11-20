@@ -10,10 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Pastikan post type editorial mendukung thumbnail & excerpt
+// Pastikan post type editorial mendukung thumbnail & excerpt & editor
 add_action( 'init', function() {
     add_post_type_support( 'editorial', 'thumbnail' );
     add_post_type_support( 'editorial', 'excerpt' );
+    add_post_type_support( 'editorial', 'editor' );
 }, 20 );
 
 /**

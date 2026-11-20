@@ -12,6 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Helper: Daftar post type yang menggunakan Word Editor
+ */
+function mtsn1_word_editor_supported_post_types() {
+    return apply_filters( 'mtsn1_word_editor_post_types', array( 'post', 'editorial', 'blog' ) );
+}
+
+/**
  * 1. Tentukan apakah menggunakan Word Editor (Classic TinyMCE) atau Block Editor
  */
 add_filter( 'use_block_editor_for_post', 'mtsn1_word_editor_toggle_editor', 20, 2 );
@@ -33,13 +40,40 @@ function mtsn1_word_editor_toggle_editor( $use_block_editor, $post ) {
         return false;
     }
 
-    // Untuk postingan artikel/berita ('post'): Default ke Word Editor
-    if ( $post->post_type === 'post' ) {
+    // Untuk post type yang didukung (post, editorial, blog): Default ke Word Editor
+    $supported = mtsn1_word_editor_supported_post_types();
+    if ( in_array( $post->post_type, $supported, true ) ) {
         $disabled = get_option( 'mtsn1_disable_word_editor', false );
         if ( $disabled ) {
             return true;
         }
         return false; // Aktifkan Word Editor (Classic WYSIWYG)
+    }
+
+    return $use_block_editor;
+}
+
+add_filter( 'use_block_editor_for_post_type', 'mtsn1_word_editor_toggle_by_post_type', 20, 2 );
+function mtsn1_word_editor_toggle_by_post_type( $use_block_editor, $post_type ) {
+    if ( isset( $_GET['editor'] ) ) {
+        if ( $_GET['editor'] === 'classic' || $_GET['editor'] === 'word' ) {
+            return false;
+        }
+        if ( $_GET['editor'] === 'block' || $_GET['editor'] === 'gutenberg' ) {
+            return true;
+        }
+    }
+    if ( isset( $_GET['classic-editor'] ) ) {
+        return false;
+    }
+
+    $supported = mtsn1_word_editor_supported_post_types();
+    if ( in_array( $post_type, $supported, true ) ) {
+        $disabled = get_option( 'mtsn1_disable_word_editor', false );
+        if ( $disabled ) {
+            return true;
+        }
+        return false;
     }
 
     return $use_block_editor;
@@ -209,13 +243,15 @@ function mtsn1_word_editor_disable_expand( $hook ) {
 add_action( 'admin_head-post.php', 'mtsn1_word_editor_admin_styles' );
 add_action( 'admin_head-post-new.php', 'mtsn1_word_editor_admin_styles' );
 function mtsn1_word_editor_admin_styles() {
-    global $post;
-    if ( ! $post || $post->post_type !== 'post' ) {
+    global $post, $typenow;
+    $post_type = $post ? $post->post_type : ( isset( $typenow ) ? $typenow : ( isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : 'post' ) );
+
+    $supported = mtsn1_word_editor_supported_post_types();
+    if ( ! in_array( $post_type, $supported, true ) ) {
         return;
     }
 
-    $is_block = use_block_editor_for_post( $post );
-    if ( $is_block ) {
+    if ( $post && use_block_editor_for_post( $post ) ) {
         return;
     }
     ?>
@@ -561,8 +597,10 @@ function mtsn1_word_editor_admin_styles() {
  * 8. Tampilkan Tombol Aksi di Daftar Artikel (Word Editor vs Block Editor)
  */
 add_filter( 'post_row_actions', 'mtsn1_word_editor_add_row_actions', 10, 2 );
+add_filter( 'page_row_actions', 'mtsn1_word_editor_add_row_actions', 10, 2 );
 function mtsn1_word_editor_add_row_actions( $actions, $post ) {
-    if ( $post->post_type === 'post' ) {
+    $supported = mtsn1_word_editor_supported_post_types();
+    if ( in_array( $post->post_type, $supported, true ) ) {
         $word_url  = admin_url( 'post.php?post=' . $post->ID . '&action=edit&editor=classic' );
         $block_url = admin_url( 'post.php?post=' . $post->ID . '&action=edit&editor=block' );
 
@@ -585,14 +623,17 @@ function mtsn1_word_editor_add_row_actions( $actions, $post ) {
  */
 add_action( 'add_meta_boxes', 'mtsn1_word_editor_register_metabox' );
 function mtsn1_word_editor_register_metabox() {
-    add_meta_box(
-        'mtsn1_editor_mode_box',
-        'Pilihan Mode Editor',
-        'mtsn1_word_editor_render_metabox',
-        'post',
-        'side',
-        'high'
-    );
+    $supported = mtsn1_word_editor_supported_post_types();
+    foreach ( $supported as $pt ) {
+        add_meta_box(
+            'mtsn1_editor_mode_box',
+            'Pilihan Mode Editor',
+            'mtsn1_word_editor_render_metabox',
+            $pt,
+            'side',
+            'high'
+        );
+    }
 }
 
 function mtsn1_word_editor_render_metabox( $post ) {
