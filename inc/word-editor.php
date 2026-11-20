@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Helper: Daftar post type yang menggunakan Word Editor
  */
 function mtsn1_word_editor_supported_post_types() {
-    return apply_filters( 'mtsn1_word_editor_post_types', array( 'post', 'editorial', 'blog' ) );
+    return apply_filters( 'mtsn1_word_editor_post_types', array( 'post', 'editorial', 'pengumuman', 'agenda', 'blog', 'download', 'page' ) );
 }
 
 /**

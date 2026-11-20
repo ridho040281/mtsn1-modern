@@ -10,11 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Pastikan post type editorial mendukung thumbnail & excerpt & editor
+// Pastikan post type editorial & pengumuman & agenda mendukung thumbnail & excerpt & editor
 add_action( 'init', function() {
-    add_post_type_support( 'editorial', 'thumbnail' );
-    add_post_type_support( 'editorial', 'excerpt' );
-    add_post_type_support( 'editorial', 'editor' );
+    $types = array( 'editorial', 'pengumuman', 'agenda' );
+    foreach ( $types as $t ) {
+        add_post_type_support( $t, 'thumbnail' );
+        add_post_type_support( $t, 'excerpt' );
+        add_post_type_support( $t, 'editor' );
+    }
 }, 20 );
 
 /**
