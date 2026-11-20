@@ -353,6 +353,18 @@ function mtsn1_filter_nav_menu_objects( $items, $args ) {
         if ( stripos( $title, 'Bidang Humas' ) !== false || ( stripos( $title, 'Humas' ) !== false && stripos( $title, 'Bidang' ) !== false ) ) {
             $item->url = home_url( '/statistik-publikasi/' );
         }
+
+        // Pastikan menu Sambutan Kepala Madrasah mengarah ke postingan Editorial resmi
+        if ( stripos( $title, 'Sambutan Kepala Madrasah' ) !== false || ( stripos( $title, 'Sambutan' ) !== false && stripos( $title, 'Kepala' ) !== false ) ) {
+            $editorial_posts = get_posts( array(
+                'post_type'      => 'editorial',
+                'posts_per_page' => 1,
+                'post_status'    => 'publish',
+            ) );
+            if ( ! empty( $editorial_posts ) ) {
+                $item->url = get_permalink( $editorial_posts[0]->ID );
+            }
+        }
     }
 
     return array_values( $items );
@@ -369,13 +381,31 @@ add_filter( 'walker_nav_menu_start_el', function( $item_output, $item, $depth, $
     return $item_output;
 }, 99, 4 );
 
+/**
+ * Redirect otomatis dari URL laman lama /sambutan-kepala-madrasah/ ke halaman resmi Editorial
+ */
+add_action( 'template_redirect', function() {
+    $current_uri = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '';
+    if ( is_page( 'sambutan-kepala-madrasah' ) || strpos( $current_uri, 'sambutan-kepala-madrasah' ) !== false ) {
+        $editorial_posts = get_posts( array(
+            'post_type'      => 'editorial',
+            'posts_per_page' => 1,
+            'post_status'    => 'publish',
+        ) );
+        if ( ! empty( $editorial_posts ) ) {
+            wp_safe_redirect( get_permalink( $editorial_posts[0]->ID ), 301 );
+            exit;
+        }
+    }
+} );
+
 // Otomatis bersihkan LiteSpeed Cache saat tema diperbarui
 add_action( 'init', function() {
-    if ( get_option( 'mtsn1_lscache_purged_v4' ) !== 'yes' || isset( $_GET['purge_cache'] ) ) {
+    if ( get_option( 'mtsn1_lscache_purged_v5' ) !== 'yes' || isset( $_GET['purge_cache'] ) ) {
         if ( function_exists( 'do_action' ) ) {
             do_action( 'litespeed_purge_all' );
         }
-        update_option( 'mtsn1_lscache_purged_v4', 'yes' );
+        update_option( 'mtsn1_lscache_purged_v5', 'yes' );
     }
 }, 1 );
 

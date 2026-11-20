@@ -363,7 +363,7 @@ function mtsn1_sync_all_alqalam_articles() {
  */
 add_action( 'init', 'mtsn1_sync_fix_menu_and_slugs' );
 function mtsn1_sync_fix_menu_and_slugs() {
-    $fix_version = 'v4_purge_lscache_stat';
+    $fix_version = 'v5_unify_sambutan_editorial';
     if ( get_option( 'mtsn1_menu_and_slug_fix_version' ) === $fix_version ) {
         return;
     }
@@ -457,6 +457,30 @@ function mtsn1_sync_fix_menu_and_slugs() {
             update_post_meta( $k_id, '_menu_item_object_id', $k_id );
             update_post_meta( $k_id, '_menu_item_url', '#' );
         }
+    }
+
+    // 8. Satukan Laman Sambutan Kepala Madrasah ke Postingan Editorial Resmi
+    $editorial_id = $wpdb->get_var( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'editorial' AND post_status = 'publish' LIMIT 1" );
+    if ( $editorial_id ) {
+        // Update menu item Sambutan Kepala Madrasah agar mengarah ke Editorial resmi
+        $sambutan_menu_items = $wpdb->get_col( "
+            SELECT p.ID FROM {$wpdb->posts} p
+            LEFT JOIN {$wpdb->postmeta} pm_obj ON p.ID = pm_obj.post_id AND pm_obj.meta_key = '_menu_item_object_id'
+            WHERE p.post_type = 'nav_menu_item' 
+              AND (p.post_title LIKE '%Sambutan%' OR pm_obj.meta_value = '6737')
+        " );
+
+        if ( ! empty( $sambutan_menu_items ) ) {
+            foreach ( $sambutan_menu_items as $sm_id ) {
+                update_post_meta( $sm_id, '_menu_item_type', 'post_type' );
+                update_post_meta( $sm_id, '_menu_item_object', 'editorial' );
+                update_post_meta( $sm_id, '_menu_item_object_id', $editorial_id );
+                update_post_meta( $sm_id, '_menu_item_url', '' );
+            }
+        }
+
+        // Nonaktifkan laman biasa /sambutan-kepala-madrasah/ (ID 6737) agar tidak dobel
+        $wpdb->query( "UPDATE {$wpdb->posts} SET post_status = 'draft' WHERE post_type = 'page' AND (post_name = 'sambutan-kepala-madrasah' OR ID = 6737)" );
     }
 
     clean_post_cache( 0 );
