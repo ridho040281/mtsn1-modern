@@ -68,10 +68,62 @@ header img, .custom-logo {
   color: #334155;
 }
 
-.prose img {
+/* Default Gambar di Dalam Konten Berita/Artikel: Full Width Landscape Selebar Teks */
+.prose figure,
+.prose .wp-block-image,
+.prose figure.wp-block-image {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 2rem 0 !important;
+  display: block !important;
+  clear: both;
+}
+
+.prose img:not(.wp-smiley),
+.prose figure img:not(.wp-smiley),
+.prose .wp-block-image img:not(.wp-smiley),
+.prose p > img:not(.wp-smiley) {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+  display: block !important;
+  margin: 1.75rem auto !important;
   border-radius: 1rem;
-  margin: 1.5rem auto;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.08);
+}
+
+/* Caption / Keterangan Gambar di Dalam Konten */
+.prose figcaption,
+.prose .wp-element-caption {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  color: #64748b;
+  text-align: center;
+  font-style: italic;
+  margin-top: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+/* Pengecualian: Gambar kecil yang sengaja di-float kiri atau kanan oleh penulis */
+.prose .alignleft img,
+.prose img.alignleft {
+  width: auto !important;
+  max-width: 48% !important;
+  aspect-ratio: auto !important;
+  float: left;
+  margin: 0.5em 1.5em 1em 0 !important;
+}
+
+.prose .alignright img,
+.prose img.alignright {
+  width: auto !important;
+  max-width: 48% !important;
+  aspect-ratio: auto !important;
+  float: right;
+  margin: 0.5em 0 1em 1.5em !important;
 }
 
 .prose ul, .prose ol {

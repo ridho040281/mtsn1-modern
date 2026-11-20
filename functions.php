@@ -56,8 +56,9 @@ function mtsn1_scripts() {
     // Compiled Static Tailwind CSS (Blazing Fast, Zero Render-Blocking)
     wp_enqueue_style( 'mtsn1-tailwind', get_template_directory_uri() . '/assets/css/tailwind.min.css', array(), '1.0.1' );
 
-    // Theme main stylesheet
-    wp_enqueue_style( 'mtsn1-style', get_stylesheet_uri(), array( 'mtsn1-tailwind' ), '1.0.1' );
+    // Theme main stylesheet (dengan cache-busting otomatis)
+    $style_ver = file_exists( get_stylesheet_directory() . '/style.css' ) ? filemtime( get_stylesheet_directory() . '/style.css' ) : '1.0.2';
+    wp_enqueue_style( 'mtsn1-style', get_stylesheet_uri(), array( 'mtsn1-tailwind' ), $style_ver );
 }
 add_action( 'wp_enqueue_scripts', 'mtsn1_scripts' );
 
