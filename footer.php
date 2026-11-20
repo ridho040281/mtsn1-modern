@@ -240,6 +240,61 @@
       document.addEventListener('mouseover', handleHover, { passive: true });
       document.addEventListener('touchstart', handleHover, { passive: true });
     })();
+
+    // 4. Smart Document Embed Enhancer (Full-page PDF & Google Drive Viewer)
+    (function() {
+      const proseContainers = document.querySelectorAll('.prose');
+      if (!proseContainers.length) return;
+
+      proseContainers.forEach(function(container) {
+        const iframes = container.querySelectorAll('iframe');
+        iframes.forEach(function(iframe) {
+          const src = iframe.getAttribute('src') || '';
+          const isDoc = src.includes('drive.google.com') ||
+                        src.includes('docs.google.com') ||
+                        src.includes('onedrive.live.com') ||
+                        src.includes('office.com') ||
+                        src.includes('.pdf');
+
+          const isVideo = src.includes('youtube') ||
+                          src.includes('youtu.be') ||
+                          src.includes('vimeo') ||
+                          src.includes('dailymotion');
+
+          if (isDoc || (!isVideo && !src.includes('maps') && !src.includes('spotify') && !src.includes('soundcloud'))) {
+            iframe.classList.add('document-embed-fullpage');
+            iframe.setAttribute('allowfullscreen', 'true');
+            iframe.setAttribute('loading', 'lazy');
+
+            // If it's a document and doesn't already have a header bar
+            if (isDoc && (!iframe.previousElementSibling || !iframe.previousElementSibling.classList.contains('document-viewer-header'))) {
+              let viewUrl = src;
+              if (src.includes('drive.google.com/file/d/')) {
+                viewUrl = src.replace('/preview', '/view?usp=sharing');
+              }
+
+              const header = document.createElement('div');
+              header.className = 'document-viewer-header';
+              header.innerHTML = `
+                <div class="flex items-center gap-2 text-slate-800 font-bold text-xs sm:text-sm">
+                  <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-file-pdf"></i>
+                  </span>
+                  <span>Dokumen Lampiran Resmi</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <a href="${viewUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-emerald-600 hover:text-white text-emerald-800 font-bold rounded-lg border border-slate-200 shadow-xs transition text-xs">
+                    <span>Buka Layar Penuh / Unduh</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </a>
+                </div>
+              `;
+              iframe.parentNode.insertBefore(header, iframe);
+            }
+          }
+        });
+      });
+    })();
   </script>
 
 <?php wp_footer(); ?>

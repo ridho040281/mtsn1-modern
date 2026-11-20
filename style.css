@@ -169,9 +169,13 @@ html, body {
 }
 
 /* Ensure media never forces horizontal scroll on phones */
-img, video, iframe, embed, object {
+img, video {
   max-width: 100%;
   height: auto;
+}
+
+embed, object {
+  max-width: 100%;
 }
 
 /* Fix marquee container on mobile */
@@ -220,4 +224,148 @@ marquee {
   border: 0;
   border-top: 1px solid #e2e8f0;
   margin: 2em 0;
+}
+
+/* ==========================================================================
+   Responsive Embeds & Full Page Document Viewer (PDF, Google Drive, Docs, etc.)
+   ========================================================================== */
+
+/* Universal iframe, embed, object sizing in prose */
+.prose iframe,
+.prose embed,
+.prose object {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* WordPress Embed Block wrapper reset for non-video embeds */
+.prose .wp-block-embed:not(.wp-block-embed-youtube):not(.wp-block-embed-vimeo) {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 1.75rem 0 !important;
+}
+.prose .wp-block-embed:not(.wp-block-embed-youtube):not(.wp-block-embed-vimeo) .wp-block-embed__wrapper {
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+.prose .wp-block-embed:not(.wp-block-embed-youtube):not(.wp-block-embed-vimeo) .wp-block-embed__wrapper::before {
+  display: none !important;
+}
+
+/* 1. Video Embeds (YouTube, Vimeo, etc. -> Widescreen 16:9) */
+.prose .wp-block-embed-youtube iframe,
+.prose .wp-block-embed-vimeo iframe,
+.prose iframe[src*="youtube.com"],
+.prose iframe[src*="youtube-nocookie.com"],
+.prose iframe[src*="youtu.be"],
+.prose iframe[src*="vimeo.com"],
+.prose iframe[src*="dailymotion.com"] {
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  height: auto !important;
+  min-height: unset !important;
+  max-height: unset !important;
+  border-radius: 1rem !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08) !important;
+  display: block !important;
+  margin: 1.5rem auto !important;
+}
+
+/* 2. Audio Embeds (Spotify, SoundCloud) */
+.prose iframe[src*="spotify.com"],
+.prose iframe[src*="soundcloud.com"] {
+  width: 100% !important;
+  height: 160px !important;
+  min-height: 152px !important;
+  border-radius: 1rem !important;
+  border: 1px solid #e2e8f0 !important;
+  margin: 1.25rem 0 !important;
+}
+
+/* 3. Google Maps Embed */
+.prose iframe[src*="google.com/maps"] {
+  width: 100% !important;
+  height: 450px !important;
+  min-height: 380px !important;
+  border-radius: 1rem !important;
+  border: 1px solid #cbd5e1 !important;
+  margin: 1.5rem 0 !important;
+}
+
+/* 4. Full Page Document Viewer (PDF, Google Drive preview, Docs, Sheets, Slides, OneDrive) */
+.prose iframe[src*="drive.google.com"],
+.prose iframe[src*="docs.google.com"],
+.prose iframe[src*="onedrive.live.com"],
+.prose iframe[src*="office.com"],
+.prose iframe[src*=".pdf"],
+.prose object[type*="pdf"],
+.prose embed[type*="pdf"],
+.prose .wp-block-file object,
+.prose .wp-block-file embed,
+.prose .document-embed-fullpage,
+.document-embed-fullpage iframe,
+.prose iframe.full-page-embed {
+  width: 100% !important;
+  height: 85vh !important;
+  min-height: 820px !important;
+  max-height: 1200px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.04) !important;
+  background-color: #f8fafc !important;
+  display: block !important;
+  margin: 1.75rem auto !important;
+}
+
+/* 5. Fallback for any other non-video / generic iframe in article body */
+.prose iframe:not([src*="youtube"]):not([src*="youtu.be"]):not([src*="vimeo"]):not([src*="dailymotion"]):not([src*="maps"]):not([src*="spotify"]):not([src*="soundcloud"]) {
+  width: 100% !important;
+  height: 85vh !important;
+  min-height: 820px !important;
+  max-height: 1200px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08) !important;
+  background-color: #f8fafc !important;
+  display: block !important;
+  margin: 1.75rem auto !important;
+}
+
+/* Header bar pendukung dokumen lampiran */
+.document-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Mobile responsive full page view */
+@media (max-width: 640px) {
+  .prose iframe[src*="drive.google.com"],
+  .prose iframe[src*="docs.google.com"],
+  .prose iframe[src*="onedrive.live.com"],
+  .prose iframe[src*="office.com"],
+  .prose iframe[src*=".pdf"],
+  .prose object[type*="pdf"],
+  .prose embed[type*="pdf"],
+  .prose .wp-block-file object,
+  .prose .wp-block-file embed,
+  .prose .document-embed-fullpage,
+  .document-embed-fullpage iframe,
+  .prose iframe.full-page-embed,
+  .prose iframe:not([src*="youtube"]):not([src*="youtu.be"]):not([src*="vimeo"]):not([src*="dailymotion"]):not([src*="maps"]):not([src*="spotify"]):not([src*="soundcloud"]) {
+    height: 75vh !important;
+    min-height: 520px !important;
+    border-radius: 0.75rem !important;
+    margin: 1.25rem auto !important;
+  }
 }

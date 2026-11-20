@@ -143,3 +143,14 @@ img.aligncenter,
     font-style: italic !important;
     line-height: 1.4 !important;
 }
+
+/* Tampilan Embed Iframe & Dokumen PDF di Word Editor */
+iframe {
+    width: 100% !important;
+    min-height: 600px !important;
+    max-width: 100% !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    margin: 1.5em 0 !important;
+    display: block !important;
+}
