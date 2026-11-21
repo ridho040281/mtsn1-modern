@@ -53,14 +53,6 @@ get_header();
           <!-- Left Column: Instagram Flyer Display (Full Uncut Flyer) -->
           <div class="lg:col-span-6 flex flex-col items-center">
 
-            <!-- Header Badges Bar di Atas Flyer: Peringkat Juara & Tingkat Kejuaraan -->
-            <div class="w-full max-w-md mb-3 flex items-center justify-between gap-2 px-1">
-              <?php echo mtsn1_render_peringkat_badge( $id ); ?>
-              <div>
-                <?php echo mtsn1_render_tingkat_badge( mtsn1_get_tingkat_prestasi( $id ) ); ?>
-              </div>
-            </div>
-
             <!-- Frame Flyer Bersih 100% Tanpa Ada Elemen Overlay yang Menutupi Foto -->
             <div class="w-full max-w-md rounded-3xl overflow-hidden bg-slate-950 shadow-2xl border-4 border-amber-400/40 relative group flex items-center justify-center">
               <?php if ( $thumb ) : ?>
