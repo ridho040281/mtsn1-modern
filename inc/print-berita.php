@@ -217,7 +217,7 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 max-width: 210mm;
                 margin: 25px auto 40px auto;
                 background: #ffffff;
-                padding: 18mm 18mm 20mm 18mm;
+                padding: 15mm 20mm 18mm 20mm;
                 box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.05);
                 border-radius: 6px;
                 position: relative;
@@ -627,8 +627,8 @@ function mtsn1_render_print_berita_page( $post_id ) {
                     size: A4 portrait;
                     margin-top: 10mm;
                     margin-bottom: 14mm;
-                    margin-left: 14mm;
-                    margin-right: 14mm;
+                    margin-left: 20mm;
+                    margin-right: 20mm;
 
                     /* Running Footer di Setiap Lembar Halaman Cetak (Sisi Kiri) */
                     @bottom-left {
