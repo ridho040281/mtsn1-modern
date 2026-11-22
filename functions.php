@@ -470,6 +470,7 @@ require_once get_template_directory() . '/inc/word-editor.php';
 require_once get_template_directory() . '/inc/admin-berita-redaksi.php';
 require_once get_template_directory() . '/inc/print-berita.php';
 require_once get_template_directory() . '/inc/statistik-publikasi.php';
+require_once get_template_directory() . '/inc/auto-webp-converter.php';
 
 /**
  * Helper Ekstraksi YouTube Video ID dari URL / Embed string
