@@ -625,7 +625,7 @@ function mtsn1_render_print_berita_page( $post_id ) {
             @media print {
                 @page {
                     size: A4 portrait;
-                    margin-top: 10mm;
+                    margin-top: 15mm;
                     margin-bottom: 14mm;
                     margin-left: 20mm;
                     margin-right: 20mm;
