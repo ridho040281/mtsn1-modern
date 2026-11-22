@@ -61,9 +61,18 @@ function mtsn1_get_default_portal_layanan() {
         'spmb' => [
             'title'  => 'SPMB Online',
             'desc'   => 'Pendaftaran Murid',
-            'url'    => 'https://ppdb.mtsn1blitar.sch.id',
+            'url'    => 'https://spmb.mtsn1blitar.sch.id/',
             'icon'   => 'fa-solid fa-user-graduate',
             'color'  => 'teal',
+            'active' => 1,
+            'target' => '_blank',
+        ],
+        'library' => [
+            'title'  => 'Digital Library',
+            'desc'   => 'Damar Pustaka',
+            'url'    => 'https://damarpustaka.mtsn1blitar.sch.id/',
+            'icon'   => 'fa-solid fa-book-bookmark',
+            'color'  => 'sky',
             'active' => 1,
             'target' => '_blank',
         ],
@@ -78,6 +87,12 @@ function mtsn1_get_portal_layanan() {
     $defaults = mtsn1_get_default_portal_layanan();
     if ( empty( $saved ) || ! is_array( $saved ) ) {
         return $defaults;
+    }
+
+    // Auto-sync jika item library belum ada di saved option database
+    if ( ! isset( $saved['library'] ) && isset( $defaults['library'] ) ) {
+        $saved['library'] = $defaults['library'];
+        update_option( 'mtsn1_portal_layanan', $saved );
     }
 
     $merged = [];
@@ -160,6 +175,8 @@ function mtsn1_render_layanan_admin_page() {
         'purple'  => 'Ungu Elegan',
         'rose'    => 'Merah Rose / Muda',
         'teal'    => 'Tosca / Teal',
+        'sky'     => 'Biru Langit / Sky (Digital Library)',
+        'indigo'  => 'Biru Indigo / Modern',
     ];
     ?>
     <div class="wrap" style="max-width: 1100px; margin-top: 20px;">
@@ -168,7 +185,7 @@ function mtsn1_render_layanan_admin_page() {
             Pengaturan Portal Layanan Terpadu (Ekosistem Digital)
         </h1>
         <p style="font-size: 14px; color: #64748b; margin-bottom: 24px;">
-            Kelola tautan (URL), judul, keterangan, dan ikon untuk 6 kartu layanan digital yang tampil di bagian Beranda dan Footer website MTsN 1 Blitar.
+            Kelola tautan (URL), judul, keterangan, dan ikon untuk kartu layanan digital yang tampil di bagian Beranda dan Footer website MTsN 1 Blitar.
         </p>
 
         <?php if ( isset( $_GET['saved'] ) && $_GET['saved'] === '1' ) : ?>

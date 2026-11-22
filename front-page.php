@@ -370,7 +370,7 @@ get_header();
         <p class="text-xs text-slate-500 max-w-md">Akses cepat seluruh platform pembelajaran mandiri, penilaian terpusat, dan administrasi online madrasah.</p>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
         <?php
         $layanan_items = function_exists( 'mtsn1_get_portal_layanan' ) ? mtsn1_get_portal_layanan() : [];
         $color_classes = [
@@ -403,6 +403,16 @@ get_header();
                 'card'  => 'hover:border-teal-500 hover:bg-teal-50',
                 'icon'  => 'bg-teal-100 text-teal-700 group-hover:bg-teal-600 group-hover:text-white',
                 'title' => 'group-hover:text-teal-800',
+            ],
+            'sky' => [
+                'card'  => 'hover:border-sky-500 hover:bg-sky-50',
+                'icon'  => 'bg-sky-100 text-sky-700 group-hover:bg-sky-500 group-hover:text-white',
+                'title' => 'group-hover:text-sky-800',
+            ],
+            'indigo' => [
+                'card'  => 'hover:border-indigo-500 hover:bg-indigo-50',
+                'icon'  => 'bg-indigo-100 text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white',
+                'title' => 'group-hover:text-indigo-800',
             ],
         ];
 
