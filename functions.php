@@ -414,48 +414,7 @@ add_action( 'init', function() {
  * OPTIMASI KECEPATAN WP-ADMIN & PERFORMANCE BOOST (LOCAL & PRODUCTION)
  * -----------------------------------------------------------------------------
  */
-
-// 1. Hapus widget RSS eksternal di Dashboard yang memicu cURL lambat
-add_action( 'wp_dashboard_setup', 'mtsn1_disable_slow_dashboard_widgets', 999 );
-function mtsn1_disable_slow_dashboard_widgets() {
-    remove_meta_box( 'dashboard_primary', 'dashboard', 'side' );     // WordPress Events & News
-    remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' ); // Quick Draft
-}
-
-// 2. Matikan pengecekan update eksternal yang memblokir navigasi menu admin secara sinkron
-add_action( 'admin_init', function() {
-    remove_action( 'admin_init', 'wp_version_check' );
-    remove_action( 'admin_init', 'wp_update_plugins' );
-    remove_action( 'admin_init', 'wp_update_themes' );
-}, 1 );
-
-// 3. Cegah timeout cURL dari updater ciuss.com (sekolahpro / mading) dan planet.wordpress.org di localhost
-add_filter( 'pre_http_request', function( $pre, $args, $url ) {
-    if ( is_string( $url ) ) {
-        if ( strpos( $url, 'update.ciuss.com' ) !== false || strpos( $url, 'planet.wordpress.org' ) !== false ) {
-            return new WP_Error( 'http_request_blocked', 'External update check bypassed for local speed' );
-        }
-    }
-    return $pre;
-}, 10, 3 );
-
-// 4. Pastikan transient updater sekolahpro selalu terisi agar tidak memicu fallback wp_remote_get
-add_action( 'init', function() {
-    if ( is_admin() && ! get_transient( 'sekolahpro_updater' ) ) {
-        set_transient( 'sekolahpro_updater', wp_json_encode( array(
-            'version'      => defined( 'SEKOLAHPRO_VERSION' ) ? SEKOLAHPRO_VERSION : '3.1.5.9',
-            'requires'     => '5.0',
-            'requires_php' => '7.4',
-            'download_url' => '',
-            'name'         => 'Sekolah Pro',
-            'slug'         => 'sekolahpro'
-        ) ), 30 * DAY_IN_SECONDS );
-    }
-    // Hapus hook updater tema mading jika aktif (karena tema aktif adalah mtsn1-modern)
-    if ( function_exists( 'theme_pre_set_transient_update_mading' ) ) {
-        remove_filter( 'pre_set_site_transient_update_themes', 'theme_pre_set_transient_update_mading' );
-    }
-}, 5 );
+require_once get_template_directory() . '/inc/admin-performance.php';
 
 require_once get_template_directory() . '/inc/admin-layanan.php';
 require_once get_template_directory() . '/inc/admin-blog-author.php';
@@ -463,8 +422,15 @@ require_once get_template_directory() . '/inc/admin-editorial-headline.php';
 require_once get_template_directory() . '/inc/admin-medsos.php';
 require_once get_template_directory() . '/inc/admin-instagram-sync.php';
 require_once get_template_directory() . '/inc/admin-prestasi-meta.php';
-require_once get_template_directory() . '/inc/auto-sync-content.php';
-require_once get_template_directory() . '/inc/auto-sync-prestasi.php';
+
+// Hanya muat migrasi auto-sync jika belum pernah disinkronkan atau dipicu manual (?mtsn1_run_sync=1)
+if ( isset( $_GET['mtsn1_run_sync'] ) || get_option( 'mtsn1_alqalam_sync_version' ) !== 'v3_clean_series' || get_option( 'mtsn1_menu_and_slug_fix_version' ) !== 'v5_unify_sambutan_editorial' ) {
+    require_once get_template_directory() . '/inc/auto-sync-content.php';
+}
+if ( isset( $_GET['mtsn1_run_sync'] ) || get_option( 'mtsn1_prestasi_sync_version_ig' ) !== 'v4_fix_flyer_mismatch' ) {
+    require_once get_template_directory() . '/inc/auto-sync-prestasi.php';
+}
+
 require_once get_template_directory() . '/inc/opengraph.php';
 require_once get_template_directory() . '/inc/word-editor.php';
 require_once get_template_directory() . '/inc/admin-berita-redaksi.php';
