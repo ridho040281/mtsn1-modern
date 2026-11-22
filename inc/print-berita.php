@@ -473,15 +473,26 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 padding: 0 4px !important;
             }
 
+            /* Kontainer Penutup Anti-Orphan (Paragraf Akhir + Kotak Redaksi + Seal) */
+            .editorial-closing-block {
+                display: block;
+                width: 100%;
+                margin-top: 0;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
             /* Kotak Redaksi 3 Kolom */
             .editorial-team-box {
                 background: #f0fdf4;
                 border: 1px solid #bbf7d0;
                 border-radius: 10px;
                 padding: 12px 14px;
-                margin: 16px 0 14px 0;
+                margin: 14px 0 10px 0;
                 break-inside: avoid;
                 page-break-inside: avoid;
+                break-before: avoid;
+                page-break-before: avoid;
             }
             .editorial-header {
                 display: flex;
@@ -573,6 +584,10 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 padding: 6px 0;
                 border-top: 1px dashed #cbd5e1;
                 margin-top: 8px;
+                break-inside: avoid;
+                page-break-inside: avoid;
+                break-before: avoid;
+                page-break-before: avoid;
             }
             .article-official-seal .seal-source {
                 max-width: 100%;
@@ -610,10 +625,10 @@ function mtsn1_render_print_berita_page( $post_id ) {
             @media print {
                 @page {
                     size: A4 portrait;
-                    margin-top: 13mm;
-                    margin-bottom: 18mm;
-                    margin-left: 15mm;
-                    margin-right: 15mm;
+                    margin-top: 10mm;
+                    margin-bottom: 14mm;
+                    margin-left: 14mm;
+                    margin-right: 14mm;
 
                     /* Running Footer di Setiap Lembar Halaman Cetak (Sisi Kiri) */
                     @bottom-left {
@@ -643,7 +658,7 @@ function mtsn1_render_print_berita_page( $post_id ) {
                 body {
                     background: #ffffff !important;
                     color: #000000 !important;
-                    font-size: 10pt !important;
+                    font-size: 9.5pt !important;
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
@@ -666,16 +681,27 @@ function mtsn1_render_print_berita_page( $post_id ) {
                     width: 100% !important;
                 }
 
-                .article-title {
-                    font-size: 18pt !important;
-                    line-height: 1.3 !important;
-                    color: #000000 !important;
+                .official-kop {
+                    padding-bottom: 8px !important;
                     margin-bottom: 10px !important;
+                }
+
+                .article-meta {
+                    margin-bottom: 6px !important;
+                    gap: 6px !important;
+                    font-size: 8.5pt !important;
+                }
+
+                .article-title {
+                    font-size: 16pt !important;
+                    line-height: 1.28 !important;
+                    color: #000000 !important;
+                    margin-bottom: 8px !important;
                 }
 
                 /* Batasi tinggi foto utama pada mode print agar proporsional dan tidak terpotong */
                 .featured-image-box {
-                    margin-bottom: 10px !important;
+                    margin-bottom: 8px !important;
                     border-radius: 4px !important;
                     break-inside: avoid;
                     page-break-inside: avoid;
@@ -683,7 +709,7 @@ function mtsn1_render_print_berita_page( $post_id ) {
                     text-align: center !important;
                 }
                 .featured-image-box img {
-                    max-height: 320px !important;
+                    max-height: 260px !important;
                     max-width: 100% !important;
                     width: auto !important;
                     height: auto !important;
@@ -692,28 +718,80 @@ function mtsn1_render_print_berita_page( $post_id ) {
                     display: block !important;
                 }
                 .featured-image-caption {
-                    font-size: 8.5pt !important;
-                    padding: 3px 6px !important;
+                    font-size: 8pt !important;
+                    padding: 2px 4px !important;
                     text-align: center !important;
                 }
 
                 .article-content {
-                    font-size: 10pt !important;
-                    line-height: 1.52 !important;
-                    margin-bottom: 12px !important;
+                    font-size: 9.5pt !important;
+                    line-height: 1.48 !important;
+                    margin-bottom: 8px !important;
                 }
                 .article-content p {
-                    margin-bottom: 0.65em !important;
+                    margin-bottom: 0.5em !important;
+                    orphans: 3 !important;
+                    widows: 3 !important;
+                }
+
+                /* Kontainer Penutup: Paragraf Penutup (min 5 baris) + Kotak Redaksi */
+                .editorial-closing-block {
+                    display: block !important;
+                    width: 100% !important;
+                    margin-top: 0 !important;
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
                 }
 
                 .editorial-team-box {
                     background: #f8fafc !important;
                     border: 1px solid #cbd5e1 !important;
-                    margin-top: 12px !important;
-                    margin-bottom: 8px !important;
+                    padding: 8px 10px !important;
+                    margin-top: 10px !important;
+                    margin-bottom: 4px !important;
+                    border-radius: 6px !important;
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                    break-before: avoid !important;
+                    page-break-before: avoid !important;
+                }
+                .editorial-header {
+                    padding-bottom: 4px !important;
+                    margin-bottom: 6px !important;
+                }
+                .editorial-header-title {
+                    font-size: 9pt !important;
+                }
+                .editorial-grid {
+                    gap: 6px !important;
                 }
                 .editorial-card {
                     border: 1px solid #cbd5e1 !important;
+                    padding: 4px 6px !important;
+                    gap: 5px !important;
+                    border-radius: 4px !important;
+                }
+                .editorial-icon {
+                    width: 22px !important;
+                    height: 22px !important;
+                    font-size: 9pt !important;
+                    border-radius: 4px !important;
+                }
+                .editorial-info .role {
+                    font-size: 7.5pt !important;
+                }
+                .editorial-info .name {
+                    font-size: 9.5pt !important;
+                }
+
+                .article-official-seal {
+                    padding: 3px 0 !important;
+                    margin-top: 4px !important;
+                    font-size: 8pt !important;
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                    break-before: avoid !important;
+                    page-break-before: avoid !important;
                 }
             }
         </style>
@@ -840,6 +918,99 @@ function mtsn1_render_print_berita_page( $post_id ) {
             </footer>
 
         </div>
+
+        <script>
+            /**
+             * Logika Pengelompokan Otomatis (Anti-Orphan Editorial Box):
+             * Memastikan kolom identitas penulis & editor TIDAK PERNAH berdiri sendiri di halaman baru.
+             * Kotak redaksi WAJIB ditemani oleh minimal 5 baris teks artikel penutup tepat di atasnya.
+             */
+            function mtsn1PreparePrintClosingBlock() {
+                if ( document.querySelector( '.editorial-closing-block' ) ) {
+                    return;
+                }
+
+                const content = document.querySelector( '.article-content' );
+                const editorialBox = document.querySelector( '.editorial-team-box' );
+                const sealBox = document.querySelector( '.article-official-seal' );
+
+                if ( ! content || ! editorialBox ) {
+                    return;
+                }
+
+                const children = Array.from( content.children );
+                if ( children.length === 0 ) {
+                    return;
+                }
+
+                const selectedElements = [];
+                let accumulatedLines = 0;
+                let accumulatedChars = 0;
+
+                // Telusuri mundur dari paragraf/elemen terakhir
+                for ( let i = children.length - 1; i >= 0; i-- ) {
+                    const el = children[i];
+                    if ( el.tagName === 'SCRIPT' || el.tagName === 'STYLE' ) {
+                        continue;
+                    }
+
+                    const text = ( el.innerText || el.textContent || '' ).replace( /\s+/g, ' ' ).trim();
+                    if ( text.length > 0 ) {
+                        selectedElements.unshift( el );
+
+                        // Hitung jumlah baris teks (lebar kertas A4 ~80-95 karakter per baris)
+                        let linesInEl = Math.max( 1, Math.ceil( text.length / 85 ) );
+                        if ( el.offsetHeight > 0 ) {
+                            const computedStyle = window.getComputedStyle( el );
+                            const lineHeight = parseFloat( computedStyle.lineHeight ) || 20;
+                            const renderedLines = Math.round( el.offsetHeight / lineHeight );
+                            if ( renderedLines > 0 ) {
+                                linesInEl = Math.max( linesInEl, renderedLines );
+                            }
+                        }
+
+                        accumulatedLines += linesInEl;
+                        accumulatedChars += text.length;
+
+                        // Berhenti jika sudah mengumpulkan minimal 5 baris (atau minimal 400 karakter teks)
+                        if ( accumulatedLines >= 5 || accumulatedChars >= 400 ) {
+                            break;
+                        }
+                    }
+                }
+
+                // Jika artikel sangat pendek, ambil setidaknya elemen terakhir
+                if ( selectedElements.length === 0 && children.length > 0 ) {
+                    selectedElements.push( children[ children.length - 1 ] );
+                }
+
+                // Buat pembungkus khusus yang tidak boleh terputus oleh page break
+                const closingBlock = document.createElement( 'div' );
+                closingBlock.className = 'editorial-closing-block';
+
+                // Pindahkan elemen-elemen teks terpilih ke dalam closingBlock
+                selectedElements.forEach( function( el ) {
+                    closingBlock.appendChild( el );
+                } );
+
+                // Masukkan kotak redaksi dan seal ke dalam closingBlock tepat di bawah teks
+                closingBlock.appendChild( editorialBox );
+                if ( sealBox ) {
+                    closingBlock.appendChild( sealBox );
+                }
+
+                // Tempelkan closingBlock ke bagian akhir artikel
+                content.appendChild( closingBlock );
+            }
+
+            // Jalankan saat halaman siap dan sebelum dialog print dibuka
+            if ( document.readyState === 'loading' ) {
+                document.addEventListener( 'DOMContentLoaded', mtsn1PreparePrintClosingBlock );
+            } else {
+                mtsn1PreparePrintClosingBlock();
+            }
+            window.addEventListener( 'beforeprint', mtsn1PreparePrintClosingBlock );
+        </script>
 
     </body>
     </html>
