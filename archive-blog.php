@@ -147,8 +147,8 @@ $categories = get_terms( array(
                   </div>
                 </div>
 
-                <!-- Banner Image (Bersih 100% Tanpa Efek Gelap/Blur, Sudut Membulat Rapi) -->
-                <a href="<?php the_permalink(); ?>" class="block overflow-hidden rounded-2xl aspect-[16/9] sm:aspect-[21/9] bg-slate-50 border border-slate-100/80 shadow-xs">
+                <!-- Banner Image (Aspect 21:9 seragam HP & Desktop agar tidak terpotong ke samping) -->
+                <a href="<?php the_permalink(); ?>" class="block overflow-hidden rounded-2xl aspect-[21/9] bg-emerald-950/10 border border-slate-100/80 shadow-xs">
                   <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500">
                 </a>
               </div>
