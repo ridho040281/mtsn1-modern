@@ -131,12 +131,12 @@ $categories = get_terms( array(
                 $badge_icon = 'fa-user-graduate';
             }
             ?>
-            <article class="blog-card bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group p-3 sm:p-4 pt-3.5 relative" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>" data-author="<?php echo esc_attr( strtolower( $author_name ) ); ?>">
+            <article class="blog-card bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group p-3 sm:p-4 pt-4 sm:pt-5 relative" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>" data-author="<?php echo esc_attr( strtolower( $author_name ) ); ?>">
               
-              <!-- Gambar Banner Artikel (Bersih dengan Sudut Melengkung & Floating Badge di Garis Atas) -->
-              <div class="relative mb-3">
-                <!-- Floating Badge Kategori (Pojok Kanan Atas Melayang) -->
-                <div class="absolute -top-2.5 right-2 z-20 shadow-md">
+              <!-- Gambar Banner Artikel (Bersih dengan Sudut Melengkung & Floating Badge Melayang di Garis Atas) -->
+              <div class="relative mb-3 mt-2 sm:mt-2.5">
+                <!-- Floating Badge Kategori (Melayang di Garis Batas Atas Banner) -->
+                <div class="blog-floating-badge" style="top: -13px; right: 12px;">
                   <div class="inline-flex items-stretch rounded-full overflow-hidden text-[9px] sm:text-[10px] font-black tracking-wider uppercase border border-black/10 shadow-sm">
                     <span class="<?php echo esc_attr( $icon_bg ); ?> px-2 sm:px-2.5 py-0.5 sm:py-1 flex items-center justify-center font-black">
                       <i class="fa-solid <?php echo esc_attr( $badge_icon ); ?>"></i>

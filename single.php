@@ -270,12 +270,12 @@ get_header();
                 
                 $card_aspect = $is_blog ? 'aspect-[16/9] sm:aspect-[21/9]' : 'aspect-[16/10]';
                 ?>
-                <div class="bg-white rounded-3xl p-3.5 sm:p-4 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between relative">
+                <div class="bg-white rounded-3xl p-3.5 sm:p-4 pt-4 sm:pt-5 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between relative">
                   <div>
-                    <div class="relative mb-3">
+                    <div class="relative mb-3 mt-1.5 sm:mt-2">
                       <?php if ( $is_blog ) : ?>
                         <!-- Floating Badge Kategori (Pojok Kanan Atas Melayang) -->
-                        <div class="absolute -top-2 right-1.5 z-20 shadow-md">
+                        <div class="blog-floating-badge" style="top: -12px; right: 10px;">
                           <div class="inline-flex items-stretch rounded-full overflow-hidden text-[9px] font-black tracking-wider uppercase border border-black/10 shadow-sm">
                             <span class="bg-amber-400 text-slate-900 px-2 py-0.5 flex items-center justify-center font-black">
                               <i class="fa-solid fa-feather-pointed"></i>

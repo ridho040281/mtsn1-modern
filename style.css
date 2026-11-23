@@ -532,3 +532,21 @@ marquee {
 .editorial-preview-content p.alignleft {
   text-align: left !important;
 }
+
+/* ==========================================================================
+   Floating Category Badge di Atas Banner Artikel Guru (Melayang di Tepi Atas Banner)
+   ========================================================================== */
+.blog-floating-badge {
+  position: absolute !important;
+  top: -13px !important;
+  right: 12px !important;
+  z-index: 30 !important;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.12));
+}
+
+@media (min-width: 640px) {
+  .blog-floating-badge {
+    top: -15px !important;
+    right: 14px !important;
+  }
+}

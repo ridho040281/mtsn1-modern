@@ -39,13 +39,13 @@ get_header();
                 </div>
               <?php endif; ?>
 
-              <div class="relative mb-4">
+              <div class="relative mb-4 mt-1.5 sm:mt-2">
                 <?php if ( $is_blog ) : 
                   $b_terms = get_the_terms( get_the_ID(), 'blog-kat' );
                   $b_cat_name = ( $b_terms && ! is_wp_error( $b_terms ) ) ? $b_terms[0]->name : 'Opini';
                 ?>
                   <!-- Floating Badge Kategori (Pojok Kanan Atas Melayang) -->
-                  <div class="absolute -top-2.5 right-2 z-20 shadow-md">
+                  <div class="blog-floating-badge" style="top: -12px; right: 10px;">
                     <div class="inline-flex items-stretch rounded-full overflow-hidden text-[9px] font-black tracking-wider uppercase border border-black/10 shadow-sm">
                       <span class="bg-amber-400 text-slate-900 px-2 py-0.5 flex items-center justify-center font-black">
                         <i class="fa-solid fa-feather-pointed"></i>
