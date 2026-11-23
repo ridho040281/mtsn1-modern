@@ -139,11 +139,18 @@ if ( $agenda_query->have_posts() ) {
 
     <!-- Agenda Grid / List -->
     <div id="agenda-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <?php foreach ( $all_events as $item ) : 
+      <?php 
+      $id_months = array(
+          1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr',
+          5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Ags',
+          9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'
+      );
+      foreach ( $all_events as $item ) : 
           $tevent_ts = $item['tevent'] ? strtotime( $item['tevent'] ) : false;
-          $month_str = $tevent_ts ? date_i18n( 'M', $tevent_ts ) : 'Okt';
-          $day_str   = $tevent_ts ? date_i18n( 'd', $tevent_ts ) : '01';
-          $year_str  = $tevent_ts ? date_i18n( 'Y', $tevent_ts ) : '2026';
+          $m_num     = $tevent_ts ? (int) date( 'n', $tevent_ts ) : (int) date( 'n' );
+          $month_str = $id_months[ $m_num ] ?? 'Nov';
+          $day_str   = $tevent_ts ? date( 'd', $tevent_ts ) : '01';
+          $year_str  = $tevent_ts ? date( 'Y', $tevent_ts ) : '2026';
 
           $filter_classes = array();
           if ( $item['semester'] === 'Semester Gasal' ) $filter_classes[] = 'type-gasal';
@@ -159,7 +166,7 @@ if ( $agenda_query->have_posts() ) {
             <!-- Top Card Header: Date Badge & Semester Pill -->
             <div class="flex items-start justify-between gap-3 mb-4">
               <!-- Big Date Badge -->
-              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white flex flex-col items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300">
+              <div class="w-16 min-w-[64px] h-16 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white flex flex-col items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300">
                 <span class="text-[10px] uppercase font-bold tracking-wider leading-none text-emerald-100"><?php echo esc_html( $month_str ); ?></span>
                 <span class="text-xl font-black leading-none mt-1"><?php echo esc_html( $day_str ); ?></span>
                 <span class="text-[9px] font-semibold text-emerald-200 leading-none mt-0.5"><?php echo esc_html( $year_str ); ?></span>

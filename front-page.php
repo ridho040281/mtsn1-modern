@@ -565,6 +565,12 @@ get_header();
               }
 
               if ( $papan_agenda_q->have_posts() ) :
+                  $id_months = array(
+                      1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr',
+                      5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Ags',
+                      9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'
+                  );
+
                   while ( $papan_agenda_q->have_posts() ) : $papan_agenda_q->the_post();
                       $tevent   = get_post_meta( get_the_ID(), '_tevent', true );
                       $tgl_teks = get_post_meta( get_the_ID(), '_tgl_teks', true );
@@ -572,28 +578,34 @@ get_header();
                       $lokasi   = get_post_meta( get_the_ID(), '_lokasi', true );
                       $kategori = get_post_meta( get_the_ID(), '_kategori', true );
 
-                      $month_str = $tevent ? date_i18n( 'M', strtotime( $tevent ) ) : 'Okt';
-                      $day_str   = $tevent ? date_i18n( 'd', strtotime( $tevent ) ) : date( 'd' );
+                      $tevent_ts = $tevent ? strtotime( $tevent ) : false;
+                      $m_num     = $tevent_ts ? (int) date( 'n', $tevent_ts ) : (int) date( 'n' );
+                      $month_str = $id_months[ $m_num ] ?? 'Nov';
+                      $day_str   = $tevent_ts ? date( 'd', $tevent_ts ) : date( 'd' );
                       ?>
-                      <a href="<?php the_permalink(); ?>" class="p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-md transition group flex items-center gap-3.5 sm:gap-4">
-                        <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-b from-emerald-600 to-teal-700 text-white flex flex-col items-center justify-center flex-shrink-0 shadow-md">
-                          <span class="text-[10px] uppercase font-bold tracking-wider leading-none"><?php echo esc_html( $month_str ); ?></span>
-                          <span class="text-base sm:text-lg font-black leading-none mt-1"><?php echo esc_html( $day_str ); ?></span>
+                      <a href="<?php the_permalink(); ?>" class="p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-md transition group flex items-center gap-3 sm:gap-4">
+                        <!-- Kalender Badge Tanggal Responsif (Tidak Gepeng di HP) -->
+                        <div class="w-14 min-w-[56px] h-14 sm:w-16 sm:min-w-[64px] sm:h-16 rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 text-white flex flex-col items-center justify-center shrink-0 shadow-sm border border-emerald-500/20 group-hover:scale-105 transition-transform duration-300">
+                          <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-emerald-200 leading-none"><?php echo esc_html( $month_str ); ?></span>
+                          <span class="text-base sm:text-xl font-black text-white leading-none mt-1"><?php echo esc_html( $day_str ); ?></span>
                         </div>
                         <div class="min-w-0 flex-1">
-                          <div class="flex items-center gap-2 mb-1">
+                          <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
                             <?php if ( $kategori ) : ?>
-                              <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60"><?php echo esc_html( $kategori ); ?></span>
+                              <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60"><?php echo esc_html( $kategori ); ?></span>
                             <?php endif; ?>
                             <?php if ( $tgl_teks && ( strpos( $tgl_teks, '–' ) !== false || strpos( $tgl_teks, '-' ) !== false || strpos( $tgl_teks, 'atau' ) !== false ) ) : ?>
-                              <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 line-clamp-1"><i class="fa-regular fa-calendar-days text-[9px] mr-1"></i><?php echo esc_html( $tgl_teks ); ?></span>
+                              <span class="text-[9px] sm:text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60 inline-flex items-center gap-1">
+                                <i class="fa-regular fa-calendar-days text-[9px] text-amber-600"></i>
+                                <span><?php echo esc_html( $tgl_teks ); ?></span>
+                              </span>
                             <?php endif; ?>
                           </div>
-                          <h5 class="text-xs sm:text-sm font-black text-slate-900 group-hover:text-emerald-700 transition line-clamp-1 leading-snug">
+                          <h5 class="text-xs sm:text-sm font-black text-slate-900 group-hover:text-emerald-700 transition line-clamp-2 leading-snug">
                             <?php the_title(); ?>
                           </h5>
-                          <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5 truncate">
-                            <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-location-dot"></i> <?php echo esc_html( $lokasi ? $lokasi : 'Madrasah' ); ?></span>
+                          <p class="text-[10px] sm:text-[11px] text-slate-500 mt-1 flex items-center gap-1.5 truncate">
+                            <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-location-dot"></i> <?php echo esc_html( $lokasi ? $lokasi : 'Madrasah' ); ?></span>
                             <span>•</span>
                             <span><i class="fa-regular fa-clock"></i> <?php echo esc_html( ( $jam && $jam !== '00:00' ) ? $jam . ' WIB' : 'Sesuai Jadwal' ); ?></span>
                           </p>
