@@ -24,7 +24,8 @@ get_header();
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php while ( have_posts() ) : the_post();
             $is_prestasi = ( get_post_type() === 'prestasi' || is_post_type_archive( 'prestasi' ) );
-            $aspect_ratio = $is_prestasi ? 'aspect-[4/5]' : 'aspect-[16/10]';
+            $is_blog     = ( get_post_type() === 'blog' || is_tax( 'blog-kat' ) );
+            $aspect_ratio = $is_prestasi ? 'aspect-[4/5]' : ( $is_blog ? 'aspect-[16/9] sm:aspect-[21/9]' : 'aspect-[16/10]' );
             $peraih = $is_prestasi ? get_post_meta( get_the_ID(), '_peraih', true ) : '';
         ?>
           <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
@@ -40,7 +41,7 @@ get_header();
 
               <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $aspect_ratio ); ?> bg-slate-950 mb-4 relative flex items-center justify-center">
                 <?php $card_thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), $is_prestasi ? 'full' : 'mtsn1-card' ); ?>
-                <?php if ( $is_prestasi ) : ?>
+                <?php if ( $is_prestasi || $is_blog ) : ?>
                   <img src="<?php echo esc_url( $card_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true">
                   <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain p-0.5 group-hover:scale-102 transition duration-500">
                 <?php else : ?>

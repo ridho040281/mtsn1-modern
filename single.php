@@ -268,7 +268,7 @@ get_header();
                     $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, 'mtsn1-card' );
                 }
                 
-                $card_aspect = $is_blog ? 'aspect-[4/3] sm:aspect-[16/10]' : 'aspect-[16/10]';
+                $card_aspect = $is_blog ? 'aspect-[16/9] sm:aspect-[21/9]' : 'aspect-[16/10]';
                 ?>
                 <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between">
                   <div>
