@@ -295,6 +295,66 @@
         });
       });
     })();
+
+    // 5. Sinkronisasi Float Gambar & Wrap Text (100% Identik Word Editor)
+    (function() {
+      const prose = document.querySelectorAll('.prose');
+      if (!prose.length) return;
+
+      function syncImageFloats() {
+        if (window.innerWidth <= 640) return; // Pada HP, biarkan full-width alami responsif
+
+        document.querySelectorAll('.prose img, .prose figure, .prose .wp-caption, .prose .wp-block-image').forEach(function(el) {
+          const isRight = el.classList.contains('alignright') || 
+                          (el.getAttribute('align') === 'right') ||
+                          (el.style && (el.style.float === 'right' || el.style.cssText.includes('float: right') || el.style.cssText.includes('float:right')));
+          
+          const isLeft = el.classList.contains('alignleft') || 
+                         (el.getAttribute('align') === 'left') ||
+                         (el.style && (el.style.float === 'left' || el.style.cssText.includes('float: left') || el.style.cssText.includes('float:left')));
+
+          if (isRight) {
+            el.style.setProperty('float', 'right', 'important');
+            el.style.setProperty('clear', 'right', 'important');
+            el.style.setProperty('margin', '0.5rem 0 1.25rem 1.75rem', 'important');
+            el.style.setProperty('display', 'inline', 'important');
+            el.style.setProperty('max-width', '50%', 'important');
+            if (el.parentElement && el.parentElement.tagName === 'A') {
+              el.parentElement.style.setProperty('float', 'right', 'important');
+              el.parentElement.style.setProperty('clear', 'right', 'important');
+              el.parentElement.style.setProperty('display', 'inline', 'important');
+            }
+            const parentP = el.closest('p');
+            if (parentP) {
+              parentP.style.setProperty('float', 'none', 'important');
+              parentP.style.setProperty('max-width', '100%', 'important');
+            }
+          } else if (isLeft) {
+            el.style.setProperty('float', 'left', 'important');
+            el.style.setProperty('clear', 'left', 'important');
+            el.style.setProperty('margin', '0.5rem 1.75rem 1.25rem 0', 'important');
+            el.style.setProperty('display', 'inline', 'important');
+            el.style.setProperty('max-width', '50%', 'important');
+            if (el.parentElement && el.parentElement.tagName === 'A') {
+              el.parentElement.style.setProperty('float', 'left', 'important');
+              el.parentElement.style.setProperty('clear', 'left', 'important');
+              el.parentElement.style.setProperty('display', 'inline', 'important');
+            }
+            const parentP = el.closest('p');
+            if (parentP) {
+              parentP.style.setProperty('float', 'none', 'important');
+              parentP.style.setProperty('max-width', '100%', 'important');
+            }
+          }
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', syncImageFloats);
+      } else {
+        syncImageFloats();
+      }
+    })();
   </script>
 
 <?php wp_footer(); ?>

@@ -80,43 +80,97 @@ header img, .custom-logo {
   box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.08);
 }
 
-/* 1. Square - Kanan (Align Right: Teks Mengalir Membungkus di Sisi Kiri Gambar) */
+/* 0. Text Alignment pada Elemen Paragraf & Heading (Mencegah Class Teks Membajak Float Media) */
+.prose p.alignleft,
+.prose h1.alignleft, .prose h2.alignleft, .prose h3.alignleft, .prose h4.alignleft, .prose h5.alignleft, .prose h6.alignleft,
+.prose div.alignleft:not(.wp-caption) {
+  text-align: left !important;
+  float: none !important;
+  max-width: 100% !important;
+  clear: none !important;
+}
+
+.prose p.alignright,
+.prose h1.alignright, .prose h2.alignright, .prose h3.alignright, .prose h4.alignright, .prose h5.alignright, .prose h6.alignright,
+.prose div.alignright:not(.wp-caption) {
+  text-align: right !important;
+  float: none !important;
+  max-width: 100% !important;
+  clear: none !important;
+}
+
+.prose p.aligncenter,
+.prose h1.aligncenter, .prose h2.aligncenter, .prose h3.aligncenter, .prose h4.aligncenter, .prose h5.aligncenter, .prose h6.aligncenter,
+.prose div.aligncenter:not(.wp-caption) {
+  text-align: center !important;
+  float: none !important;
+  clear: none !important;
+}
+
+.prose p.alignjustify {
+  text-align: justify !important;
+  text-justify: inter-word !important;
+  float: none !important;
+  clear: none !important;
+}
+
+/* 1. Square - KANAN (Align Right: Teks Mengalir Membungkus di Sisi Kiri Gambar) */
 .prose img.alignright,
-.prose .alignright img,
 .prose figure.alignright,
-.prose .wp-block-image.alignright,
 .prose .wp-caption.alignright,
-.prose .alignright {
+.prose .wp-block-image.alignright,
+.prose a.alignright,
+.prose a:has(> img.alignright),
+.prose .wp-caption.alignright img,
+.prose figure.alignright img,
+.prose .wp-block-image.alignright img,
+.prose img[align="right"],
+.prose img[style*="float: right"],
+.prose img[style*="float:right"],
+.prose figure[style*="float: right"],
+.prose .wp-caption[style*="float: right"] {
   float: right !important;
   margin: 0.5rem 0 1.25rem 1.75rem !important;
   display: inline !important;
   max-width: 50% !important;
   width: auto !important;
-  clear: none !important;
+  clear: right !important;
 }
 
-/* 2. Square - Kiri (Align Left: Teks Mengalir Membungkus di Sisi Kanan Gambar) */
+/* 2. Square - KIRI (Align Left: Teks Mengalir Membungkus di Sisi Kanan Gambar) */
 .prose img.alignleft,
-.prose .alignleft img,
 .prose figure.alignleft,
-.prose .wp-block-image.alignleft,
 .prose .wp-caption.alignleft,
-.prose .alignleft {
+.prose .wp-block-image.alignleft,
+.prose a.alignleft,
+.prose a:has(> img.alignleft),
+.prose .wp-caption.alignleft img,
+.prose figure.alignleft img,
+.prose .wp-block-image.alignleft img,
+.prose img[align="left"],
+.prose img[style*="float: left"],
+.prose img[style*="float:left"],
+.prose figure[style*="float: left"],
+.prose .wp-caption[style*="float: left"] {
   float: left !important;
   margin: 0.5rem 1.75rem 1.25rem 0 !important;
   display: inline !important;
   max-width: 50% !important;
   width: auto !important;
-  clear: none !important;
+  clear: left !important;
 }
 
 /* 3. Center (Align Center: Di Tengah & Memisahkan Paragraf) */
 .prose img.aligncenter,
-.prose .aligncenter img,
 .prose figure.aligncenter,
 .prose .wp-block-image.aligncenter,
 .prose .wp-caption.aligncenter,
-.prose .aligncenter {
+.prose a.aligncenter,
+.prose a:has(> img.aligncenter),
+.prose .wp-caption.aligncenter img,
+.prose figure.aligncenter img,
+.prose .wp-block-image.aligncenter img,
+.prose img[align="center"] {
   display: block !important;
   margin-left: auto !important;
   margin-right: auto !important;
@@ -129,29 +183,29 @@ header img, .custom-logo {
 
 /* 4. In Line with Text (Align None) */
 .prose img.alignnone,
-.prose .alignnone img,
+.prose figure.alignnone,
 .prose .wp-caption.alignnone,
-.prose .alignnone {
+.prose a.alignnone,
+.prose .wp-caption.alignnone img {
   display: inline-block !important;
   float: none !important;
   margin: 0.5rem 0.75rem !important;
   vertical-align: middle !important;
 }
 
-/* 5. Gambar Default / Blok Gambar Tanpa Alignment Khusus (Full Width Proporsional) */
-.prose figure:not(.alignleft):not(.alignright),
-.prose .wp-block-image:not(.alignleft):not(.alignright) {
-  margin: 1.75rem auto;
-  max-width: 100%;
-  clear: both;
+/* Caption (Keterangan Gambar di Dalam Konten) */
+.prose .wp-caption {
+  max-width: 100% !important;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
 }
-.prose figure:not(.alignleft):not(.alignright) img,
-.prose .wp-block-image:not(.alignleft):not(.alignright) img {
-  display: block;
-  margin: 0 auto;
+.prose .wp-caption img {
+  box-shadow: none !important;
+  margin: 0 auto !important;
 }
-
-/* Caption / Keterangan Gambar di Dalam Konten */
 .prose figcaption,
 .prose .wp-element-caption,
 .prose .wp-caption-text {
@@ -161,28 +215,39 @@ header img, .custom-logo {
   text-align: center;
   font-style: italic;
   margin-top: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Clearfix Utama Konten Artikel */
+.prose::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.prose h1, .prose h2, .prose h3, .prose hr {
+  clear: both !important;
 }
 
 /* Responsif Ponsel: Di layar sempit HP (<640px), foto float dijadikan block agar teks tidak terjepit */
 @media (max-width: 640px) {
   .prose img.alignright,
-  .prose .alignright img,
   .prose figure.alignright,
   .prose .wp-block-image.alignright,
   .prose .wp-caption.alignright,
-  .prose .alignright,
+  .prose a.alignright,
+  .prose a:has(> img.alignright),
   .prose img.alignleft,
-  .prose .alignleft img,
   .prose figure.alignleft,
   .prose .wp-block-image.alignleft,
   .prose .wp-caption.alignleft,
-  .prose .alignleft {
+  .prose a.alignleft,
+  .prose a:has(> img.alignleft) {
     float: none !important;
     display: block !important;
     max-width: 100% !important;
     width: 100% !important;
     margin: 1.25rem auto !important;
+    clear: both !important;
   }
 }
 
