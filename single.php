@@ -258,24 +258,31 @@ get_header();
                     $b_cat    = ( $b_terms && ! is_wp_error( $b_terms ) ) ? $b_terms[0]->name : 'Opini Guru';
 
                     if ( has_post_thumbnail( $rel_id ) ) {
-                        $rel_thumb = get_the_post_thumbnail_url( $rel_id, 'mtsn1-card' );
+                        $rel_thumb = get_the_post_thumbnail_url( $rel_id, $is_blog ? 'large' : 'mtsn1-card' );
                     } elseif ( ! empty( $b_author['photo'] ) ) {
                         $rel_thumb = $b_author['photo'];
                     } else {
-                        $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, 'mtsn1-card' );
+                        $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, $is_blog ? 'large' : 'mtsn1-card' );
                     }
                 } else {
                     $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, 'mtsn1-card' );
                 }
+                
+                $card_aspect = $is_blog ? 'aspect-[4/3] sm:aspect-[16/10]' : 'aspect-[16/10]';
                 ?>
                 <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between">
                   <div>
-                    <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-900/5 mb-3 flex items-center justify-center relative">
-                      <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $card_aspect ); ?> bg-slate-950 mb-3 flex items-center justify-center relative">
                       <?php if ( $is_blog ) : ?>
-                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-md bg-emerald-950/80 backdrop-blur-sm text-[9px] font-bold text-emerald-300 uppercase tracking-wider">
+                        <!-- Ambient blurred backdrop agar kartu penuh & serasi -->
+                        <img src="<?php echo esc_url( $rel_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-md opacity-40 scale-110 pointer-events-none" aria-hidden="true">
+                        <!-- Gambar Flyer Utama: Utuh 100% Tanpa Terpotong di HP maupun Desktop -->
+                        <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain p-1 group-hover:scale-105 transition duration-300">
+                        <span class="absolute top-2.5 left-2.5 z-20 px-2.5 py-0.5 rounded-md bg-emerald-950/80 backdrop-blur-sm text-[9px] font-bold text-emerald-300 uppercase tracking-wider">
                           <?php echo esc_html( $b_cat ); ?>
                         </span>
+                      <?php else : ?>
+                        <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                       <?php endif; ?>
                     </div>
 

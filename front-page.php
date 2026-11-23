@@ -69,31 +69,28 @@ get_header();
             <!-- Slide Image -->
             <img id="mainSliderImg" src="<?php echo esc_url( $first_slide['img'] ); ?>" alt="Banner Madrasah" class="w-full h-full object-cover transition-opacity duration-700" decoding="async">
             
-            <!-- Overlay Gradient & Text Caption -->
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-6 sm:p-8">
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-emerald-600 text-white text-xs font-bold w-fit mb-2 shadow-sm">
-                <i class="fa-solid fa-star text-gold-400"></i> UNGGULAN MADRASAH
-              </span>
-              <h2 id="mainSliderTitle" class="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight">
+            <!-- Overlay Gradient & Text Caption (Diperkecil & Kompak di HP agar Gambar Tetap Terlihat Jelas) -->
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/30 to-transparent flex flex-col justify-end p-3.5 sm:p-7">
+              <h2 id="mainSliderTitle" class="text-xs sm:text-xl lg:text-2xl font-black text-white leading-tight line-clamp-2 max-w-xl drop-shadow-sm">
                 <?php echo esc_html( $first_slide['title'] ); ?>
               </h2>
-              <p id="mainSliderDesc" class="text-xs sm:text-sm text-slate-300 mt-2 line-clamp-2 max-w-2xl">
+              <p id="mainSliderDesc" class="text-[10px] sm:text-xs lg:text-sm text-slate-300 mt-0.5 sm:mt-1.5 line-clamp-1 sm:line-clamp-2 max-w-xl">
                 <?php echo esc_html( $first_slide['desc'] ); ?>
               </p>
             </div>
 
-            <!-- Slider Control Buttons -->
-            <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/70 hover:bg-emerald-600 text-white flex items-center justify-center backdrop-blur-sm transition border border-white/20">
+            <!-- Slider Control Buttons (Responsif: Lebih Ringkas di HP) -->
+            <button onclick="prevSlide()" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-slate-900/70 hover:bg-emerald-600 text-white flex items-center justify-center backdrop-blur-sm transition border border-white/20 text-xs sm:text-base">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/70 hover:bg-emerald-600 text-white flex items-center justify-center backdrop-blur-sm transition border border-white/20">
+            <button onclick="nextSlide()" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-slate-900/70 hover:bg-emerald-600 text-white flex items-center justify-center backdrop-blur-sm transition border border-white/20 text-xs sm:text-base">
               <i class="fa-solid fa-chevron-right"></i>
             </button>
 
             <!-- Indicators -->
-            <div class="absolute bottom-3 right-6 flex items-center gap-1.5 z-20">
+            <div class="absolute bottom-2 sm:bottom-3 right-3 sm:right-6 flex items-center gap-1 sm:gap-1.5 z-20">
               <?php foreach ( $slides_data as $idx => $s ) : ?>
-                <span id="dot<?php echo esc_attr( $idx ); ?>" class="<?php echo $idx === 0 ? 'w-7 h-2 rounded-full bg-emerald-500' : 'w-2 h-2 rounded-full bg-white/40'; ?> transition-all"></span>
+                <span id="dot<?php echo esc_attr( $idx ); ?>" class="<?php echo $idx === 0 ? 'w-5 sm:w-7 h-1.5 sm:h-2 rounded-full bg-emerald-500' : 'w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white/40'; ?> transition-all"></span>
               <?php endforeach; ?>
             </div>
           </div>

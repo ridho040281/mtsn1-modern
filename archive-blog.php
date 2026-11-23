@@ -120,7 +120,7 @@ $categories = get_terms( array(
             <article class="blog-card bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>" data-author="<?php echo esc_attr( strtolower( $author_name ) ); ?>">
               
               <!-- Gambar Banner Artikel (Skala Pas Tanpa Terpotong) -->
-              <div class="relative overflow-hidden aspect-[21/9] bg-slate-950 flex items-center justify-center">
+              <div class="relative overflow-hidden aspect-[4/3] sm:aspect-[16/10] bg-slate-950 flex items-center justify-center">
                 <a href="<?php the_permalink(); ?>" class="relative z-10 block w-full h-full">
                   <!-- Ambient blurred backdrop -->
                   <img src="<?php echo esc_url( $post_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-md opacity-40 scale-105 pointer-events-none" aria-hidden="true">
