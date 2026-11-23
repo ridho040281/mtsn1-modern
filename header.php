@@ -9,6 +9,7 @@
   <!-- PWA & Mobile Capabilities -->
   <link rel="manifest" href="<?php echo esc_url( home_url( '/manifest.json' ) ); ?>">
   <meta name="theme-color" content="#064e3b">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MTsN 1 Blitar">

@@ -3,3 +3,5 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/mtsr8395/public_html/web/wp-content/themes/mtsn1-modern/
     - /bin/cp -R * $DEPLOYPATH
+    - /bin/cp sw.js /home/mtsr8395/public_html/web/sw.js
+    - /bin/cp manifest.json /home/mtsr8395/public_html/web/manifest.json
