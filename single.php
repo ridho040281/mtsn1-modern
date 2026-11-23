@@ -18,7 +18,7 @@ get_header();
                 $cat_link = get_term_link( $terms[0] );
             } else {
                 $cat_name = 'Blog & Opini';
-                $cat_link = home_url( '/#berita' );
+                $cat_link = get_post_type_archive_link( 'blog' ) ? get_post_type_archive_link( 'blog' ) : home_url( '/blog' );
             }
         } else {
             $cats = get_the_category();
@@ -167,51 +167,143 @@ get_header();
             <a href="https://twitter.com/intent/tweet?text=<?php echo urlencode( get_the_title() ); ?>&url=<?php echo urlencode( get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center hover:bg-sky-600 transition shadow-xs" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
           </div>
 
-          <a href="<?php echo esc_url( home_url( '/#berita' ) ); ?>" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-emerald-600 hover:text-white text-xs font-bold text-slate-700 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Berita
-          </a>
+          <?php if ( get_post_type() === 'blog' ) : ?>
+            <a href="<?php echo esc_url( get_post_type_archive_link( 'blog' ) ? get_post_type_archive_link( 'blog' ) : home_url( '/blog' ) ); ?>" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-emerald-600 hover:text-white text-xs font-bold text-slate-700 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Artikel Guru
+            </a>
+          <?php else : ?>
+            <a href="<?php echo esc_url( home_url( '/#berita' ) ); ?>" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-emerald-600 hover:text-white text-xs font-bold text-slate-700 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Berita
+            </a>
+          <?php endif; ?>
         </div>
       </article>
 
-      <!-- Related News (3 Cards) -->
-      <div class="mt-12">
-        <h3 class="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">
-          <span class="w-2 h-5 rounded-full bg-emerald-600"></span> Warta Terkait Lainnya
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <?php
-          $related_q = new WP_Query( array(
-              'post_type'      => 'post',
-              'posts_per_page' => 3,
-              'post__not_in'   => array( get_the_ID() ),
-              'post_status'    => 'publish',
-          ) );
+      <!-- Related Posts (3 Cards) -->
+      <?php
+      $current_post_type = get_post_type();
+      $is_blog = ( $current_post_type === 'blog' );
 
-          if ( $related_q->have_posts() ) :
-              while ( $related_q->have_posts() ) : $related_q->the_post();
-                  ?>
-                  <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between">
-                    <div>
-                      <div class="overflow-hidden rounded-2xl <?php echo get_post_type() === 'blog' ? 'aspect-[21/9] bg-slate-950' : 'aspect-[16/10] bg-slate-100'; ?> mb-3 flex items-center justify-center">
-                        <?php $rel_thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), 'mtsn1-card' ); ?>
-                        <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full <?php echo ( get_post_type() === 'blog' ? 'object-contain' : 'object-cover' ); ?> group-hover:scale-105 transition duration-300">
-                      </div>
-                      <h4 class="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition line-clamp-2 leading-snug">
-                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                      </h4>
+      $related_args = array(
+          'post_type'      => $is_blog ? 'blog' : 'post',
+          'posts_per_page' => 3,
+          'post__not_in'   => array( get_the_ID() ),
+          'post_status'    => 'publish',
+          'orderby'        => 'date',
+          'order'          => 'DESC',
+      );
+
+      // Jika artikel blog, coba ambil yang satu kategori/rubrik terlebih dahulu jika ada
+      if ( $is_blog ) {
+          $terms = get_the_terms( get_the_ID(), 'blog-kat' );
+          if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+              $related_args['tax_query'] = array(
+                  array(
+                      'taxonomy' => 'blog-kat',
+                      'field'    => 'term_id',
+                      'terms'    => $terms[0]->term_id,
+                  ),
+              );
+          }
+      }
+
+      $related_q = new WP_Query( $related_args );
+
+      // Fallback jika kategori sama belum mencukupi 3 tulisan, ambil dari seluruh artikel blog guru terbaru lainnya
+      if ( $is_blog && $related_q->post_count < 3 ) {
+          $needed = 3 - $related_q->post_count;
+          $exclude = array_merge( array( get_the_ID() ), wp_list_pluck( $related_q->posts, 'ID' ) );
+          $fallback_q = new WP_Query( array(
+              'post_type'      => 'blog',
+              'posts_per_page' => $needed,
+              'post__not_in'   => $exclude,
+              'post_status'    => 'publish',
+              'orderby'        => 'date',
+              'order'          => 'DESC',
+          ) );
+          if ( $fallback_q->have_posts() ) {
+              $related_q->posts = array_merge( $related_q->posts, $fallback_q->posts );
+              $related_q->post_count = count( $related_q->posts );
+          }
+      }
+      ?>
+
+      <?php if ( $related_q->have_posts() ) : ?>
+        <div class="mt-12">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-black text-slate-900 flex items-center gap-2">
+              <span class="w-2 h-5 rounded-full bg-emerald-600"></span>
+              <?php echo $is_blog ? 'Artikel Guru Lainnya' : 'Warta Terkait Lainnya'; ?>
+            </h3>
+            <?php if ( $is_blog ) : ?>
+              <a href="<?php echo esc_url( get_post_type_archive_link( 'blog' ) ? get_post_type_archive_link( 'blog' ) : home_url( '/blog' ) ); ?>" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 transition">
+                <span>Lihat Semua Artikel Guru</span>
+                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </a>
+            <?php else : ?>
+              <a href="<?php echo esc_url( home_url( '/#berita' ) ); ?>" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 transition">
+                <span>Lihat Semua Berita</span>
+                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </a>
+            <?php endif; ?>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <?php
+            while ( $related_q->have_posts() ) : $related_q->the_post();
+                $rel_id = get_the_ID();
+                if ( $is_blog ) {
+                    $b_author = function_exists( 'mtsn1_get_blog_author_data' ) ? mtsn1_get_blog_author_data( $rel_id ) : array( 'name' => get_the_author(), 'role' => 'GTK MTsN 1 Blitar' );
+                    $b_terms  = get_the_terms( $rel_id, 'blog-kat' );
+                    $b_cat    = ( $b_terms && ! is_wp_error( $b_terms ) ) ? $b_terms[0]->name : 'Opini Guru';
+
+                    if ( has_post_thumbnail( $rel_id ) ) {
+                        $rel_thumb = get_the_post_thumbnail_url( $rel_id, 'mtsn1-card' );
+                    } elseif ( ! empty( $b_author['photo'] ) ) {
+                        $rel_thumb = $b_author['photo'];
+                    } else {
+                        $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, 'mtsn1-card' );
+                    }
+                } else {
+                    $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, 'mtsn1-card' );
+                }
+                ?>
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between">
+                  <div>
+                    <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-900/5 mb-3 flex items-center justify-center relative">
+                      <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                      <?php if ( $is_blog ) : ?>
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-md bg-emerald-950/80 backdrop-blur-sm text-[9px] font-bold text-emerald-300 uppercase tracking-wider">
+                          <?php echo esc_html( $b_cat ); ?>
+                        </span>
+                      <?php endif; ?>
                     </div>
-                    <div class="mt-3 pt-2 border-t border-slate-100 text-[10px] text-slate-400 flex justify-between">
-                      <span><?php echo get_the_date( 'd M Y' ); ?></span>
-                      <a href="<?php the_permalink(); ?>" class="text-emerald-700 font-bold">Baca &rarr;</a>
-                    </div>
+
+                    <?php if ( $is_blog && ! empty( $b_author['name'] ) ) : ?>
+                      <p class="text-[11px] font-semibold text-emerald-700 mb-1 flex items-center gap-1 truncate">
+                        <i class="fa-solid fa-user-pen text-[9px] text-emerald-600"></i>
+                        <span><?php echo esc_html( $b_author['name'] ); ?></span>
+                      </p>
+                    <?php endif; ?>
+
+                    <h4 class="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition line-clamp-2 leading-snug">
+                      <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                    </h4>
                   </div>
-                  <?php
-              endwhile;
-              wp_reset_postdata();
-          endif;
-          ?>
+                  <div class="mt-3 pt-2.5 border-t border-slate-100 text-[10px] text-slate-400 flex justify-between items-center">
+                    <span><i class="fa-regular fa-calendar text-slate-400 mr-1"></i><?php echo get_the_date( 'd M Y' ); ?></span>
+                    <a href="<?php the_permalink(); ?>" class="text-emerald-700 hover:text-emerald-800 font-bold inline-flex items-center gap-1">
+                      <span>Baca</span> &rarr;
+                    </a>
+                  </div>
+                </div>
+                <?php
+            endwhile;
+            wp_reset_postdata();
+            ?>
+          </div>
         </div>
-      </div>
+      <?php endif; ?>
 
     <?php endwhile; ?>
 
