@@ -505,3 +505,30 @@ marquee {
 .text-indigo-700 { color: #4338ca !important; }
 .group:hover .group-hover\:bg-indigo-600 { background-color: #4f46e5 !important; }
 .group:hover .group-hover\:text-indigo-800 { color: #3730a3 !important; }
+
+/* ==========================================================================
+   Editorial Sambutan Kepala Madrasah di Halaman Depan: Rata Kanan-Kiri Rapi (Justified)
+   ========================================================================== */
+.editorial-preview-content,
+.editorial-preview-content p {
+  text-align: justify !important;
+  text-justify: inter-word !important;
+  -webkit-hyphens: none !important;
+  hyphens: none !important;
+  line-height: 1.85 !important;
+}
+
+.editorial-preview-content p[style*="text-align: right"],
+.editorial-preview-content p.alignright {
+  text-align: right !important;
+}
+
+.editorial-preview-content p[style*="text-align: center"],
+.editorial-preview-content p.aligncenter {
+  text-align: center !important;
+}
+
+.editorial-preview-content p[style*="text-align: left"],
+.editorial-preview-content p.alignleft {
+  text-align: left !important;
+}

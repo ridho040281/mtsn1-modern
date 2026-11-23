@@ -216,35 +216,33 @@ get_header();
             "<?php echo esc_html( trim( $editorial_headline, "\"'“”" ) ); ?>"
           </h2>
           <?php if ( ! empty( $editorial_content ) ) : ?>
-            <div class="space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed">
+            <div class="editorial-preview-content space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed text-justify [text-align:justify] [text-justify:inter-word]">
               <?php
-              $paragraphs = explode( '</p>', $editorial_content );
-              $clean_paragraphs = array();
-              foreach ( $paragraphs as $p ) {
-                  $p = trim( strip_tags( $p, '<strong><em><b><i>' ) );
-                  if ( ! empty( $p ) ) {
-                      $clean_paragraphs[] = '<p>' . $p . '</p>';
+              $content_with_p = wpautop( $editorial_content );
+              preg_match_all( '/<p\b[^>]*>.*?<\/p>/is', $content_with_p, $matches );
+
+              if ( ! empty( $matches[0] ) ) {
+                  $selected_paragraphs = array_slice( $matches[0], 0, 3 );
+                  foreach ( $selected_paragraphs as $p_html ) {
+                      if ( stripos( $p_html, 'text-align' ) === false && stripos( $p_html, 'align' ) === false ) {
+                          $p_html = preg_replace( '/^<p(\s|>)/i', '<p class="text-justify [text-align:justify] [text-justify:inter-word] leading-relaxed"$1', $p_html );
+                      }
+                      echo $p_html;
                   }
-                  if ( count( $clean_paragraphs ) >= 3 ) {
-                      break;
-                  }
-              }
-              if ( ! empty( $clean_paragraphs ) ) {
-                  echo implode( '', $clean_paragraphs );
               } else {
-                  echo '<p>' . wp_trim_words( strip_tags( $editorial_content ), 70, '...' ) . '</p>';
+                  echo '<p class="text-justify [text-align:justify] [text-justify:inter-word] leading-relaxed">' . wp_trim_words( strip_tags( $editorial_content ), 70, '...' ) . '</p>';
               }
               ?>
             </div>
           <?php else : ?>
-            <div class="space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed">
-              <p class="font-semibold text-slate-850">
+            <div class="editorial-preview-content space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed text-justify [text-align:justify] [text-justify:inter-word]">
+              <p class="font-semibold text-slate-850 text-justify [text-align:justify] [text-justify:inter-word] leading-relaxed">
                 Assalamu’alaikum Warahmatullahi Wabarakatuh.
               </p>
-              <p>
+              <p class="text-justify [text-align:justify] [text-justify:inter-word] leading-relaxed">
                 Selamat datang di portal informasi resmi <strong>Madrasah Tsanawiyah Negeri 1 Blitar</strong>. Sebagai salah satu lembaga pendidikan Islam unggulan di Kabupaten Blitar, kami senantiasa berikhtiar mendidik para tunas bangsa agar tidak hanya cakap menguasai ilmu pengetahuan dan teknologi modern, namun juga kokoh memegang nilai-nilai tauhid dan berakhlakul karimah.
               </p>
-              <p>
+              <p class="text-justify [text-align:justify] [text-justify:inter-word] leading-relaxed">
                 Melalui integrasi kurikulum terpadu, program tahfidz, riset sains dan robotik, serta lingkungan madrasah adiwiyata yang asri, kami siap mengantarkan putra-putri panjenengan meraih prestasi tertinggi dan menjadi pribadi yang membanggakan bagi agama, nusa, dan bangsa.
               </p>
             </div>
