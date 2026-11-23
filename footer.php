@@ -356,6 +356,91 @@
         syncImageFloats();
       }
     })();
+
+    // 8. Global Helper: Copy Link & Native Web Share API
+    function mtsn1CopyLink(btn) {
+      var url = btn.getAttribute('data-url') || window.location.href;
+      var textSpan = btn.querySelector('.copy-text');
+      var originalText = textSpan ? textSpan.innerText : 'Salin Link';
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function() {
+          mtsn1ShowCopySuccess(btn, textSpan, originalText);
+        }).catch(function() {
+          mtsn1FallbackCopy(url, btn, textSpan, originalText);
+        });
+      } else {
+        mtsn1FallbackCopy(url, btn, textSpan, originalText);
+      }
+    }
+
+    function mtsn1FallbackCopy(url, btn, textSpan, originalText) {
+      var textArea = document.createElement("textarea");
+      textArea.value = url;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        mtsn1ShowCopySuccess(btn, textSpan, originalText);
+      } catch (err) {
+        prompt('Salin link ini:', url);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function mtsn1ShowCopySuccess(btn, textSpan, originalText) {
+      if (textSpan) textSpan.innerText = 'Tersalin!';
+      btn.classList.add('!bg-emerald-600', '!text-white', '!border-emerald-600');
+      var icon = btn.querySelector('i');
+      if (icon) {
+        var origClass = icon.className;
+        icon.className = 'fa-solid fa-check text-white';
+        setTimeout(function() {
+          if (textSpan) textSpan.innerText = originalText;
+          btn.classList.remove('!bg-emerald-600', '!text-white', '!border-emerald-600');
+          icon.className = origClass;
+        }, 2500);
+      }
+      mtsn1ShowToast('Link berhasil disalin ke clipboard! 📋');
+    }
+
+    function mtsn1NativeShare(btn) {
+      var title = btn.getAttribute('data-title') || document.title;
+      var url = btn.getAttribute('data-url') || window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          text: title + ' - MTsN 1 Blitar',
+          url: url
+        }).catch(function(err) {
+          if (err.name !== 'AbortError') {
+            mtsn1CopyLink(btn);
+          }
+        });
+      } else {
+        mtsn1CopyLink(btn);
+      }
+    }
+
+    function mtsn1ShowToast(msg) {
+      var toast = document.getElementById('mtsn1-share-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'mtsn1-share-toast';
+        toast.className = 'fixed bottom-24 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 border border-slate-700/60 backdrop-blur-md transition-all duration-300 pointer-events-none opacity-0 translate-y-4';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> <span>' + msg + '</span>';
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(function() {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4');
+      }, 2500);
+    }
   </script>
 
 <?php wp_footer(); ?>

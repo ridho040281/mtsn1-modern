@@ -61,14 +61,36 @@ get_header();
 
         <!-- Headline Sambutan Besar -->
         <?php if ( ! empty( $editorial_headline ) ) : ?>
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight mb-8">
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight mb-4">
             "<?php echo esc_html( trim( $editorial_headline, "\"'“”" ) ); ?>"
           </h1>
         <?php else : ?>
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight mb-8">
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight mb-4">
             <?php the_title(); ?>
           </h1>
         <?php endif; ?>
+
+        <!-- Bilah Berbagi Cepat & Salin Link -->
+        <div class="mb-8 pb-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="mtsn1CopyLink(this)" data-url="<?php echo esc_url( get_permalink() ); ?>" class="copy-link-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 font-bold transition border border-slate-200/80 shadow-xs cursor-pointer active:scale-95" title="Salin Tautan">
+              <i class="fa-regular fa-copy text-emerald-600"></i>
+              <span class="copy-text">Salin Link</span>
+            </button>
+            <button type="button" onclick="mtsn1NativeShare(this)" data-title="<?php echo esc_attr( get_the_title() ); ?>" data-url="<?php echo esc_url( get_permalink() ); ?>" class="native-share-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 font-bold transition border border-slate-200/80 shadow-xs cursor-pointer active:scale-95" title="Bagikan">
+              <i class="fa-solid fa-share-nodes text-emerald-600"></i>
+              <span>Bagikan</span>
+            </button>
+            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . "\n\n" . get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition shadow-xs active:scale-95" title="WhatsApp">
+              <i class="fa-brands fa-whatsapp text-sm"></i>
+              <span>WhatsApp</span>
+            </a>
+          </div>
+          <div class="hidden sm:flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
+            <i class="fa-solid fa-circle-check text-emerald-600"></i>
+            <span>Portal Resmi MTsN 1 Blitar</span>
+          </div>
+        </div>
 
         <!-- Banner Khusus di Dalam Halaman (Jika diset banner lanskap tersendiri) -->
         <?php if ( ! empty( $inside_banner ) ) : ?>

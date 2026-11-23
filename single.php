@@ -64,9 +64,37 @@ get_header();
         </div>
 
         <!-- Title -->
-        <h1 class="text-2xl sm:text-4xl font-black text-slate-900 leading-tight mb-6">
+        <h1 class="text-2xl sm:text-4xl font-black text-slate-900 leading-tight mb-4">
           <?php the_title(); ?>
         </h1>
+
+        <!-- Bilah Berbagi Cepat & Salin Link (Sangat Membantu di Layar HP & Mode PWA Layar Penuh) -->
+        <div class="mb-6 pb-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Tombol Salin Link -->
+            <button type="button" onclick="mtsn1CopyLink(this)" data-url="<?php echo esc_url( get_permalink() ); ?>" class="copy-link-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 font-bold transition border border-slate-200/80 shadow-xs cursor-pointer active:scale-95" title="Salin Tautan Berita">
+              <i class="fa-regular fa-copy text-emerald-600"></i>
+              <span class="copy-text">Salin Link</span>
+            </button>
+
+            <!-- Tombol Native Share HP (Buka Dialog Bagikan Android/iOS) -->
+            <button type="button" onclick="mtsn1NativeShare(this)" data-title="<?php echo esc_attr( get_the_title() ); ?>" data-url="<?php echo esc_url( get_permalink() ); ?>" class="native-share-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 font-bold transition border border-slate-200/80 shadow-xs cursor-pointer active:scale-95" title="Bagikan ke Aplikasi Lain">
+              <i class="fa-solid fa-share-nodes text-emerald-600"></i>
+              <span>Bagikan</span>
+            </button>
+
+            <!-- Tombol Langsung WhatsApp -->
+            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . "\n\n" . get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition shadow-xs active:scale-95" title="Kirim Berita ke WhatsApp">
+              <i class="fa-brands fa-whatsapp text-sm"></i>
+              <span>WhatsApp</span>
+            </a>
+          </div>
+
+          <div class="hidden sm:flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
+            <i class="fa-solid fa-circle-check text-emerald-600"></i>
+            <span>Portal Resmi MTsN 1 Blitar</span>
+          </div>
+        </div>
 
         <!-- Featured Image Dinamis (Mengikuti Ukuran Asli Foto Tanpa Terpotong) -->
         <?php if ( has_post_thumbnail() ) : ?>
@@ -158,13 +186,31 @@ get_header();
           </div>
         <?php endif; ?>
 
-        <!-- Share & Print Buttons -->
+        <!-- Share & Action Buttons -->
         <div class="mt-10 pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
-          <div class="flex flex-wrap items-center gap-2.5 text-xs font-bold text-slate-600">
-            <span>Bagikan:</span>
-            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . ' ' . get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition shadow-xs" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode( get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition shadow-xs" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-            <a href="https://twitter.com/intent/tweet?text=<?php echo urlencode( get_the_title() ); ?>&url=<?php echo urlencode( get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center hover:bg-sky-600 transition shadow-xs" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
+          <div class="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-700">
+            <span class="mr-1 text-slate-500">Bagikan:</span>
+
+            <!-- Salin Link Button -->
+            <button type="button" onclick="mtsn1CopyLink(this)" data-url="<?php echo esc_url( get_permalink() ); ?>" class="copy-link-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 font-bold transition border border-slate-200/80 shadow-xs cursor-pointer active:scale-95" title="Salin Tautan">
+              <i class="fa-regular fa-copy text-emerald-600"></i>
+              <span class="copy-text">Salin Link</span>
+            </button>
+
+            <!-- Native Share Button -->
+            <button type="button" onclick="mtsn1NativeShare(this)" data-title="<?php echo esc_attr( get_the_title() ); ?>" data-url="<?php echo esc_url( get_permalink() ); ?>" class="native-share-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 font-bold transition border border-slate-200/80 shadow-xs cursor-pointer active:scale-95" title="Bagikan ke Aplikasi">
+              <i class="fa-solid fa-share-nodes text-emerald-600"></i>
+              <span>Bagikan</span>
+            </button>
+
+            <!-- WhatsApp -->
+            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . "\n\n" . get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition shadow-xs" title="Kirim ke WhatsApp"><i class="fa-brands fa-whatsapp text-base"></i></a>
+            
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode( get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition shadow-xs" title="Facebook"><i class="fa-brands fa-facebook text-base"></i></a>
+            
+            <!-- Twitter / X -->
+            <a href="https://twitter.com/intent/tweet?text=<?php echo urlencode( get_the_title() ); ?>&url=<?php echo urlencode( get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-sky-500 text-white flex items-center justify-center hover:bg-sky-600 transition shadow-xs" title="Twitter / X"><i class="fa-brands fa-x-twitter text-base"></i></a>
           </div>
 
           <?php if ( get_post_type() === 'blog' ) : ?>

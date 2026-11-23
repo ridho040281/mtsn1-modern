@@ -84,10 +84,14 @@ get_header();
                   <span>Cek di IG</span>
                 </a>
               <?php endif; ?>
-              <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . ' - MTsN 1 Blitar: ' . get_permalink() ); ?>" target="_blank" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm">
-                <i class="fa-brands fa-whatsapp text-xs"></i>
+              <button type="button" onclick="mtsn1CopyLink(this)" data-url="<?php echo esc_url( get_permalink() ); ?>" class="copy-link-btn flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm border border-slate-200 cursor-pointer active:scale-95" title="Salin Tautan">
+                <i class="fa-regular fa-copy text-xs text-emerald-600"></i>
+                <span class="copy-text">Salin Link</span>
+              </button>
+              <button type="button" onclick="mtsn1NativeShare(this)" data-title="<?php echo esc_attr( get_the_title() ); ?>" data-url="<?php echo esc_url( get_permalink() ); ?>" class="native-share-btn flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer active:scale-95" title="Bagikan ke WhatsApp/Aplikasi">
+                <i class="fa-solid fa-share-nodes text-xs"></i>
                 <span>Bagikan</span>
-              </a>
+              </button>
             </div>
           </div>
 
