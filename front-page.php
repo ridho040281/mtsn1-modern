@@ -65,32 +65,32 @@ get_header();
           $first_slide = $slides_data[0];
           ?>
 
-          <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-700/60 group bg-slate-950 aspect-[16/9] sm:aspect-[16/8]">
-            <!-- Slide Image -->
+          <div class="relative rounded-xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-700/60 group bg-slate-950 aspect-[1920/700] sm:aspect-[16/8]">
+            <!-- Slide Image (Skala Sesuai Asli 1920x700 Tanpa Pemotongan Logo di HP) -->
             <img id="mainSliderImg" src="<?php echo esc_url( $first_slide['img'] ); ?>" alt="Banner Madrasah" class="w-full h-full object-cover transition-opacity duration-700" decoding="async">
             
-            <!-- Overlay Gradient & Text Caption (Diperkecil & Kompak di HP agar Gambar Tetap Terlihat Jelas) -->
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/30 to-transparent flex flex-col justify-end p-3.5 sm:p-7">
-              <h2 id="mainSliderTitle" class="text-xs sm:text-xl lg:text-2xl font-black text-white leading-tight line-clamp-2 max-w-xl drop-shadow-sm">
+            <!-- Overlay Gradient & Text Caption: Sembunyi Total di HP (Opsi A) agar Poster Bersih 100% -->
+            <div class="hidden sm:flex absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent flex-col justify-end p-5 sm:p-7 pointer-events-none">
+              <h2 id="mainSliderTitle" class="text-lg sm:text-xl lg:text-2xl font-black text-white leading-tight line-clamp-2 max-w-xl drop-shadow-sm">
                 <?php echo esc_html( $first_slide['title'] ); ?>
               </h2>
-              <p id="mainSliderDesc" class="text-[10px] sm:text-xs lg:text-sm text-slate-300 mt-0.5 sm:mt-1.5 line-clamp-1 sm:line-clamp-2 max-w-xl">
+              <p id="mainSliderDesc" class="text-xs sm:text-sm text-slate-300 mt-1 line-clamp-2 max-w-xl">
                 <?php echo esc_html( $first_slide['desc'] ); ?>
               </p>
             </div>
 
-            <!-- Slider Control Buttons (Responsif: Lebih Ringkas di HP) -->
-            <button onclick="prevSlide()" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-slate-900/70 hover:bg-emerald-600 text-white flex items-center justify-center backdrop-blur-sm transition border border-white/20 text-xs sm:text-base">
+            <!-- Slider Control Buttons (Minimalis & Transparan di HP) -->
+            <button onclick="prevSlide()" class="absolute left-1.5 sm:left-4 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-11 sm:h-11 rounded-full bg-slate-950/40 hover:bg-emerald-600 text-white/90 flex items-center justify-center backdrop-blur-xs transition border border-white/10 text-[10px] sm:text-base opacity-75 hover:opacity-100 z-20">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button onclick="nextSlide()" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-slate-900/70 hover:bg-emerald-600 text-white flex items-center justify-center backdrop-blur-sm transition border border-white/20 text-xs sm:text-base">
+            <button onclick="nextSlide()" class="absolute right-1.5 sm:right-4 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-11 sm:h-11 rounded-full bg-slate-950/40 hover:bg-emerald-600 text-white/90 flex items-center justify-center backdrop-blur-xs transition border border-white/10 text-[10px] sm:text-base opacity-75 hover:opacity-100 z-20">
               <i class="fa-solid fa-chevron-right"></i>
             </button>
 
             <!-- Indicators -->
-            <div class="absolute bottom-2 sm:bottom-3 right-3 sm:right-6 flex items-center gap-1 sm:gap-1.5 z-20">
+            <div class="absolute bottom-1.5 sm:bottom-3 right-2.5 sm:right-6 flex items-center gap-1 sm:gap-1.5 z-20 pointer-events-none">
               <?php foreach ( $slides_data as $idx => $s ) : ?>
-                <span id="dot<?php echo esc_attr( $idx ); ?>" class="<?php echo $idx === 0 ? 'w-5 sm:w-7 h-1.5 sm:h-2 rounded-full bg-emerald-500' : 'w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white/40'; ?> transition-all"></span>
+                <span id="dot<?php echo esc_attr( $idx ); ?>" class="<?php echo $idx === 0 ? 'w-4 sm:w-7 h-1 sm:h-2 rounded-full bg-emerald-500' : 'w-1 sm:w-2 h-1 sm:h-2 rounded-full bg-white/40'; ?> transition-all"></span>
               <?php endforeach; ?>
             </div>
           </div>
