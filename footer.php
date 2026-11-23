@@ -181,8 +181,9 @@
     // 1. Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('<?php echo esc_url( home_url( '/sw.js' ) ); ?>')
+        navigator.serviceWorker.register('<?php echo esc_url( home_url( '/sw.js?v=3' ) ); ?>')
           .then(function(reg) {
+            reg.update();
             console.log('MTsN 1 Blitar PWA Service Worker Registered with scope: ', reg.scope);
           })
           .catch(function(err) {
