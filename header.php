@@ -26,18 +26,8 @@
         "urls": [
           "<?php echo esc_url( home_url( '/' ) ); ?>",
           "<?php echo esc_url( home_url( '/prestasi/' ) ); ?>",
-          "<?php echo esc_url( home_url( '/profil/' ) ); ?>",
           "<?php echo esc_url( home_url( '/gtk/' ) ); ?>"
         ]
-      }
-    ],
-    "prefetch": [
-      {
-        "source": "document",
-        "where": {
-          "href_matches": "/*"
-        },
-        "eagerness": "moderate"
       }
     ]
   }

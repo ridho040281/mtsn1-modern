@@ -2,7 +2,7 @@
  * MTsN 1 Blitar - Modern Progressive Web App (PWA) Service Worker
  */
 
-const CACHE_NAME = 'mtsn1-cache-v2';
+const CACHE_NAME = 'mtsn1-cache-v3';
 const OFFLINE_URL = 'offline.html';
 
 const PRECACHE_ASSETS = [
@@ -13,36 +13,39 @@ const PRECACHE_ASSETS = [
   'pwa-icon-512.png'
 ];
 
-// Install Event
+// Install Event: Activate immediately
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS);
+      return cache.addAll(PRECACHE_ASSETS).catch(() => {});
     })
   );
-  self.skipWaiting();
 });
 
-// Activate Event
+// Activate Event: Claim all clients immediately & purge obsolete caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((name) => {
-          if (name !== CACHE_NAME) {
-            return caches.delete(name);
-          }
-        })
-      );
-    })
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((name) => {
+            if (name !== CACHE_NAME) {
+              return caches.delete(name);
+            }
+          })
+        );
+      })
+    ])
   );
-  self.clients.claim();
 });
 
 // Fetch Event
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests
+  // Only handle GET requests and valid http/https schemes
   if (event.request.method !== 'GET') return;
+  if (!event.request.url.startsWith('http')) return;
 
   const url = new URL(event.request.url);
 
@@ -51,23 +54,26 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          // Clone and cache the freshly fetched page
           if (response && response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            }).catch(() => {});
+            try {
+              const responseClone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, responseClone).catch(() => {});
+              }).catch(() => {});
+            } catch (err) {}
           }
           return response;
         })
         .catch(async () => {
-          // Check if the page is in cache
-          const cachedResponse = await caches.match(event.request);
-          if (cachedResponse) {
-            return cachedResponse;
+          try {
+            const cachedResponse = await caches.match(event.request);
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            return caches.match(OFFLINE_URL);
+          } catch (e) {
+            return caches.match(OFFLINE_URL);
           }
-          // Fallback to offline.html
-          return caches.match(OFFLINE_URL);
         })
     );
     return;
@@ -79,15 +85,21 @@ self.addEventListener('fetch', (event) => {
   ) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
-        const fetchPromise = fetch(event.request).then((networkResponse) => {
-          if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            }).catch(() => {});
-          }
-          return networkResponse;
-        }).catch(() => {/* Ignore network errors for background revalidation */});
+        const fetchPromise = fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+              try {
+                const responseToCache = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                  cache.put(event.request, responseToCache).catch(() => {});
+                }).catch(() => {});
+              } catch (e) {
+                // If clone fails for any reason, ignore gracefully
+              }
+            }
+            return networkResponse;
+          })
+          .catch(() => cachedResponse);
 
         return cachedResponse || fetchPromise;
       })
@@ -99,6 +111,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
-    })
+    }).catch(() => fetch(event.request))
   );
 });
