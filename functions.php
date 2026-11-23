@@ -10,7 +10,7 @@ if ( ! function_exists( 'mtsn1_setup' ) ) :
 
         // Enable featured images
         add_theme_support( 'post-thumbnails' );
-        set_post_thumbnail_size( 800, 500, true );
+        set_post_thumbnail_size( 1200, 9999, false );
         add_image_size( 'mtsn1-slider', 1400, 560, true );
         add_image_size( 'mtsn1-card', 600, 380, true );
         add_image_size( 'mtsn1-avatar', 200, 200, true );
@@ -454,6 +454,66 @@ function mtsn1_extract_youtube_id( $s ) {
         return $match[1];
     }
     return '';
+}
+
+/**
+ * Pratinjau Featured Image di Admin Panel: Tampil Penuh & Zero-Crop
+ * Memastikan gambar utama di halaman admin (Classic Editor, Word Editor, Gutenberg)
+ * tampil utuh mengikuti rasio aslinya tanpa terpotong di sisi kiri-kanan.
+ */
+add_filter( 'admin_post_thumbnail_size', function( $size, $thumbnail_id, $post ) {
+    return 'full';
+}, 10, 3 );
+
+add_action( 'admin_head', 'mtsn1_admin_featured_image_styles' );
+function mtsn1_admin_featured_image_styles() {
+    ?>
+    <style>
+        /* Tampilan Kotak Featured Image di Admin Panel */
+        #postimagediv .inside {
+            padding: 12px 14px 16px 14px !important;
+        }
+        #postimagediv .inside a {
+            display: block !important;
+            width: 100% !important;
+            text-align: center !important;
+        }
+        #postimagediv .inside img {
+            max-width: 100% !important;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 520px !important;
+            object-fit: contain !important;
+            border-radius: 8px !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.08) !important;
+            display: block !important;
+            margin: 0 auto 10px auto !important;
+            background-color: #f8fafc !important;
+        }
+        #postimagediv #set-post-thumbnail-desc {
+            font-size: 11px !important;
+            color: #64748b !important;
+            text-align: center !important;
+            margin: 6px 0 8px 0 !important;
+        }
+        #postimagediv #remove-post-thumbnail {
+            display: inline-block !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            color: #ef4444 !important;
+        }
+        /* Dukungan untuk Gutenberg Block Editor */
+        .editor-post-featured-image__preview,
+        .editor-post-featured-image img {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 520px !important;
+            object-fit: contain !important;
+            border-radius: 8px !important;
+        }
+    </style>
+    <?php
 }
 
 
