@@ -270,20 +270,31 @@ get_header();
                 
                 $card_aspect = $is_blog ? 'aspect-[16/9] sm:aspect-[21/9]' : 'aspect-[16/10]';
                 ?>
-                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between">
+                <div class="bg-white rounded-3xl p-3.5 sm:p-4 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between relative">
                   <div>
-                    <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $card_aspect ); ?> bg-slate-950 mb-3 flex items-center justify-center relative">
+                    <div class="relative mb-3">
                       <?php if ( $is_blog ) : ?>
-                        <!-- Ambient blurred backdrop agar kartu penuh & serasi -->
-                        <img src="<?php echo esc_url( $rel_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-md opacity-40 scale-110 pointer-events-none" aria-hidden="true">
-                        <!-- Gambar Flyer Utama: Utuh 100% Tanpa Terpotong di HP maupun Desktop -->
-                        <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain p-1 group-hover:scale-105 transition duration-300">
-                        <span class="absolute top-2.5 left-2.5 z-20 px-2.5 py-0.5 rounded-md bg-emerald-950/80 backdrop-blur-sm text-[9px] font-bold text-emerald-300 uppercase tracking-wider">
-                          <?php echo esc_html( $b_cat ); ?>
-                        </span>
-                      <?php else : ?>
-                        <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        <!-- Floating Badge Kategori (Pojok Kanan Atas Melayang) -->
+                        <div class="absolute -top-2 right-1.5 z-20 shadow-md">
+                          <div class="inline-flex items-stretch rounded-full overflow-hidden text-[9px] font-black tracking-wider uppercase border border-black/10 shadow-sm">
+                            <span class="bg-amber-400 text-slate-900 px-2 py-0.5 flex items-center justify-center font-black">
+                              <i class="fa-solid fa-feather-pointed"></i>
+                            </span>
+                            <span class="bg-emerald-600 text-white px-2.5 py-0.5 flex items-center">
+                              <?php echo esc_html( $b_cat ); ?>
+                            </span>
+                          </div>
+                        </div>
                       <?php endif; ?>
+
+                      <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $card_aspect ); ?> bg-slate-50 border border-slate-100/80 flex items-center justify-center relative shadow-xs">
+                        <?php if ( $is_blog ) : ?>
+                          <!-- Banner Bersih Tanpa Blur -->
+                          <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-103 transition duration-500">
+                        <?php else : ?>
+                          <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        <?php endif; ?>
+                      </div>
                     </div>
 
                     <?php if ( $is_blog && ! empty( $b_author['name'] ) ) : ?>

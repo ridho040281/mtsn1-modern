@@ -39,14 +39,36 @@ get_header();
                 </div>
               <?php endif; ?>
 
-              <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $aspect_ratio ); ?> bg-slate-950 mb-4 relative flex items-center justify-center">
-                <?php $card_thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), $is_prestasi ? 'full' : 'mtsn1-card' ); ?>
-                <?php if ( $is_prestasi || $is_blog ) : ?>
-                  <img src="<?php echo esc_url( $card_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true">
-                  <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain p-0.5 group-hover:scale-102 transition duration-500">
-                <?php else : ?>
-                  <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              <div class="relative mb-4">
+                <?php if ( $is_blog ) : 
+                  $b_terms = get_the_terms( get_the_ID(), 'blog-kat' );
+                  $b_cat_name = ( $b_terms && ! is_wp_error( $b_terms ) ) ? $b_terms[0]->name : 'Opini';
+                ?>
+                  <!-- Floating Badge Kategori (Pojok Kanan Atas Melayang) -->
+                  <div class="absolute -top-2.5 right-2 z-20 shadow-md">
+                    <div class="inline-flex items-stretch rounded-full overflow-hidden text-[9px] font-black tracking-wider uppercase border border-black/10 shadow-sm">
+                      <span class="bg-amber-400 text-slate-900 px-2 py-0.5 flex items-center justify-center font-black">
+                        <i class="fa-solid fa-feather-pointed"></i>
+                      </span>
+                      <span class="bg-emerald-600 text-white px-2.5 py-0.5 flex items-center">
+                        <?php echo esc_html( $b_cat_name ); ?>
+                      </span>
+                    </div>
+                  </div>
                 <?php endif; ?>
+
+                <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $aspect_ratio ); ?> <?php echo $is_blog ? 'bg-slate-50 border border-slate-100/80 shadow-xs' : 'bg-slate-950'; ?> relative flex items-center justify-center">
+                  <?php $card_thumb = mtsn1_get_post_thumbnail_url( get_the_ID(), $is_prestasi ? 'full' : 'mtsn1-card' ); ?>
+                  <?php if ( $is_prestasi ) : ?>
+                    <img src="<?php echo esc_url( $card_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true">
+                    <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="relative z-10 w-full h-full object-contain p-0.5 group-hover:scale-102 transition duration-500">
+                  <?php elseif ( $is_blog ) : ?>
+                    <!-- Banner Bersih Tanpa Blur -->
+                    <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-103 transition duration-500">
+                  <?php else : ?>
+                    <img src="<?php echo esc_url( $card_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                  <?php endif; ?>
+                </div>
               </div>
 
               <?php if ( $peraih ) : ?>

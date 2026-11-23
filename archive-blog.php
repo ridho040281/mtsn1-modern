@@ -117,27 +117,44 @@ $categories = get_terms( array(
             // Gambar Banner Artikel (Sama seperti gambar di dalam artikel / Featured Image)
             $post_thumb = mtsn1_has_post_thumbnail() ? mtsn1_get_post_thumbnail_url( get_the_ID(), 'large' ) : ( ! empty( $author_photo ) ? $author_photo : mtsn1_get_post_thumbnail_url( get_the_ID(), 'large' ) );
             ?>
-            <article class="blog-card bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>" data-author="<?php echo esc_attr( strtolower( $author_name ) ); ?>">
+            <?php
+            // Pengaturan Warna & Ikon Floating Badge
+            $badge_bg = 'bg-emerald-600';
+            $icon_bg  = 'bg-amber-400 text-slate-900';
+            $badge_icon = 'fa-feather-pointed';
+
+            if ( strpos( $cat_slug, 'sekolah' ) !== false ) {
+                $badge_bg = 'bg-amber-600';
+                $badge_icon = 'fa-school';
+            } elseif ( strpos( $cat_slug, 'karakter' ) !== false || strpos( $cat_slug, 'siswa' ) !== false ) {
+                $badge_bg = 'bg-blue-600';
+                $badge_icon = 'fa-user-graduate';
+            }
+            ?>
+            <article class="blog-card bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group p-3 sm:p-4 pt-3.5 relative" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>" data-author="<?php echo esc_attr( strtolower( $author_name ) ); ?>">
               
-              <!-- Gambar Banner Artikel (Opsi 1 Disempurnakan: 16:9 di HP agar tidak terpotong, 21:9 di Desktop pas lebar) -->
-              <div class="relative overflow-hidden aspect-[16/9] sm:aspect-[21/9] bg-slate-950 flex items-center justify-center">
-                <a href="<?php the_permalink(); ?>" class="relative z-10 block w-full h-full">
-                  <!-- Ambient blurred backdrop -->
-                  <img src="<?php echo esc_url( $post_thumb ); ?>" class="absolute inset-0 w-full h-full object-cover blur-md opacity-40 scale-105 pointer-events-none" aria-hidden="true">
-                  <!-- Gambar Utama: 100% Utuh Tanpa Terpotong -->
-                  <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="relative z-10 w-full h-full object-contain group-hover:scale-102 transition-transform duration-500">
-                </a>
-                
-                <!-- Kategori / Rubrik (Pojok Kanan Atas) -->
-                <div class="absolute top-2.5 right-2.5 z-20 pointer-events-none">
-                  <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600/95 text-white shadow-md flex items-center gap-1 backdrop-blur-xs">
-                    <i class="fa-solid fa-feather-pointed text-gold-400"></i> <?php echo esc_html( $cat_name ); ?>
-                  </span>
+              <!-- Gambar Banner Artikel (Bersih dengan Sudut Melengkung & Floating Badge di Garis Atas) -->
+              <div class="relative mb-3">
+                <!-- Floating Badge Kategori (Pojok Kanan Atas Melayang) -->
+                <div class="absolute -top-2.5 right-2 z-20 shadow-md">
+                  <div class="inline-flex items-stretch rounded-full overflow-hidden text-[9px] sm:text-[10px] font-black tracking-wider uppercase border border-black/10 shadow-sm">
+                    <span class="<?php echo esc_attr( $icon_bg ); ?> px-2 sm:px-2.5 py-0.5 sm:py-1 flex items-center justify-center font-black">
+                      <i class="fa-solid <?php echo esc_attr( $badge_icon ); ?>"></i>
+                    </span>
+                    <span class="<?php echo esc_attr( $badge_bg ); ?> text-white px-2.5 sm:px-3 py-0.5 sm:py-1 flex items-center">
+                      <?php echo esc_html( $cat_name ); ?>
+                    </span>
+                  </div>
                 </div>
+
+                <!-- Banner Image (Bersih 100% Tanpa Efek Gelap/Blur, Sudut Membulat Rapi) -->
+                <a href="<?php the_permalink(); ?>" class="block overflow-hidden rounded-2xl aspect-[16/9] sm:aspect-[21/9] bg-slate-50 border border-slate-100/80 shadow-xs">
+                  <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500">
+                </a>
               </div>
 
               <!-- Isi Konten Card -->
-              <div class="p-6 flex-1 flex flex-col justify-between">
+              <div class="px-2 pb-1 sm:px-3 sm:pb-2 flex-1 flex flex-col justify-between">
                 <div>
                   <!-- Meta Info: Tanggal & Waktu Baca (Sejajar Kiri-Kanan) -->
                   <div class="flex items-center justify-between text-[11px] font-semibold text-slate-400 mb-2.5">
