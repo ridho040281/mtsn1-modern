@@ -218,17 +218,19 @@ get_header();
           <?php if ( ! empty( $editorial_content ) ) : ?>
             <div class="editorial-preview-content space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed text-justify [text-align:justify] [text-justify:inter-word]">
               <?php
-              $content_with_p = wpautop( $editorial_content );
-              preg_match_all( '/<p\b[^>]*>.*?<\/p>/is', $content_with_p, $matches );
-
-              if ( ! empty( $matches[0] ) ) {
-                  $selected_paragraphs = array_slice( $matches[0], 0, 3 );
-                  foreach ( $selected_paragraphs as $p_html ) {
-                      if ( stripos( $p_html, 'text-align' ) === false && stripos( $p_html, 'align' ) === false ) {
-                          $p_html = preg_replace( '/^<p(\s|>)/i', '<p class="text-justify [text-align:justify] [text-justify:inter-word] leading-relaxed"$1', $p_html );
-                      }
-                      echo $p_html;
+              $paragraphs = explode( '</p>', $editorial_content );
+              $clean_paragraphs = array();
+              foreach ( $paragraphs as $p ) {
+                  $p = trim( strip_tags( $p, '<strong><em><b><i><u><span><br>' ) );
+                  if ( ! empty( $p ) ) {
+                      $clean_paragraphs[] = '<p class="text-justify [text-align:justify] [text-justify:inter-word] leading-relaxed">' . $p . '</p>';
                   }
+                  if ( count( $clean_paragraphs ) >= 3 ) {
+                      break;
+                  }
+              }
+              if ( ! empty( $clean_paragraphs ) ) {
+                  echo implode( '', $clean_paragraphs );
               } else {
                   echo '<p class="text-justify [text-align:justify] [text-justify:inter-word] leading-relaxed">' . wp_trim_words( strip_tags( $editorial_content ), 70, '...' ) . '</p>';
               }
