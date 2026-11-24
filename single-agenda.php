@@ -153,7 +153,7 @@ while ( have_posts() ) : the_post();
       <div class="mt-10 pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
           <span>Bagikan Jadwal:</span>
-          <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( 'Jadwal Agenda MTsN 1 Blitar: ' . get_the_title() . ' (' . $display_date . ') ' . get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition shadow-xs" title="WhatsApp">
+          <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_permalink() ); ?>" target="_blank" class="w-8 h-8 rounded-lg bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition shadow-xs" title="WhatsApp">
             <i class="fa-brands fa-whatsapp"></i>
           </a>
           <button type="button" onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">

@@ -413,7 +413,6 @@
       if (navigator.share) {
         navigator.share({
           title: title,
-          text: title + ' - MTsN 1 Blitar',
           url: url
         }).catch(function(err) {
           if (err.name !== 'AbortError') {

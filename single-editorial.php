@@ -81,7 +81,7 @@ get_header();
               <i class="fa-solid fa-share-nodes text-emerald-600"></i>
               <span>Bagikan</span>
             </button>
-            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . "\n\n" . get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition shadow-xs active:scale-95" title="WhatsApp">
+            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition shadow-xs active:scale-95" title="WhatsApp">
               <i class="fa-brands fa-whatsapp text-sm"></i>
               <span>WhatsApp</span>
             </a>

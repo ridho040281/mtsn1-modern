@@ -83,8 +83,8 @@ get_header();
               <span>Bagikan</span>
             </button>
 
-            <!-- Tombol Langsung WhatsApp -->
-            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . "\n\n" . get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition shadow-xs active:scale-95" title="Kirim Berita ke WhatsApp">
+            <!-- Tombol Langsung WhatsApp (Opsi A: Kirim Link Bersih, Preview Card Otomatis Dibuat WhatsApp) -->
+            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition shadow-xs active:scale-95" title="Kirim Berita ke WhatsApp">
               <i class="fa-brands fa-whatsapp text-sm"></i>
               <span>WhatsApp</span>
             </a>
@@ -203,8 +203,8 @@ get_header();
               <span>Bagikan</span>
             </button>
 
-            <!-- WhatsApp -->
-            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_the_title() . "\n\n" . get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition shadow-xs" title="Kirim ke WhatsApp"><i class="fa-brands fa-whatsapp text-base"></i></a>
+            <!-- WhatsApp (Opsi A: Kirim Link Bersih) -->
+            <a href="https://api.whatsapp.com/send?text=<?php echo urlencode( get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition shadow-xs" title="Kirim ke WhatsApp"><i class="fa-brands fa-whatsapp text-base"></i></a>
             
             <!-- Facebook -->
             <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode( get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition shadow-xs" title="Facebook"><i class="fa-brands fa-facebook text-base"></i></a>
