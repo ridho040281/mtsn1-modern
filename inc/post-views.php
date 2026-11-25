@@ -217,44 +217,46 @@ function mtsn1_sort_views_column_query( $query ) {
 }
 
 /**
- * 7. Meta Box di Halaman Edit Berita / Prestasi
- * Memungkinkan Admin Mengubah atau Menyesuaikan Angka Pembaca Secara Manual
+ * 7. Kotak Pengaturan Manual (Metabox) Jumlah Pembaca di Layar Edit Berita (WP-Admin)
+ * Memudahkan Admin/Humas memantau dan mengoreksi angka pembaca secara mandiri
  */
-add_action( 'add_meta_boxes', 'mtsn1_add_views_meta_box' );
-function mtsn1_add_views_meta_box() {
-    $screens = array( 'post', 'editorial', 'prestasi' );
+add_action( 'add_meta_boxes', 'mtsn1_register_views_metabox' );
+function mtsn1_register_views_metabox() {
+    $screens = array( 'post', 'editorial', 'prestasi', 'blog' );
     foreach ( $screens as $screen ) {
         add_meta_box(
-            'mtsn1_views_metabox',
-            '<i class="dashicons dashicons-visibility"></i> Statistik Pembaca Artikel',
-            'mtsn1_render_views_meta_box',
+            'mtsn1_views_box',
+            '👁️ Statistik Pembaca Artikel',
+            'mtsn1_render_views_metabox',
             $screen,
             'side',
-            'low'
+            'high'
         );
     }
 }
 
-function mtsn1_render_views_meta_box( $post ) {
-    wp_nonce_field( 'mtsn1_views_nonce_action', 'mtsn1_views_nonce' );
+function mtsn1_render_views_metabox( $post ) {
+    wp_nonce_field( 'mtsn1_save_views_action', 'mtsn1_views_nonce' );
     $views = mtsn1_get_post_views( $post->ID );
     ?>
-    <p style="margin-bottom:6px;font-size:12px;color:#64748b;">
-        Jumlah kali artikel ini dibaca oleh pengunjung website:
-    </p>
-    <div style="display:flex;align-items:center;gap:6px;">
-        <input type="number" min="0" name="mtsn1_custom_views_count" value="<?php echo esc_attr( $views ); ?>" style="width:110px;font-weight:700;color:#047857;padding:4px 8px;border-radius:6px;" />
-        <span style="font-size:13px;font-weight:600;color:#334155;">kali dibaca</span>
+    <div style="padding: 4px 0;">
+        <label for="mtsn1_views_input" style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:6px;">
+            Total Pembaca (Views):
+        </label>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <input type="number" name="mtsn1_views_input" id="mtsn1_views_input" value="<?php echo esc_attr( $views ); ?>" min="0" style="width:100%; font-weight:700; font-size:14px; padding:6px 10px; border-radius:6px; border:1px solid #cbd5e1; color:#047857;" />
+            <span style="font-size:12px; font-weight:600; color:#64748b; white-space:nowrap;">kali</span>
+        </div>
+        <p style="margin-top:8px; font-size:11px; color:#64748b; line-height:1.4;">
+            Angka ini otomatis bertambah setiap ada pengunjung baru. Anda juga dapat menyesuaikan nilainya secara manual di sini lalu klik <strong>Perbarui</strong>.
+        </p>
     </div>
-    <p style="margin-top:8px;font-size:11px;color:#94a3b8;line-height:1.4;">
-        * Angka ini bertambah otomatis setiap ada pembaca baru. Anda juga dapat mengubah angka ini secara manual jika diperlukan.
-    </p>
     <?php
 }
 
-add_action( 'save_post', 'mtsn1_save_views_meta_box_data' );
-function mtsn1_save_views_meta_box_data( $post_id ) {
-    if ( ! isset( $_POST['mtsn1_views_nonce'] ) || ! wp_verify_nonce( $_POST['mtsn1_views_nonce'], 'mtsn1_views_nonce_action' ) ) {
+add_action( 'save_post', 'mtsn1_save_views_metabox_data' );
+function mtsn1_save_views_metabox_data( $post_id ) {
+    if ( ! isset( $_POST['mtsn1_views_nonce'] ) || ! wp_verify_nonce( $_POST['mtsn1_views_nonce'], 'mtsn1_save_views_action' ) ) {
         return;
     }
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -264,16 +266,16 @@ function mtsn1_save_views_meta_box_data( $post_id ) {
         return;
     }
 
-    if ( isset( $_POST['mtsn1_custom_views_count'] ) ) {
-        $custom_views = absint( $_POST['mtsn1_custom_views_count'] );
-        update_post_meta( $post_id, 'mtsn1_post_views_count', $custom_views );
-        update_post_meta( $post_id, 'post_views_count', $custom_views );
+    if ( isset( $_POST['mtsn1_views_input'] ) ) {
+        $val = absint( $_POST['mtsn1_views_input'] );
+        update_post_meta( $post_id, 'mtsn1_post_views_count', $val );
+        update_post_meta( $post_id, 'post_views_count', $val );
     }
 }
 
 /**
- * 8. Kalibrasi Otomatis Berita Periode Transisi (15-24 November 2026)
- * Mengisi angka wajar untuk berita yang tayang sebelum pelacak view diaktifkan
+ * 8. Kalibrasi Otomatis untuk Berita Masa Transisi (17 - 24 November 2026)
+ * Mengisi angka dasar yang realistis bagi artikel yang terbit sebelum modul penghitung view aktif
  */
 add_action( 'init', 'mtsn1_calibrate_transition_views' );
 function mtsn1_calibrate_transition_views() {
@@ -281,19 +283,22 @@ function mtsn1_calibrate_transition_views() {
         return;
     }
 
-    // Berita-berita yang terbit pada masa transisi dan belum sempat tercatat
-    $calibrations = array(
-        9715 => 148, // Kunjungan Edukatif Trenggalek (19 Nov 2026) -> Diatur ke baseline wajar 148 kali
-        9383 => 162, // Apel PGRI (17 Nov 2026) -> Diatur ke baseline wajar 162 kali
+    // Baseline estimasi pembaca wajar (~118 - 146 pembaca) untuk 4 berita di masa jeda
+    $transition_posts = array(
+        9383 => 146, // 17 Nov: HUT PGRI Tenis Meja
+        9715 => 138, // 19 Nov: Kunjungan Trenggalek
+        9723 => 125, // 20 Nov: Workshop Transformasi Perangkat Ajar
+        9735 => 118, // 24 Nov: Pelantikan Pramuka Garuda
     );
 
-    foreach ( $calibrations as $pid => $baseline ) {
-        $current = mtsn1_get_post_views( $pid );
-        if ( $current < 10 ) {
-            update_post_meta( $pid, 'mtsn1_post_views_count', $baseline );
-            update_post_meta( $pid, 'post_views_count', $baseline );
+    foreach ( $transition_posts as $pid => $baseline ) {
+        $existing = (int) get_post_meta( $pid, 'mtsn1_post_views_count', true );
+        if ( $existing < 15 ) {
+            $final = $baseline + $existing;
+            update_post_meta( $pid, 'mtsn1_post_views_count', $final );
+            update_post_meta( $pid, 'post_views_count', $final );
         }
     }
 
-    update_option( 'mtsn1_views_calibrated_v1', 1 );
+    update_option( 'mtsn1_views_calibrated_v1', '1' );
 }
