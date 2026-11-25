@@ -106,10 +106,13 @@ img.alignright,
     max-width: 55% !important;
 }
 
-/* 4. Center / Di Tengah & Top-Bottom (Pisahkan Teks) */
+/* 4. Center / Di Tengah & Top-Bottom (Pisahkan Teks - Lebar Penuh) */
 img.aligncenter,
 .wp-caption.aligncenter {
     display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
     margin-left: auto !important;
     margin-right: auto !important;
     margin-top: 20px !important;

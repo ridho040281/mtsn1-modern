@@ -160,7 +160,7 @@ header img, .custom-logo {
   clear: left !important;
 }
 
-/* 3. Center (Align Center: Di Tengah & Memisahkan Paragraf) */
+/* 3. Center (Align Center: Di Tengah & Memisahkan Paragraf - Lebar Penuh Mengikuti Kolom Teks) */
 .prose img.aligncenter,
 .prose figure.aligncenter,
 .prose .wp-block-image.aligncenter,
@@ -172,6 +172,9 @@ header img, .custom-logo {
 .prose .wp-block-image.aligncenter img,
 .prose img[align="center"] {
   display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
   margin-left: auto !important;
   margin-right: auto !important;
   margin-top: 1.5rem !important;
