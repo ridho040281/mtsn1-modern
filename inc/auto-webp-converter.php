@@ -149,3 +149,70 @@ add_filter( 'wp_editor_set_quality', function( $quality, $mime_type ) {
     }
     return $quality;
 }, 10, 2 );
+
+/**
+ * Self-Healing / Pemulihan Otomatis untuk Lampiran Media yang Ekstensinya Mismatch
+ * (Misalnya file tersimpan fisik sebagai .webp namun metadata WordPress mencari .jpeg)
+ */
+add_action( 'init', 'mtsn1_repair_attachment_file_mismatch' );
+function mtsn1_repair_attachment_file_mismatch() {
+    $check_ids = array();
+    if ( isset( $_GET['item'] ) ) {
+        $check_ids[] = absint( $_GET['item'] );
+    }
+    if ( isset( $_GET['post'] ) ) {
+        $check_ids[] = absint( $_GET['post'] );
+    }
+    // Pastikan item 9716 (lampiran kunjungan Trenggalek yang baru diedit) selalu dipulihkan
+    $check_ids[] = 9716;
+
+    $upload_dir = wp_upload_dir();
+    $base_dir   = $upload_dir['basedir'];
+    if ( empty( $base_dir ) || ! is_dir( $base_dir ) ) {
+        return;
+    }
+
+    foreach ( array_unique( $check_ids ) as $att_id ) {
+        if ( ! $att_id ) {
+            continue;
+        }
+
+        $rel_file = get_post_meta( $att_id, '_wp_attached_file', true );
+        if ( ! $rel_file ) {
+            continue;
+        }
+
+        $target_path = path_join( $base_dir, $rel_file );
+
+        // Jika file .jpeg tidak ditemukan di disk
+        if ( ! file_exists( $target_path ) ) {
+            // 1. Cek apakah ada file fisik berakhiran .webp
+            $webp_path = preg_replace( '/\.(jpe?g|png)$/i', '.webp', $target_path );
+            if ( file_exists( $webp_path ) ) {
+                @copy( $webp_path, $target_path );
+            } else {
+                // 2. Cek apakah ada file scaled tanpa akhiran -e...
+                $clean_path = preg_replace( '/-e[0-9]+(?=\.[a-z0-9]+$)/i', '', $target_path );
+                if ( file_exists( $clean_path ) ) {
+                    @copy( $clean_path, $target_path );
+                }
+            }
+        }
+
+        // Sinkronkan juga sub-sizes jika ada yang missing
+        $meta = wp_get_attachment_metadata( $att_id );
+        if ( ! empty( $meta['sizes'] ) && is_array( $meta['sizes'] ) ) {
+            $dir = dirname( $target_path );
+            foreach ( $meta['sizes'] as $size_info ) {
+                if ( empty( $size_info['file'] ) ) continue;
+                $size_file = path_join( $dir, $size_info['file'] );
+                if ( ! file_exists( $size_file ) ) {
+                    $alt_webp = preg_replace( '/\.(jpe?g|png)$/i', '.webp', $size_file );
+                    if ( file_exists( $alt_webp ) ) {
+                        @copy( $alt_webp, $size_file );
+                    }
+                }
+            }
+        }
+    }
+}
