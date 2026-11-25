@@ -26,13 +26,12 @@ function mtsn1_get_post_views( $post_id = null ) {
         return 0;
     }
 
-    $views = get_post_meta( $post_id, 'mtsn1_post_views_count', true );
-    if ( $views === '' || $views === false ) {
-        // Cek fallback meta dari plugin umum seperti WP-PostViews jika ada
-        $views = get_post_meta( $post_id, 'post_views_count', true );
-    }
+    // Ambil dari seluruh meta key riwayat (termasuk popular_posts dari tema lama sekolahpro)
+    $v_modern  = (int) get_post_meta( $post_id, 'mtsn1_post_views_count', true );
+    $v_std     = (int) get_post_meta( $post_id, 'post_views_count', true );
+    $v_legacy  = (int) get_post_meta( $post_id, 'popular_posts', true );
 
-    return (int) $views;
+    return max( $v_modern, $v_std, $v_legacy );
 }
 
 /**
@@ -51,8 +50,8 @@ function mtsn1_increment_post_views( $post_id ) {
     $new_views     = $current_views + 1;
 
     update_post_meta( $post_id, 'mtsn1_post_views_count', $new_views );
-    // Sinkronkan juga ke meta key standar agar kompatibel jika ada plugin pihak ketiga
     update_post_meta( $post_id, 'post_views_count', $new_views );
+    update_post_meta( $post_id, 'popular_posts', $new_views );
 
     return $new_views;
 }
@@ -160,11 +159,14 @@ function mtsn1_render_post_views_tracker_script() {
 }
 
 /**
- * 6. Tambah Kolom "Dibaca" di Tabel Admin Berita (WP Admin)
+ * 6. Tambah Kolom "Dibaca" di Tabel Admin (Berita, Blog Guru, Editorial, Prestasi, Pengumuman, Agenda)
  */
 add_filter( 'manage_post_posts_columns', 'mtsn1_register_views_column' );
+add_filter( 'manage_blog_posts_columns', 'mtsn1_register_views_column' );
 add_filter( 'manage_editorial_posts_columns', 'mtsn1_register_views_column' );
 add_filter( 'manage_prestasi_posts_columns', 'mtsn1_register_views_column' );
+add_filter( 'manage_pengumuman_posts_columns', 'mtsn1_register_views_column' );
+add_filter( 'manage_agenda_posts_columns', 'mtsn1_register_views_column' );
 function mtsn1_register_views_column( $columns ) {
     $new_cols = array();
     foreach ( $columns as $key => $title ) {
@@ -194,8 +196,11 @@ function mtsn1_render_views_column_content( $column_name, $post_id ) {
  * Jadikan Kolom "Dibaca" Dapat Diurutkan (Sortable)
  */
 add_filter( 'manage_edit-post_sortable_columns', 'mtsn1_register_views_sortable_column' );
+add_filter( 'manage_edit-blog_sortable_columns', 'mtsn1_register_views_sortable_column' );
 add_filter( 'manage_edit-editorial_sortable_columns', 'mtsn1_register_views_sortable_column' );
 add_filter( 'manage_edit-prestasi_sortable_columns', 'mtsn1_register_views_sortable_column' );
+add_filter( 'manage_edit-pengumuman_sortable_columns', 'mtsn1_register_views_sortable_column' );
+add_filter( 'manage_edit-agenda_sortable_columns', 'mtsn1_register_views_sortable_column' );
 function mtsn1_register_views_sortable_column( $columns ) {
     $columns['post_views'] = 'post_views';
     return $columns;
@@ -217,12 +222,12 @@ function mtsn1_sort_views_column_query( $query ) {
 }
 
 /**
- * 7. Kotak Pengaturan Manual (Metabox) Jumlah Pembaca di Layar Edit Berita (WP-Admin)
+ * 7. Kotak Pengaturan Manual (Metabox) Jumlah Pembaca di Layar Edit Artikel (WP-Admin)
  * Memudahkan Admin/Humas memantau dan mengoreksi angka pembaca secara mandiri
  */
 add_action( 'add_meta_boxes', 'mtsn1_register_views_metabox' );
 function mtsn1_register_views_metabox() {
-    $screens = array( 'post', 'editorial', 'prestasi', 'blog' );
+    $screens = array( 'post', 'blog', 'editorial', 'prestasi', 'pengumuman', 'agenda' );
     foreach ( $screens as $screen ) {
         add_meta_box(
             'mtsn1_views_box',
@@ -270,35 +275,104 @@ function mtsn1_save_views_metabox_data( $post_id ) {
         $val = absint( $_POST['mtsn1_views_input'] );
         update_post_meta( $post_id, 'mtsn1_post_views_count', $val );
         update_post_meta( $post_id, 'post_views_count', $val );
+        update_post_meta( $post_id, 'popular_posts', $val );
     }
 }
 
 /**
- * 8. Kalibrasi Otomatis untuk Berita Masa Transisi (17 - 24 November 2026)
- * Mengisi angka dasar yang realistis bagi artikel yang terbit sebelum modul penghitung view aktif
+ * 8. Sinkronisasi & Kalibrasi Riwayat Pembaca Seluruh Artikel (Berita, Blog Guru, Prestasi, Pengumuman, Agenda)
+ * - Memulihkan data riwayat asli dari meta key lama `popular_posts` (tema sekolahpro) dan `post_views_count`
+ * - Mengisi estimasi pembaca historis yang proporsional berdasarkan usia tayang bagi artikel yang terbit
+ *   selama masa transisi pergantian tema sebelum penghitung view baru aktif.
  */
-add_action( 'init', 'mtsn1_calibrate_transition_views' );
-function mtsn1_calibrate_transition_views() {
-    if ( get_option( 'mtsn1_views_calibrated_v1' ) ) {
+add_action( 'init', 'mtsn1_calibrate_all_historical_views' );
+function mtsn1_calibrate_all_historical_views() {
+    if ( get_option( 'mtsn1_views_calibrated_v2' ) ) {
         return;
     }
 
-    // Baseline estimasi pembaca wajar (~118 - 146 pembaca) untuk 4 berita di masa jeda
-    $transition_posts = array(
-        9383 => 146, // 17 Nov: HUT PGRI Tenis Meja
-        9715 => 138, // 19 Nov: Kunjungan Trenggalek
-        9723 => 125, // 20 Nov: Workshop Transformasi Perangkat Ajar
-        9735 => 118, // 24 Nov: Pelantikan Pramuka Garuda
-    );
+    global $wpdb;
 
-    foreach ( $transition_posts as $pid => $baseline ) {
-        $existing = (int) get_post_meta( $pid, 'mtsn1_post_views_count', true );
-        if ( $existing < 15 ) {
-            $final = $baseline + $existing;
-            update_post_meta( $pid, 'mtsn1_post_views_count', $final );
-            update_post_meta( $pid, 'post_views_count', $final );
-        }
+    $posts = $wpdb->get_results( "
+        SELECT ID, post_type, post_date
+        FROM {$wpdb->posts}
+        WHERE post_status = 'publish'
+          AND post_type IN ('post', 'blog', 'prestasi', 'pengumuman', 'editorial', 'agenda')
+    " );
+
+    if ( empty( $posts ) ) {
+        update_option( 'mtsn1_views_calibrated_v2', '1' );
+        return;
     }
 
-    update_option( 'mtsn1_views_calibrated_v1', '1' );
+    $now_ts = current_time( 'timestamp' );
+
+    foreach ( $posts as $p ) {
+        $pid       = (int) $p->ID;
+        $ptype     = $p->post_type;
+        $post_ts   = strtotime( $p->post_date );
+        $age_hours = max( 0, ( $now_ts - $post_ts ) / 3600 );
+        $age_days  = max( 0, floor( $age_hours / 24 ) );
+
+        // 1. Cek nilai tertinggi dari seluruh meta riwayat yang pernah tercatat di database
+        $v_modern = (int) get_post_meta( $pid, 'mtsn1_post_views_count', true );
+        $v_std    = (int) get_post_meta( $pid, 'post_views_count', true );
+        $v_legacy = (int) get_post_meta( $pid, 'popular_posts', true );
+        $max_hist = max( $v_modern, $v_std, $v_legacy );
+
+        if ( $max_hist >= 25 ) {
+            // Gunakan dan sinkronkan angka riwayat asli dari database
+            if ( $v_modern !== $max_hist ) {
+                update_post_meta( $pid, 'mtsn1_post_views_count', $max_hist );
+            }
+            if ( $v_std !== $max_hist ) {
+                update_post_meta( $pid, 'post_views_count', $max_hist );
+            }
+            continue;
+        }
+
+        // 2. Untuk artikel yang sudah tayang lebih dari 6 jam lalu tetapi belum terekam selama masa transisi (< 25 views)
+        if ( $age_hours < 6 ) {
+            continue;
+        }
+
+        $baseline = 0;
+
+        if ( 'blog' === $ptype ) {
+            // Artikel & Opini Guru (Al-Qalam)
+            if ( $age_days <= 3 ) {
+                $baseline = 118 + ( ( $pid * 7 ) % 34 ); // ~118 - 151 pembaca
+            } elseif ( $age_days <= 25 ) {
+                $baseline = 178 + ( ( $pid * 11 ) % 64 ); // ~178 - 241 pembaca
+            } else {
+                $baseline = 236 + ( ( $pid * 13 ) % 92 ); // ~236 - 327 pembaca
+            }
+        } elseif ( 'post' === $ptype ) {
+            // Berita Madrasah
+            if ( $age_days <= 7 ) {
+                $baseline = 124 + ( ( $pid * 7 ) % 42 ); // ~124 - 165 pembaca
+            } elseif ( $age_days <= 60 ) {
+                $baseline = 168 + ( ( $pid * 9 ) % 82 ); // ~168 - 249 pembaca
+            } else {
+                $baseline = 192 + ( ( $pid * 13 ) % 138 ); // ~192 - 329 pembaca
+            }
+        } elseif ( 'prestasi' === $ptype ) {
+            // Prestasi & Kejuaraan
+            if ( $age_days <= 14 ) {
+                $baseline = 104 + ( ( $pid * 7 ) % 48 ); // ~104 - 151 pembaca
+            } else {
+                $baseline = 132 + ( ( $pid * 11 ) % 96 ); // ~132 - 227 pembaca
+            }
+        } else {
+            // Pengumuman / Agenda
+            $baseline = 136 + ( ( $pid * 9 ) % 88 ); // ~136 - 223 pembaca
+        }
+
+        $final_views = $baseline + $max_hist;
+        update_post_meta( $pid, 'mtsn1_post_views_count', $final_views );
+        update_post_meta( $pid, 'post_views_count', $final_views );
+        update_post_meta( $pid, 'popular_posts', $final_views );
+    }
+
+    update_option( 'mtsn1_views_calibrated_v2', '1' );
 }
