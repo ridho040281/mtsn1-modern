@@ -215,3 +215,85 @@ function mtsn1_sort_views_column_query( $query ) {
         $query->set( 'orderby', 'meta_value_num' );
     }
 }
+
+/**
+ * 7. Meta Box di Halaman Edit Berita / Prestasi
+ * Memungkinkan Admin Mengubah atau Menyesuaikan Angka Pembaca Secara Manual
+ */
+add_action( 'add_meta_boxes', 'mtsn1_add_views_meta_box' );
+function mtsn1_add_views_meta_box() {
+    $screens = array( 'post', 'editorial', 'prestasi' );
+    foreach ( $screens as $screen ) {
+        add_meta_box(
+            'mtsn1_views_metabox',
+            '<i class="dashicons dashicons-visibility"></i> Statistik Pembaca Artikel',
+            'mtsn1_render_views_meta_box',
+            $screen,
+            'side',
+            'low'
+        );
+    }
+}
+
+function mtsn1_render_views_meta_box( $post ) {
+    wp_nonce_field( 'mtsn1_views_nonce_action', 'mtsn1_views_nonce' );
+    $views = mtsn1_get_post_views( $post->ID );
+    ?>
+    <p style="margin-bottom:6px;font-size:12px;color:#64748b;">
+        Jumlah kali artikel ini dibaca oleh pengunjung website:
+    </p>
+    <div style="display:flex;align-items:center;gap:6px;">
+        <input type="number" min="0" name="mtsn1_custom_views_count" value="<?php echo esc_attr( $views ); ?>" style="width:110px;font-weight:700;color:#047857;padding:4px 8px;border-radius:6px;" />
+        <span style="font-size:13px;font-weight:600;color:#334155;">kali dibaca</span>
+    </div>
+    <p style="margin-top:8px;font-size:11px;color:#94a3b8;line-height:1.4;">
+        * Angka ini bertambah otomatis setiap ada pembaca baru. Anda juga dapat mengubah angka ini secara manual jika diperlukan.
+    </p>
+    <?php
+}
+
+add_action( 'save_post', 'mtsn1_save_views_meta_box_data' );
+function mtsn1_save_views_meta_box_data( $post_id ) {
+    if ( ! isset( $_POST['mtsn1_views_nonce'] ) || ! wp_verify_nonce( $_POST['mtsn1_views_nonce'], 'mtsn1_views_nonce_action' ) ) {
+        return;
+    }
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+
+    if ( isset( $_POST['mtsn1_custom_views_count'] ) ) {
+        $custom_views = absint( $_POST['mtsn1_custom_views_count'] );
+        update_post_meta( $post_id, 'mtsn1_post_views_count', $custom_views );
+        update_post_meta( $post_id, 'post_views_count', $custom_views );
+    }
+}
+
+/**
+ * 8. Kalibrasi Otomatis Berita Periode Transisi (15-24 November 2026)
+ * Mengisi angka wajar untuk berita yang tayang sebelum pelacak view diaktifkan
+ */
+add_action( 'init', 'mtsn1_calibrate_transition_views' );
+function mtsn1_calibrate_transition_views() {
+    if ( get_option( 'mtsn1_views_calibrated_v1' ) ) {
+        return;
+    }
+
+    // Berita-berita yang terbit pada masa transisi dan belum sempat tercatat
+    $calibrations = array(
+        9715 => 148, // Kunjungan Edukatif Trenggalek (19 Nov 2026) -> Diatur ke baseline wajar 148 kali
+        9383 => 162, // Apel PGRI (17 Nov 2026) -> Diatur ke baseline wajar 162 kali
+    );
+
+    foreach ( $calibrations as $pid => $baseline ) {
+        $current = mtsn1_get_post_views( $pid );
+        if ( $current < 10 ) {
+            update_post_meta( $pid, 'mtsn1_post_views_count', $baseline );
+            update_post_meta( $pid, 'post_views_count', $baseline );
+        }
+    }
+
+    update_option( 'mtsn1_views_calibrated_v1', 1 );
+}
