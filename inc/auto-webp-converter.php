@@ -141,13 +141,11 @@ add_filter( 'image_editor_output_format', function( $formats ) {
 } );
 
 /**
- * Atur kualitas kompresi WebP WordPress ke 85% (standar optimal Google)
+ * Atur kualitas kompresi editor gambar WordPress ke 92% (High Clarity)
+ * Mencegah penurunan kualitas tajam/blur saat dilakukan pemotongan (crop) atau edit di galeri
  */
 add_filter( 'wp_editor_set_quality', function( $quality, $mime_type ) {
-    if ( 'image/webp' === $mime_type ) {
-        return 85;
-    }
-    return $quality;
+    return 92;
 }, 10, 2 );
 
 /**
