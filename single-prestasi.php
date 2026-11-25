@@ -107,6 +107,9 @@ get_header();
                 <span class="text-xs text-slate-400">
                   <i class="fa-regular fa-calendar text-amber-600 mr-1"></i> <?php echo get_the_date( 'd F Y' ); ?>
                 </span>
+                <span class="text-xs text-slate-400">
+                  <i class="fa-regular fa-eye text-amber-600 mr-1"></i> <span class="mtsn1-view-count" data-post-id="<?php echo get_the_ID(); ?>"><?php echo number_format_i18n( function_exists( 'mtsn1_get_post_views' ) ? mtsn1_get_post_views( get_the_ID() ) : 0 ); ?></span> kali dibaca
+                </span>
               </div>
 
               <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">

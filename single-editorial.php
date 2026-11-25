@@ -56,6 +56,7 @@ get_header();
           </div>
           <div class="flex items-center gap-3 text-[11px] text-slate-400">
             <span><i class="fa-regular fa-clock text-emerald-600 mr-1"></i> <?php echo esc_html( mtsn1_reading_time() ); ?></span>
+            <span><i class="fa-regular fa-eye text-emerald-600 mr-1"></i> <span class="mtsn1-view-count" data-post-id="<?php echo get_the_ID(); ?>"><?php echo number_format_i18n( function_exists( 'mtsn1_get_post_views' ) ? mtsn1_get_post_views( get_the_ID() ) : 0 ); ?></span> kali dibaca</span>
           </div>
         </div>
 
