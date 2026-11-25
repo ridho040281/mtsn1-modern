@@ -303,45 +303,55 @@ get_header();
                     $b_author = function_exists( 'mtsn1_get_blog_author_data' ) ? mtsn1_get_blog_author_data( $rel_id ) : array( 'name' => get_the_author(), 'role' => 'GTK MTsN 1 Blitar' );
                     $b_terms  = get_the_terms( $rel_id, 'blog-kat' );
                     $b_cat    = ( $b_terms && ! is_wp_error( $b_terms ) ) ? $b_terms[0]->name : 'Opini Guru';
+                    $b_slug   = ( $b_terms && ! is_wp_error( $b_terms ) ) ? $b_terms[0]->slug : '';
 
                     if ( has_post_thumbnail( $rel_id ) ) {
-                        $rel_thumb = get_the_post_thumbnail_url( $rel_id, $is_blog ? 'large' : 'mtsn1-card' );
+                        $rel_thumb = get_the_post_thumbnail_url( $rel_id, 'full' );
                     } elseif ( ! empty( $b_author['photo'] ) ) {
                         $rel_thumb = $b_author['photo'];
                     } else {
-                        $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, $is_blog ? 'large' : 'mtsn1-card' );
+                        $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, 'full' );
                     }
                 } else {
                     $rel_thumb = mtsn1_get_post_thumbnail_url( $rel_id, 'mtsn1-card' );
                 }
-                
-                $card_aspect = $is_blog ? 'aspect-[21/9]' : 'aspect-[16/10]';
                 ?>
                 <div class="bg-white rounded-3xl p-3.5 sm:p-4 pt-4 sm:pt-5 shadow-sm border border-slate-200 hover:shadow-lg transition group flex flex-col justify-between relative">
                   <div>
                     <div class="relative mb-3 mt-1.5 sm:mt-2">
-                      <?php if ( $is_blog ) : ?>
+                      <?php if ( $is_blog ) :
+                        $rel_badge_bg   = 'bg-emerald-600';
+                        $rel_badge_icon = 'fa-feather-pointed';
+                        if ( strpos( $b_slug, 'sekolah' ) !== false ) {
+                            $rel_badge_bg   = 'bg-amber-600';
+                            $rel_badge_icon = 'fa-school';
+                        } elseif ( strpos( $b_slug, 'karakter' ) !== false || strpos( $b_slug, 'siswa' ) !== false ) {
+                            $rel_badge_bg   = 'bg-blue-600';
+                            $rel_badge_icon = 'fa-user-graduate';
+                        }
+                      ?>
                         <!-- Floating Badge Kategori (Pojok Kanan Atas Melayang) -->
                         <div class="blog-floating-badge" style="top: -12px; right: 10px;">
                           <div class="inline-flex items-stretch rounded-full overflow-hidden text-[9px] font-black tracking-wider uppercase border border-black/10 shadow-sm">
                             <span class="bg-amber-400 text-slate-900 px-2 py-0.5 flex items-center justify-center font-black">
-                              <i class="fa-solid fa-feather-pointed"></i>
+                              <i class="fa-solid <?php echo esc_attr( $rel_badge_icon ); ?>"></i>
                             </span>
-                            <span class="bg-emerald-600 text-white px-2.5 py-0.5 flex items-center">
+                            <span class="<?php echo esc_attr( $rel_badge_bg ); ?> text-white px-2.5 py-0.5 flex items-center">
                               <?php echo esc_html( $b_cat ); ?>
                             </span>
                           </div>
                         </div>
                       <?php endif; ?>
 
-                      <div class="overflow-hidden rounded-2xl <?php echo esc_attr( $card_aspect ); ?> bg-slate-50 border border-slate-100/80 flex items-center justify-center relative shadow-xs">
-                        <?php if ( $is_blog ) : ?>
-                          <!-- Banner Bersih Tanpa Blur -->
-                          <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-103 transition duration-500">
-                        <?php else : ?>
+                      <?php if ( $is_blog ) : ?>
+                        <a href="<?php the_permalink(); ?>" class="block overflow-hidden rounded-2xl bg-slate-50 border border-slate-100/80 shadow-xs">
+                          <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-auto object-contain block group-hover:scale-102 transition duration-500">
+                        </a>
+                      <?php else : ?>
+                        <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-50 border border-slate-100/80 flex items-center justify-center relative shadow-xs">
                           <img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                        <?php endif; ?>
-                      </div>
+                        </div>
+                      <?php endif; ?>
                     </div>
 
                     <?php if ( $is_blog && ! empty( $b_author['name'] ) ) : ?>

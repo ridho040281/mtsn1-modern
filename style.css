@@ -566,6 +566,10 @@ marquee {
 /* ==========================================================================
    Floating Category Badge di Atas Banner Artikel Guru (Melayang di Tepi Atas Banner)
    ========================================================================== */
+.aspect-\[21\/9\] {
+  aspect-ratio: 21 / 9;
+}
+
 .blog-floating-badge {
   position: absolute !important;
   top: -13px !important;

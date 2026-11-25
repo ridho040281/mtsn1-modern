@@ -114,8 +114,8 @@ $categories = get_terms( array(
             $author_name  = $author_data['name'];
             $author_role  = $author_data['role'];
 
-            // Gambar Banner Artikel (Sama seperti gambar di dalam artikel / Featured Image)
-            $post_thumb = mtsn1_has_post_thumbnail() ? mtsn1_get_post_thumbnail_url( get_the_ID(), 'large' ) : ( ! empty( $author_photo ) ? $author_photo : mtsn1_get_post_thumbnail_url( get_the_ID(), 'large' ) );
+            // Gambar Banner Artikel (Sama seperti gambar di dalam artikel / Featured Image - Full Tanpa Crop)
+            $post_thumb = mtsn1_has_post_thumbnail() ? mtsn1_get_post_thumbnail_url( get_the_ID(), 'full' ) : ( ! empty( $author_photo ) ? $author_photo : mtsn1_get_post_thumbnail_url( get_the_ID(), 'full' ) );
             ?>
             <?php
             // Pengaturan Warna & Ikon Floating Badge
@@ -147,9 +147,9 @@ $categories = get_terms( array(
                   </div>
                 </div>
 
-                <!-- Banner Image (Aspect 21:9 seragam HP & Desktop agar tidak terpotong ke samping) -->
-                <a href="<?php the_permalink(); ?>" class="block overflow-hidden rounded-2xl aspect-[21/9] bg-emerald-950/10 border border-slate-100/80 shadow-xs">
-                  <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500">
+                <!-- Banner Image Utuh 100% Tanpa Terpotong (Zero Crop) -->
+                <a href="<?php the_permalink(); ?>" class="block overflow-hidden rounded-2xl bg-slate-50 border border-slate-100/80 shadow-xs">
+                  <img src="<?php echo esc_url( $post_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-auto object-contain block group-hover:scale-102 transition-transform duration-500">
                 </a>
               </div>
 
