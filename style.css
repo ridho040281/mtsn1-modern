@@ -160,7 +160,7 @@ header img, .custom-logo {
   clear: left !important;
 }
 
-/* 3. Center (Align Center: Di Tengah & Memisahkan Paragraf - Lebar Penuh Mengikuti Kolom Teks) */
+/* 3. Center & Full Width (Align Center / Gambar Penuh: Membentang Rapi Selebar Paragraf) */
 .prose img.aligncenter,
 .prose figure.aligncenter,
 .prose .wp-block-image.aligncenter,
@@ -170,18 +170,31 @@ header img, .custom-logo {
 .prose .wp-caption.aligncenter img,
 .prose figure.aligncenter img,
 .prose .wp-block-image.aligncenter img,
-.prose img[align="center"] {
+.prose img[align="center"],
+.prose p > img:only-child,
+.prose p > a:only-child > img,
+.prose img.size-full,
+.prose img.size-large,
+.prose figure:not(.alignleft):not(.alignright),
+.prose .wp-block-image:not(.alignleft):not(.alignright),
+.prose .wp-caption:not(.alignleft):not(.alignright) {
   display: block !important;
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  margin-top: 1.5rem !important;
-  margin-bottom: 1.5rem !important;
+  margin-top: 1.75rem !important;
+  margin-bottom: 1.75rem !important;
   float: none !important;
   clear: both !important;
   text-align: center !important;
+}
+
+.prose p:has(> img:only-child),
+.prose p:has(> a:only-child > img) {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 /* 4. In Line with Text (Align None) */

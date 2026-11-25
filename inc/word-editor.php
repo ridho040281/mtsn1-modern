@@ -186,7 +186,7 @@ function mtsn1_word_editor_tinymce_init( $init ) {
     $init['wp_autoresize_on'] = false;
     $init['height'] = 650;
 
-    // 5. Tambahkan Tombol "Tambah Media" Langsung di Dalam Toolbar TinyMCE
+    // 5. Tambahkan Tombol "Tambah Media" & "Tata Letak Gambar" Langsung di Toolbar TinyMCE
     $init['setup'] = 'function(editor) {
         editor.addButton("mtsn1_add_media", {
             text: "Tambah Media",
@@ -198,6 +198,114 @@ function mtsn1_word_editor_tinymce_init( $init ) {
                     btn.click();
                 }
             }
+        });
+
+        editor.addButton("mtsn1_image_layout", {
+            type: "menubutton",
+            text: "Tata Letak Gambar",
+            icon: "preview",
+            tooltip: "Atur Format, Posisi & Wrap Text Gambar",
+            menu: [
+                {
+                    text: "Lebar Penuh Dokumen (100% Full Width)",
+                    icon: "line",
+                    onclick: function() {
+                        var node = editor.selection.getNode();
+                        var img = node.nodeName === "IMG" ? node : node.querySelector("img");
+                        if (img) {
+                            img.className = (img.className || "").replace(/\b(alignleft|alignright|alignnone|aligncenter)\b/g, "").trim() + " aligncenter size-full";
+                            img.style.float = "none";
+                            img.style.width = "100%";
+                            img.style.maxWidth = "100%";
+                            img.style.height = "auto";
+                            img.style.margin = "20px auto";
+                            img.style.display = "block";
+                            img.style.clear = "both";
+                            img.setAttribute("width", "100%");
+                            editor.nodeChanged();
+                        } else {
+                            editor.windowManager.alert("Silakan klik gambar di dalam dokumen terlebih dahulu.");
+                        }
+                    }
+                },
+                {
+                    text: "Square - Kanan (Bungkus Teks di Kiri)",
+                    icon: "alignright",
+                    onclick: function() {
+                        var node = editor.selection.getNode();
+                        var img = node.nodeName === "IMG" ? node : node.querySelector("img");
+                        if (img) {
+                            img.className = (img.className || "").replace(/\b(alignleft|alignright|alignnone|aligncenter)\b/g, "").trim() + " alignright";
+                            img.style.float = "right";
+                            img.style.width = "auto";
+                            img.style.maxWidth = "50%";
+                            img.style.height = "auto";
+                            img.style.margin = "8px 0 16px 24px";
+                            img.style.display = "inline";
+                            img.style.clear = "right";
+                            editor.nodeChanged();
+                        } else {
+                            editor.windowManager.alert("Silakan klik gambar di dalam dokumen terlebih dahulu.");
+                        }
+                    }
+                },
+                {
+                    text: "Square - Kiri (Bungkus Teks di Kanan)",
+                    icon: "alignleft",
+                    onclick: function() {
+                        var node = editor.selection.getNode();
+                        var img = node.nodeName === "IMG" ? node : node.querySelector("img");
+                        if (img) {
+                            img.className = (img.className || "").replace(/\b(alignleft|alignright|alignnone|aligncenter)\b/g, "").trim() + " alignleft";
+                            img.style.float = "left";
+                            img.style.width = "auto";
+                            img.style.maxWidth = "50%";
+                            img.style.height = "auto";
+                            img.style.margin = "8px 24px 16px 0";
+                            img.style.display = "inline";
+                            img.style.clear = "left";
+                            editor.nodeChanged();
+                        } else {
+                            editor.windowManager.alert("Silakan klik gambar di dalam dokumen terlebih dahulu.");
+                        }
+                    }
+                },
+                {
+                    text: "Di Tengah (Center Standar)",
+                    icon: "aligncenter",
+                    onclick: function() {
+                        var node = editor.selection.getNode();
+                        var img = node.nodeName === "IMG" ? node : node.querySelector("img");
+                        if (img) {
+                            img.className = (img.className || "").replace(/\b(alignleft|alignright|alignnone|aligncenter)\b/g, "").trim() + " aligncenter";
+                            img.style.float = "none";
+                            img.style.margin = "20px auto";
+                            img.style.display = "block";
+                            img.style.clear = "both";
+                            editor.nodeChanged();
+                        } else {
+                            editor.windowManager.alert("Silakan klik gambar di dalam dokumen terlebih dahulu.");
+                        }
+                    }
+                },
+                {
+                    text: "Sejajar Teks (In Line with Text)",
+                    icon: "alignnone",
+                    onclick: function() {
+                        var node = editor.selection.getNode();
+                        var img = node.nodeName === "IMG" ? node : node.querySelector("img");
+                        if (img) {
+                            img.className = (img.className || "").replace(/\b(alignleft|alignright|alignnone|aligncenter)\b/g, "").trim() + " alignnone";
+                            img.style.float = "none";
+                            img.style.display = "inline-block";
+                            img.style.margin = "8px 12px";
+                            editor.nodeChanged();
+                        } else {
+                            editor.windowManager.alert("Silakan klik gambar di dalam dokumen terlebih dahulu.");
+                        }
+                    }
+                }
+            ]
         });
     }';
 

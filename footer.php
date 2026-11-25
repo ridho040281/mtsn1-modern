@@ -346,6 +346,28 @@
               parentP.style.setProperty('float', 'none', 'important');
               parentP.style.setProperty('max-width', '100%', 'important');
             }
+          } else {
+            // Gambar Tengah / Full Width (Non-Floated): Pastikan membentang penuh 100% selebar kolom baca artikel
+            const isCenterOrFull = el.classList.contains('aligncenter') || 
+                                   el.classList.contains('size-full') || 
+                                   el.classList.contains('size-large') ||
+                                   el.hasAttribute('data-full-width') ||
+                                   (el.parentElement && el.parentElement.tagName === 'P' && el.parentElement.children.length === 1 && el.parentElement.textContent.trim() === '');
+
+            if (isCenterOrFull) {
+              el.style.setProperty('width', '100%', 'important');
+              el.style.setProperty('max-width', '100%', 'important');
+              el.style.setProperty('height', 'auto', 'important');
+              el.style.setProperty('display', 'block', 'important');
+              el.style.setProperty('margin', '1.75rem auto', 'important');
+              el.style.setProperty('clear', 'both', 'important');
+              const parentP = el.closest('p');
+              if (parentP) {
+                parentP.style.setProperty('width', '100%', 'important');
+                parentP.style.setProperty('max-width', '100%', 'important');
+                parentP.style.setProperty('margin', '1.75rem 0', 'important');
+              }
+            }
           }
         });
       }

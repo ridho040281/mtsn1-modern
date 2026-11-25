@@ -106,9 +106,10 @@ img.alignright,
     max-width: 55% !important;
 }
 
-/* 4. Center / Di Tengah & Top-Bottom (Pisahkan Teks - Lebar Penuh) */
+/* 4. Center / Di Tengah & Lebar Penuh (100% Margin to Margin ala Microsoft Word) */
 img.aligncenter,
-.wp-caption.aligncenter {
+.wp-caption.aligncenter,
+p > img:only-child {
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;
