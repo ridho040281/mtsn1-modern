@@ -133,7 +133,7 @@ header img, .custom-logo {
   margin: 0.5rem 0 1.25rem 1.75rem !important;
   display: inline !important;
   max-width: 50% !important;
-  width: auto !important;
+  height: auto !important;
   clear: right !important;
 }
 
@@ -156,12 +156,12 @@ header img, .custom-logo {
   margin: 0.5rem 1.75rem 1.25rem 0 !important;
   display: inline !important;
   max-width: 50% !important;
-  width: auto !important;
+  height: auto !important;
   clear: left !important;
 }
 
-/* 3. Center & Full Width (Align Center / Gambar Penuh: Membentang Rapi Selebar Paragraf) */
-.prose img.aligncenter,
+/* 3. Center & Full Width (Gambar Penuh / Tanpa Float Mengikuti Kolom Paragraf) */
+.prose img.aligncenter:not([width]):not([style*="width:"]),
 .prose figure.aligncenter,
 .prose .wp-block-image.aligncenter,
 .prose .wp-caption.aligncenter,
@@ -171,16 +171,14 @@ header img, .custom-logo {
 .prose figure.aligncenter img,
 .prose .wp-block-image.aligncenter img,
 .prose img[align="center"],
-.prose p > img:only-child,
-.prose p > a:only-child > img,
-.prose img.size-full,
-.prose img.size-large,
+.prose p > img:only-child:not([width]):not([style*="width:"]),
+.prose p > a:only-child > img:not([width]):not([style*="width:"]),
 .prose figure:not(.alignleft):not(.alignright),
 .prose .wp-block-image:not(.alignleft):not(.alignright),
 .prose .wp-caption:not(.alignleft):not(.alignright) {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
+  display: block;
+  width: 100%;
+  max-width: 100%;
   height: auto !important;
   margin-left: auto !important;
   margin-right: auto !important;
@@ -191,8 +189,24 @@ header img, .custom-logo {
   text-align: center !important;
 }
 
-.prose p:has(> img:only-child),
-.prose p:has(> a:only-child > img) {
+/* Jika gambar center / mandiri memiliki ukuran custom manual dari editor (<img width="200" ...>) */
+.prose img.aligncenter[width],
+.prose img.aligncenter[style*="width:"],
+.prose p > img:only-child[width],
+.prose p > img:only-child[style*="width:"] {
+  display: block;
+  max-width: 100%;
+  height: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: 1.75rem !important;
+  margin-bottom: 1.75rem !important;
+  float: none !important;
+  clear: both !important;
+}
+
+.prose p:has(> img:only-child:not([width]):not([style*="width:"])),
+.prose p:has(> a:only-child > img:not([width]):not([style*="width:"])) {
   width: 100% !important;
   max-width: 100% !important;
 }

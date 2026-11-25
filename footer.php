@@ -320,10 +320,17 @@
             el.style.setProperty('margin', '0.5rem 0 1.25rem 1.75rem', 'important');
             el.style.setProperty('display', 'inline', 'important');
             el.style.setProperty('max-width', '50%', 'important');
+            const customW = el.style.width || (el.getAttribute('width') ? el.getAttribute('width') + 'px' : '');
+            if (customW && !customW.includes('%')) {
+              el.style.setProperty('width', customW, 'important');
+            }
             if (el.parentElement && el.parentElement.tagName === 'A') {
               el.parentElement.style.setProperty('float', 'right', 'important');
               el.parentElement.style.setProperty('clear', 'right', 'important');
               el.parentElement.style.setProperty('display', 'inline', 'important');
+              if (customW && !customW.includes('%')) {
+                el.parentElement.style.setProperty('width', customW, 'important');
+              }
             }
             const parentP = el.closest('p');
             if (parentP) {
@@ -336,10 +343,17 @@
             el.style.setProperty('margin', '0.5rem 1.75rem 1.25rem 0', 'important');
             el.style.setProperty('display', 'inline', 'important');
             el.style.setProperty('max-width', '50%', 'important');
+            const customW = el.style.width || (el.getAttribute('width') ? el.getAttribute('width') + 'px' : '');
+            if (customW && !customW.includes('%')) {
+              el.style.setProperty('width', customW, 'important');
+            }
             if (el.parentElement && el.parentElement.tagName === 'A') {
               el.parentElement.style.setProperty('float', 'left', 'important');
               el.parentElement.style.setProperty('clear', 'left', 'important');
               el.parentElement.style.setProperty('display', 'inline', 'important');
+              if (customW && !customW.includes('%')) {
+                el.parentElement.style.setProperty('width', customW, 'important');
+              }
             }
             const parentP = el.closest('p');
             if (parentP) {
@@ -347,14 +361,15 @@
               parentP.style.setProperty('max-width', '100%', 'important');
             }
           } else {
-            // Gambar Tengah / Full Width (Non-Floated): Pastikan membentang penuh 100% selebar kolom baca artikel
-            const isCenterOrFull = el.classList.contains('aligncenter') || 
-                                   el.classList.contains('size-full') || 
-                                   el.classList.contains('size-large') ||
+            // Gambar Tengah / Full Width (Non-Floated):
+            const inlineW = parseInt(el.style.width || el.getAttribute('width') || '0', 10);
+            const isFullWidth = el.classList.contains('aligncenter') || 
                                    el.hasAttribute('data-full-width') ||
-                                   (el.parentElement && el.parentElement.tagName === 'P' && el.parentElement.children.length === 1 && el.parentElement.textContent.trim() === '');
+                                   (el.style.width && el.style.width.includes('100%')) ||
+                                   inlineW >= 600 ||
+                                   (inlineW === 0 && el.parentElement && el.parentElement.tagName === 'P' && el.parentElement.children.length === 1 && el.parentElement.textContent.trim() === '');
 
-            if (isCenterOrFull) {
+            if (isFullWidth) {
               el.style.setProperty('width', '100%', 'important');
               el.style.setProperty('max-width', '100%', 'important');
               el.style.setProperty('height', 'auto', 'important');
@@ -367,6 +382,12 @@
                 parentP.style.setProperty('max-width', '100%', 'important');
                 parentP.style.setProperty('margin', '1.75rem 0', 'important');
               }
+            } else if (inlineW > 0 && inlineW < 600) {
+              el.style.setProperty('width', inlineW + 'px', 'important');
+              el.style.setProperty('max-width', '100%', 'important');
+              el.style.setProperty('height', 'auto', 'important');
+              el.style.setProperty('display', 'block', 'important');
+              el.style.setProperty('margin', '1.75rem auto', 'important');
             }
           }
         });
