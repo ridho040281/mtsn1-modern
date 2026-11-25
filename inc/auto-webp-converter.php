@@ -123,9 +123,18 @@ add_filter( 'wp_handle_upload', 'mtsn1_convert_upload_to_webp' );
 
 /**
  * Pastikan semua ukuran turunan gambar (thumbnail, medium, large, dll.)
- * juga selalu di-generate ke dalam format WebP
+ * juga selalu di-generate ke dalam format WebP saat upload baru,
+ * TETAPI JANGAN ubah format saat sedang melakukan editing manual di Image Editor WordPress
+ * (karena image-edit.php WordPress belum mendukung perpindahan MIME type pada file hasil crop/rotate).
  */
 add_filter( 'image_editor_output_format', function( $formats ) {
+    // Abaikan jika sedang melakukan edit gambar manual di Media Library / Image Editor
+    if ( is_admin() ) {
+        if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_REQUEST['action'] ) && 'image-editor' === $_REQUEST['action'] ) ||
+             ( isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'editattachment', 'image-editor' ), true ) ) ) {
+            return $formats;
+        }
+    }
     $formats['image/jpeg'] = 'image/webp';
     $formats['image/png']  = 'image/webp';
     return $formats;
