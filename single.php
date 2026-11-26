@@ -98,12 +98,14 @@ get_header();
         </div>
 
         <!-- Featured Image Dinamis (Mengikuti Ukuran Asli Foto Tanpa Terpotong & Mencegah Melar/Blur) -->
-        <?php if ( has_post_thumbnail() ) : ?>
-          <div class="rounded-2xl overflow-hidden mb-8 shadow-sm border border-slate-200/80 bg-slate-900/5 flex items-center justify-center p-0.5">
+        <?php if ( has_post_thumbnail() ) : 
+            $feat_caption = get_the_post_thumbnail_caption();
+        ?>
+          <div class="rounded-2xl overflow-hidden <?php echo $feat_caption ? 'mb-2' : 'mb-8'; ?> shadow-sm border border-slate-200/80 bg-slate-900/5 flex items-center justify-center p-0.5">
             <?php the_post_thumbnail( 'full', array( 'class' => 'max-w-full w-auto h-auto max-h-[640px] object-contain rounded-2xl block mx-auto' ) ); ?>
           </div>
-          <?php if ( get_the_post_thumbnail_caption() ) : ?>
-            <p class="text-xs text-slate-500 italic -mt-6 mb-8 text-center"><?php echo esc_html( get_the_post_thumbnail_caption() ); ?></p>
+          <?php if ( $feat_caption ) : ?>
+            <p class="text-xs text-slate-500 italic mt-1 mb-7 text-center"><?php echo esc_html( $feat_caption ); ?></p>
           <?php endif; ?>
         <?php endif; ?>
 

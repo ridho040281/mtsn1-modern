@@ -167,9 +167,6 @@ header img, .custom-logo {
 .prose .wp-caption.aligncenter,
 .prose a.aligncenter,
 .prose a:has(> img.aligncenter),
-.prose .wp-caption.aligncenter img,
-.prose figure.aligncenter img,
-.prose .wp-block-image.aligncenter img,
 .prose img[align="center"],
 .prose p > img:only-child:not([width]):not([style*="width:"]),
 .prose p > a:only-child > img:not([width]):not([style*="width:"]),
@@ -182,8 +179,8 @@ header img, .custom-logo {
   height: auto !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  margin-top: 1.75rem !important;
-  margin-bottom: 1.75rem !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
   float: none !important;
   clear: both !important;
   text-align: center !important;
@@ -223,29 +220,42 @@ header img, .custom-logo {
   vertical-align: middle !important;
 }
 
-/* Caption (Keterangan Gambar di Dalam Konten) */
-.prose .wp-caption {
+/* Caption (Keterangan Gambar di Dalam Konten - Rapat & Presisi Tepat di Bawah Foto) */
+.prose .wp-caption,
+.prose figure.wp-caption {
   max-width: 100% !important;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 0.75rem;
-  padding: 0.5rem;
+  padding: 0.375rem 0.375rem 0.35rem 0.375rem !important;
   box-sizing: border-box;
 }
-.prose .wp-caption img {
+.prose .wp-caption img,
+.prose .wp-caption.aligncenter img,
+.prose figure img,
+.prose figure.aligncenter img,
+.prose .wp-block-image img,
+.prose .wp-block-image.aligncenter img {
   box-shadow: none !important;
   margin: 0 auto !important;
+  padding: 0 !important;
+  display: block !important;
+  width: 100%;
+  max-width: 100%;
+  height: auto !important;
 }
 .prose figcaption,
 .prose .wp-element-caption,
-.prose .wp-caption-text {
-  font-size: 0.75rem;
-  line-height: 1.25rem;
-  color: #64748b;
-  text-align: center;
-  font-style: italic;
-  margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
+.prose .wp-caption-text,
+.prose p.wp-caption-text {
+  font-size: 0.75rem !important;
+  line-height: 1.3 !important;
+  color: #64748b !important;
+  text-align: center !important;
+  font-style: italic !important;
+  margin-top: 0.35rem !important;
+  margin-bottom: 0.1rem !important;
+  padding: 0 0.25rem !important;
 }
 
 /* Clearfix Utama Konten Artikel */

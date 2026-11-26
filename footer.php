@@ -361,6 +361,17 @@
               parentP.style.setProperty('max-width', '100%', 'important');
             }
           } else {
+            // Jika gambar berada di dalam wadah caption (.wp-caption / figure), biarkan margin 0 agar caption rapat tepat di bawah foto
+            const inCaptionBox = el.tagName === 'IMG' && el.closest('.wp-caption, figure, .wp-block-image');
+            if (inCaptionBox) {
+              el.style.setProperty('width', '100%', 'important');
+              el.style.setProperty('max-width', '100%', 'important');
+              el.style.setProperty('height', 'auto', 'important');
+              el.style.setProperty('display', 'block', 'important');
+              el.style.setProperty('margin', '0 auto', 'important');
+              return;
+            }
+
             // Gambar Tengah / Full Width (Non-Floated):
             const inlineW = parseInt(el.style.width || el.getAttribute('width') || '0', 10);
             const isFullWidth = el.classList.contains('aligncenter') || 
@@ -374,20 +385,20 @@
               el.style.setProperty('max-width', '100%', 'important');
               el.style.setProperty('height', 'auto', 'important');
               el.style.setProperty('display', 'block', 'important');
-              el.style.setProperty('margin', '1.75rem auto', 'important');
+              el.style.setProperty('margin', '1.5rem auto', 'important');
               el.style.setProperty('clear', 'both', 'important');
               const parentP = el.closest('p');
               if (parentP) {
                 parentP.style.setProperty('width', '100%', 'important');
                 parentP.style.setProperty('max-width', '100%', 'important');
-                parentP.style.setProperty('margin', '1.75rem 0', 'important');
+                parentP.style.setProperty('margin', '1.5rem 0', 'important');
               }
             } else if (inlineW > 0 && inlineW < 600) {
               el.style.setProperty('width', inlineW + 'px', 'important');
               el.style.setProperty('max-width', '100%', 'important');
               el.style.setProperty('height', 'auto', 'important');
               el.style.setProperty('display', 'block', 'important');
-              el.style.setProperty('margin', '1.75rem auto', 'important');
+              el.style.setProperty('margin', '1.5rem auto', 'important');
             }
           }
         });
