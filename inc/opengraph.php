@@ -15,6 +15,166 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Buat Kanvas Open Graph Universal (1200 x 760 px) dengan Safe-Zone Ganda
+ * agar gambar/banner (baik 21:9, 16:9, maupun flyer 4:5) tampil 100% UTUH
+ * tanpa terpotong di WhatsApp Chat (1.91:1) MAUPUN WhatsApp Story/Status (~1.58:1).
+ *
+ * @param string $source_url URL gambar asli
+ * @param int    $thumb_id   Attachment ID (opsional)
+ * @return array|false       Array ('url', 'width', 'height', 'type') atau false jika gagal
+ */
+function mtsn1_generate_social_og_canvas( $source_url, $thumb_id = 0 ) {
+    if ( ! function_exists( 'imagecreatetruecolor' ) || ! function_exists( 'imagejpeg' ) ) {
+        return false;
+    }
+
+    $local_path = '';
+    if ( $thumb_id > 0 ) {
+        $attached = get_attached_file( $thumb_id );
+        if ( $attached && file_exists( $attached ) ) {
+            $local_path = $attached;
+        }
+    }
+
+    $upload_dir = wp_upload_dir();
+    if ( empty( $local_path ) && ! empty( $source_url ) ) {
+        if ( ! empty( $upload_dir['baseurl'] ) && strpos( $source_url, $upload_dir['baseurl'] ) === 0 ) {
+            $rel = substr( $source_url, strlen( $upload_dir['baseurl'] ) );
+            $candidate = $upload_dir['basedir'] . str_replace( '/', DIRECTORY_SEPARATOR, $rel );
+            if ( file_exists( $candidate ) ) {
+                $local_path = $candidate;
+            }
+        }
+        if ( empty( $local_path ) ) {
+            $home = home_url( '/' );
+            if ( strpos( $source_url, $home ) === 0 ) {
+                $rel = substr( $source_url, strlen( $home ) );
+                $candidate = ABSPATH . str_replace( '/', DIRECTORY_SEPARATOR, $rel );
+                if ( file_exists( $candidate ) ) {
+                    $local_path = $candidate;
+                }
+            }
+        }
+    }
+
+    if ( empty( $local_path ) || ! is_readable( $local_path ) ) {
+        return false;
+    }
+
+    $info = @getimagesize( $local_path );
+    if ( ! $info || empty( $info[0] ) || empty( $info[1] ) ) {
+        return false;
+    }
+
+    $src_w = (int) $info[0];
+    $src_h = (int) $info[1];
+    $mime  = $info['mime'] ?? '';
+
+    $canvas_w = 1200;
+    $canvas_h = 760;
+
+    // Direktori cache di wp-content/uploads/mtsn1-og/
+    $og_dir_path = trailingslashit( $upload_dir['basedir'] ) . 'mtsn1-og';
+    $og_dir_url  = trailingslashit( $upload_dir['baseurl'] ) . 'mtsn1-og';
+
+    if ( ! file_exists( $og_dir_path ) ) {
+        wp_mkdir_p( $og_dir_path );
+    }
+
+    $mtime      = @filemtime( $local_path );
+    $hash       = substr( md5( 'og_v2_story_chat_' . $local_path . '_' . $mtime ), 0, 14 );
+    $cache_file = 'og-' . $hash . '.jpg';
+    $cache_path = trailingslashit( $og_dir_path ) . $cache_file;
+    $cache_url  = trailingslashit( $og_dir_url ) . $cache_file;
+
+    if ( file_exists( $cache_path ) && filesize( $cache_path ) > 1024 ) {
+        return array(
+            'url'    => $cache_url,
+            'width'  => $canvas_w,
+            'height' => $canvas_h,
+            'type'   => 'image/jpeg',
+        );
+    }
+
+    // Muat gambar sumber menggunakan GD
+    $src_img = false;
+    if ( 'image/webp' === $mime && function_exists( 'imagecreatefromwebp' ) ) {
+        $src_img = @imagecreatefromwebp( $local_path );
+    } elseif ( 'image/jpeg' === $mime && function_exists( 'imagecreatefromjpeg' ) ) {
+        $src_img = @imagecreatefromjpeg( $local_path );
+    } elseif ( 'image/png' === $mime && function_exists( 'imagecreatefrompng' ) ) {
+        $src_img = @imagecreatefrompng( $local_path );
+    }
+    if ( ! $src_img && function_exists( 'imagecreatefromstring' ) ) {
+        $raw = @file_get_contents( $local_path );
+        if ( $raw ) {
+            $src_img = @imagecreatefromstring( $raw );
+        }
+    }
+
+    if ( ! $src_img ) {
+        return false;
+    }
+
+    $canvas = imagecreatetruecolor( $canvas_w, $canvas_h );
+    if ( ! $canvas ) {
+        imagedestroy( $src_img );
+        return false;
+    }
+
+    // 1. Buat Ambient Blurred Backdrop dari warna asli gambar agar menyatu elegan
+    $blur_w = 120;
+    $blur_h = 76;
+    $blur_buf = imagecreatetruecolor( $blur_w, $blur_h );
+    if ( $blur_buf ) {
+        imagecopyresampled( $blur_buf, $src_img, 0, 0, 0, 0, $blur_w, $blur_h, $src_w, $src_h );
+        if ( function_exists( 'imagefilter' ) ) {
+            for ( $i = 0; $i < 10; $i++ ) {
+                @imagefilter( $blur_buf, IMG_FILTER_GAUSSIAN_BLUR );
+            }
+            @imagefilter( $blur_buf, IMG_FILTER_SMOOTH, 6 );
+            @imagefilter( $blur_buf, IMG_FILTER_BRIGHTNESS, -18 );
+        }
+        imagecopyresampled( $canvas, $blur_buf, 0, 0, 0, 0, $canvas_w, $canvas_h, $blur_w, $blur_h );
+        imagedestroy( $blur_buf );
+    } else {
+        $bg_col = imagecolorallocate( $canvas, 6, 78, 59 );
+        imagefilledrectangle( $canvas, 0, 0, $canvas_w, $canvas_h, $bg_col );
+    }
+
+    // 2. Hitung Safe-Zone Universal (1152 x 588) di tengah kanvas 1200 x 760
+    // - Di WhatsApp Story (~1.58:1 = 1200x760): seluruh 1200x760 tampil utuh
+    // - Di WhatsApp Chat (1.91:1 = 1200x628): area tengah y=66..694 tampil utuh
+    // Karena safe-zone berada di x=24..1176 dan y=86..674, gambar 100% aman di Chat maupun Story!
+    $safe_w = 1152;
+    $safe_h = 588;
+
+    $scale = min( $safe_w / $src_w, $safe_h / $src_h );
+    $dst_w = max( 1, (int) round( $src_w * $scale ) );
+    $dst_h = max( 1, (int) round( $src_h * $scale ) );
+    $dst_x = (int) round( ( $canvas_w - $dst_w ) / 2 );
+    $dst_y = (int) round( ( $canvas_h - $dst_h ) / 2 );
+
+    imagealphablending( $canvas, true );
+    imagecopyresampled( $canvas, $src_img, $dst_x, $dst_y, 0, 0, $dst_w, $dst_h, $src_w, $src_h );
+
+    $saved = @imagejpeg( $canvas, $cache_path, 90 );
+    imagedestroy( $canvas );
+    imagedestroy( $src_img );
+
+    if ( $saved && file_exists( $cache_path ) ) {
+        return array(
+            'url'    => $cache_url,
+            'width'  => $canvas_w,
+            'height' => $canvas_h,
+            'type'   => 'image/jpeg',
+        );
+    }
+
+    return false;
+}
+
+/**
  * Output Open Graph and Twitter Card meta tags in wp_head
  */
 function mtsn1_opengraph_meta_tags() {
@@ -64,11 +224,12 @@ function mtsn1_opengraph_meta_tags() {
             }
 
             // 1. Gambar Featured Image (Thumbnail Utama)
+            $thumb_id = 0;
             if ( has_post_thumbnail( $post_id ) ) {
-                $thumb_id  = get_post_thumbnail_id( $post_id );
+                $thumb_id = (int) get_post_thumbnail_id( $post_id );
+                $img_full = wp_get_attachment_image_src( $thumb_id, 'full' );
                 $img_large = wp_get_attachment_image_src( $thumb_id, 'large' );
-                $img_full  = wp_get_attachment_image_src( $thumb_id, 'full' );
-                $img_data  = ! empty( $img_large ) ? $img_large : $img_full;
+                $img_data = ! empty( $img_full ) ? $img_full : $img_large;
 
                 if ( $img_data ) {
                     $og_image   = $img_data[0];
@@ -100,6 +261,18 @@ function mtsn1_opengraph_meta_tags() {
             if ( empty( $og_image ) && ! empty( $post->post_content ) ) {
                 if ( preg_match( '/<img[^>]+src=[\'"]([^\'"]+)[\'"]/i', $post->post_content, $matches ) ) {
                     $og_image = $matches[1];
+                }
+            }
+
+            // 5. Konversi otomatis ke Kanvas Universal WhatsApp Chat & Story (1200x760 Safe-Zone)
+            // agar banner 21:9, 16:9, maupun flyer 4:5 tidak terpotong di WhatsApp Story maupun Chat
+            if ( ! empty( $og_image ) ) {
+                $og_canvas = mtsn1_generate_social_og_canvas( $og_image, $thumb_id ?? 0 );
+                if ( $og_canvas && ! empty( $og_canvas['url'] ) ) {
+                    $og_image      = $og_canvas['url'];
+                    $og_image_w    = $og_canvas['width'];
+                    $og_image_h    = $og_canvas['height'];
+                    $og_image_type = $og_canvas['type'];
                 }
             }
 
